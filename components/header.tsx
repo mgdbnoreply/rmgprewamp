@@ -69,12 +69,12 @@ export function Header() {
             {/* Publications Dropdown */}
             <div className="relative group">
               <div className={navLinkStyle + " cursor-default"}>
-                Publications
+                <a href="/publications">Publications</a>
                 <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180" />
               </div>
               <div className="absolute top-full left-0 z-[200] hidden group-hover:block pt-2">
                 <ul className="bg-white border border-gray-200 shadow-2xl rounded-2xl min-w-56 p-1">
-                  <NavLink href="/publications">All Publications</NavLink>
+                  
                   <NavLink href="/publications?type=book">Book</NavLink>
                   <NavLink href="/publications?type=book-chapters">Book Chapters</NavLink>
                   <NavLink href="/publications?type=conference">Conference Proceedings</NavLink>
@@ -122,12 +122,12 @@ export function Header() {
             {/* News Dropdown */}
             <div className="relative group">
               <div className={navLinkStyle + " cursor-default"}>
-                News
+                <a href="/news">News</a>
                 <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-1CH.svg" />
               </div>
               <div className="absolute top-full left-0 z-[200] hidden group-hover:block pt-2">
                 <ul className="bg-white border border-gray-200 shadow-2xl rounded-2xl min-w-56 p-1">
-                  <NavLink href="/news">All News</NavLink>
+                  
                   <NavLink href="/news?category=blog">Blog</NavLink>
                   <NavLink href="/news?category=updates">Updates</NavLink>
                   <NavLink href="/news?category=articles">Articles</NavLink>
