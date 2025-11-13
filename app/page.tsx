@@ -159,7 +159,7 @@ export default function Page() {
       title: "The Social Dynamics of Multiplayer Mobile Games",
       description: "Investigating how early multiplayer mobile games fostered social connections and competitive play...",
       category: "Social Studies",
-      image: "/multiplayer-games.jpg",
+      image: "https://www.pcgamesn.com/wp-content/sites/pcgamesn/2025/07/best-multiplayer-games-peak.jpg",
       featured: true, // You can adjust which ones are featured
       readTime: "9 min"
     },
