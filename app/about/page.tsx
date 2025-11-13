@@ -15,21 +15,21 @@ export default function AboutPage() {
       role: "Project Director",
       bio: "Adriana de Souza e Silva is Professor of Communication Studies and Director of the Center for Transformative Media at Northeastern University. Her research explores how mobile and locative media technologies shape urban mobility and public space, especially in developing world contexts. Adriana’s deep interest in mobile media culture led her to co-found RMGP, where she brings a global, interdisciplinary lens to the preservation of mobile gaming heritage.",
       link: "https://camd.northeastern.edu/people/adriana-de-souza-e-silva/",
-      image: "/team/adriana.jpg",
+      image: "https://d3tvevvhad9ws1.cloudfront.net/wp-content/uploads/2024/07/Adriana_de_Souza_e_Silva_1-1_headshot-549x600.jpg",
     },
     {
       name: "Ragan Glover",
       role: "Project Director",
       bio: "Ragan Glover leads the RMGP initiative as Project Director, and serves as Director of the Michigan Research and Discovery Scholars at University of Michigan. Her work focuses on the sociocultural impacts of mobile and immersive media. Ragan’s passion for uncovering overlooked mobile gaming histories in varied cultural settings has helped shape RMGP’s mission to chart mobile play’s global past.",
       link: "https://lsa.umich.edu/mrads/people/Leadership-Team/ragan-glover.html",
-      image: "/team/ragan.jpg",
+      image: "https://d3tvevvhad9ws1.cloudfront.net/wp-content/uploads/2024/07/Adriana_de_Souza_e_Silva_1-1_headshot-549x600.jpg",
     },
     {
       name: "Logan Brown",
       role: "Historian & Preservation Specialist",
       bio: "Logan Brown is a media historian and educator whose scholarship examines issues of power and capital in the history of video games, with a special emphasis on early American mobile games. As the project’s preservation specialist, Logan leads efforts to catalogue, contextualize, and communicate the archival artifacts gathered by RMGP, ensuring they are both accessible and meaningful for future scholarship.",
       link: "https://www.loganbrown.info",
-      image: "/team/logan.jpg",
+      image: "/https://www.rmgd.org/images/logan-brown.jpeg",
     },
   ]
 
@@ -59,19 +59,19 @@ export default function AboutPage() {
       name: "Arslan Parkar",
       role: "MS in Information Systems",
       bio: "Arslan is pursuing an MS in information systems at Northeastern. He has experience in leading an AI-driven startup and has done impactful research projects focusing on innovative, user-centric solutions.",
-      image: "/team/arslan.jpg",
+      image: "https://coe.northeastern.edu/wp-content/uploads/images/spotlights/headshot_parkar.png",
     },
     {
       name: "Kaushik Manivannan",
       role: "Software Engineering Graduate Student",
       bio: "Kaushik is a graduate student in Software Engineering Systems at Northeastern’s College of Engineering, driven by a passion for developing AI solutions that can make a real difference in people’s lives.",
-      image: "/team/kaushik.png",
+      image: "https://burnes.northeastern.edu/wp-content/uploads/Screenshot-2024-12-19-at-10.10.12%E2%80%AFAM.png",
     },
     {
       name: "Sutanuka Jashu",
       role: "Ph.D. Student",
       bio: "Sutanuka Jashu is an interdisciplinary artist and researcher from West Bengal, India, working at the nexus of art, technology, and cultural resilience. Her current practice integrates AI, adaptive systems, and speculative storytelling to critique digital colonialism, reimagine historical narratives, and explore ecological futures.",
-      image: "/Users/arslanparkar/Downloads/code (1)/app/about/Sutanuka.png",
+      image: "https://d3tvevvhad9ws1.cloudfront.net/wp-content/uploads/2025/07/Sutanuka-Jashu-phd-student-207x300.png",
     },
   ]
   const researchFocusAreas = [
