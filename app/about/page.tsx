@@ -33,6 +33,27 @@ export default function AboutPage() {
     },
   ]
 
+  // const researchAssistants = [
+  //   {
+  //     name: "Arslan Parkar",
+  //     role: "MS in Information Systems",
+  //     bio: "Arslan is pursuing an MS in information systems at Northeastern. He has experience in leading an AI-driven startup and has done impactful research projects focusing on innovative, user-centric solutions.",
+  //     image: "/team/arslan.jpg",
+  //   },
+  //   {
+  //     name: "Kannan Karthikeyan",
+  //     role: "Software Engineering Graduate Student",
+  //     bio: "Kannan is a software engineering graduate student at Northeastern who blends his lifelong passion for gaming with technical expertise to advance the RMGP initiative.",
+  //     image: "/team/kannan.jpg",
+  //   },
+  //   {
+  //     name: "Yan (Fiona) Wu",
+  //     role: "Dean's Honors Fellow",
+  //     bio: "Fiona is a Dean's Honors Fellow pursuing a BS in Computer Science and Media Arts, contributing her technical and creative skills to the RMGP project.",
+  //     image: "/team/fiona.jpg",
+  //   },
+  // ]
+
   const researchAssistants = [
     {
       name: "Arslan Parkar",
@@ -41,19 +62,18 @@ export default function AboutPage() {
       image: "/team/arslan.jpg",
     },
     {
-      name: "Kannan Karthikeyan",
+      name: "Kaushik Manivannan",
       role: "Software Engineering Graduate Student",
-      bio: "Kannan is a software engineering graduate student at Northeastern who blends his lifelong passion for gaming with technical expertise to advance the RMGP initiative.",
-      image: "/team/kannan.jpg",
+      bio: "Kaushik is a graduate student in Software Engineering Systems at Northeastern’s College of Engineering, driven by a passion for developing AI solutions that can make a real difference in people’s lives.",
+      image: "/team/kaushik.png",
     },
     {
-      name: "Yahan (Fiona) Wu",
-      role: "Dean's Honors Fellow",
-      bio: "Fiona is a Dean's Honors Fellow pursuing a BS in Computer Science and Media Arts, contributing her technical and creative skills to the RMGP project.",
-      image: "/team/fiona.jpg",
+      name: "Sutanuka Jashu",
+      role: "Ph.D. Student",
+      bio: "Sutanuka Jashu is an interdisciplinary artist and researcher from West Bengal, India, working at the nexus of art, technology, and cultural resilience. Her current practice integrates AI, adaptive systems, and speculative storytelling to critique digital colonialism, reimagine historical narratives, and explore ecological futures.",
+      image: "/Users/arslanparkar/Downloads/code (1)/app/about/Sutanuka.png",
     },
   ]
-
   const researchFocusAreas = [
     {
       icon: <History className="w-8 h-8 text-red-600" />,

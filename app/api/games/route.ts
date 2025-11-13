@@ -1,254 +1,175 @@
 import { NextResponse } from "next/server"
+import type { GameData } from "@/lib/types" // Import your GameData type
 
-// Mock game data for demonstration
-const mockGames = [
-  {
-    GameTitle: { S: "Snake" },
-    YearDeveloped: { S: "1997" },
-    Developer: { S: "Nokia" },
-    City: { S: "Espoo" },
-    DeveloperLocation: { S: "Finland" },
-    GameWebsite: { S: "https://example.com" },
-    GameDescription: {
-      S: "Classic snake game where you control a growing line that must avoid hitting walls or itself.",
+// AWS API Gateway endpoint
+const API_BASE = "https://u3iysopa88.execute-api.us-east-1.amazonaws.com"
+
+// Helper function to unwrap DynamoDB attribute values
+function unwrapDynamoDBValue(value: any): any {
+  if (!value || typeof value !== "object") return value
+
+  // DynamoDB format: { S: "string", N: "number", SS: ["string"], etc. }
+  if (value.S !== undefined) return value.S
+  if (value.N !== undefined) return value.N
+  if (value.BOOL !== undefined) return value.BOOL
+  if (value.NULL !== undefined) return null
+  
+  // --- FIX IS HERE ---
+  // Handle String Set (SS) - join into a single, comma-separated string
+  if (value.SS !== undefined && Array.isArray(value.SS)) {
+    return value.SS.join(", ") 
+  }
+  // Handle Number Set (NS) - join into a single, comma-separated string
+  if (value.NS !== undefined && Array.isArray(value.NS)) {
+    return value.NS.join(", ")
+  }
+  // --- END FIX ---
+
+  if (value.L !== undefined) return value.L.map(unwrapDynamoDBValue)
+  if (value.M !== undefined) {
+    const obj: any = {}
+    for (const key in value.M) {
+      obj[key] = unwrapDynamoDBValue(value.M[key])
+    }
+    return obj
+  }
+
+  return value
+}
+
+// Transform a single DynamoDB item to GameData
+function transformDynamoDBItem(item: any): GameData {
+  const unwrapped: any = {}
+
+  // Unwrap all DynamoDB attributes
+  for (const key in item) {
+    unwrapped[key] = unwrapDynamoDBValue(item[key])
+  }
+
+  // Map DynamoDB fields to GameData interface
+  return {
+    Title: unwrapped.GameTitle || unwrapped.Title || "",
+    Year: unwrapped.YearDeveloped || unwrapped.Year || "",
+    Developers: unwrapped.Developer || unwrapped.Developers || "",
+    City: unwrapped.City || "",
+    Country: unwrapped.DeveloperLocation || unwrapped.Country || "",
+    URL: unwrapped.GameWebsite || unwrapped.URL || "",
+    Description: unwrapped.GameDescription || unwrapped.Description || "",
+    Pictures: unwrapped.Photos || unwrapped.Pictures || "", // This will now be a string
+    Documentation: unwrapped.Videos || unwrapped.Documentation || "",
+    Articles: unwrapped.Articles || "",
+    Purpose: unwrapped.Purpose || "",
+    "Open Source": unwrapped.OpenSource || unwrapped["Open Source"] || "",
+    "# Players": unwrapped.Players || unwrapped["# Players"] || "",
+    Location: unwrapped.SiteSpecific || unwrapped.Location || "",
+    Genre: unwrapped.Genre || "",
+    Hardware: unwrapped.HardwareFeatures || unwrapped.Hardware || "",
+    Connectivity: unwrapped.Connectivity || "",
+    Contact: unwrapped.Contact || "N/A",
+  }
+}
+
+export async function GET(request: Request) {
+  try {
+    console.log("🔄 Fetching games from API Gateway...")
+
+    const { searchParams } = new URL(request.url)
+    const id = searchParams.get("id")
+
+    const apiUrl = id ? `${API_BASE}/games/${id}` : `${API_BASE}/games`
+
+    const response = await fetch(apiUrl, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+      cache: "no-store",
+    })
+
+    if (!response.ok) {
+      throw new Error(`API Gateway responded with status: ${response.status}`)
+    }
+
+    const data = await response.json()
+    console.log("📦 Raw API response:", JSON.stringify(data).substring(0, 200))
+
+    let games: GameData[] = []
+
+    if (Array.isArray(data)) {
+      games = data.map(transformDynamoDBItem)
+    } else if (data.Items && Array.isArray(data.Items)) {
+      games = data.Items.map(transformDynamoDBItem)
+    } else if (data.Item) {
+      games = [transformDynamoDBItem(data.Item)]
+    } else if (typeof data === "object" && (data.GameTitle || data.Title)) {
+      games = [transformDynamoDBItem(data)]
+    } else if (data.body) {
+      const bodyData = typeof data.body === "string" ? JSON.parse(data.body) : data.body
+      if (Array.isArray(bodyData)) {
+        games = bodyData.map(transformDynamoDBItem)
+      } else {
+        games = [transformDynamoDBItem(bodyData)]
+      }
+    } else {
+      console.warn("⚠️ Unexpected response structure:", Object.keys(data))
+      games = [transformDynamoDBItem(data)]
+    }
+
+    console.log(`✅ Successfully loaded ${games.length} games`)
+
+    return NextResponse.json(games, {
+      headers: {
+        "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400",
+      },
+    })
+  } catch (error) {
+    console.error("❌ Error fetching games:", error)
+    return NextResponse.json(getFallbackGames(), {
+      headers: { "X-Fallback": "true" },
+    })
+  }
+}
+
+// Fallback data
+function getFallbackGames(): GameData[] {
+  return [
+    {
+      Title: "Snake",
+      Year: "1997",
+      Developers: "Nokia",
+      City: "Espoo",
+      Country: "Finland",
+      URL: "https://example.com",
+      Description: "Classic snake game...",
+      Pictures: "/retro-snake-game.jpg",
+      Documentation: "",
+      Articles: "",
+      Purpose: "Entertainment",
+      "Open Source": "No",
+      "# Players": "1",
+      Location: "No",
+      Genre: "Arcade, Puzzle",
+      Hardware: "Nokia 6110",
+      Connectivity: "None",
+      Contact: "N/A",
     },
-    Photos: { S: "/retro-snake-game.jpg" },
-    Videos: { S: "" },
-    Articles: { S: "" },
-    Purpose: { S: "Entertainment" },
-    OpenSource: { S: "No" },
-    Players: { S: "1" },
-    SiteSpecific: { S: "No" },
-    Genre: { S: "Arcade, Puzzle" },
-    HardwareFeatures: { S: "Nokia 6110" },
-    Connectivity: { S: "None" },
-    Contact: { S: "N/A" },
-  },
-  {
-    GameTitle: { S: "Tetris" },
-    YearDeveloped: { S: "1989" },
-    Developer: { S: "Nintendo" },
-    City: { S: "Kyoto" },
-    DeveloperLocation: { S: "Japan" },
-    GameWebsite: { S: "https://example.com" },
-    GameDescription: { S: "Iconic puzzle game where players arrange falling blocks to create complete lines." },
-    Photos: { S: "/game-boy-tetris.jpg" },
-    Videos: { S: "" },
-    Articles: { S: "" },
-    Purpose: { S: "Entertainment" },
-    OpenSource: { S: "No" },
-    Players: { S: "1-2" },
-    SiteSpecific: { S: "No" },
-    Genre: { S: "Puzzle" },
-    HardwareFeatures: { S: "Game Boy" },
-    Connectivity: { S: "Link Cable" },
-    Contact: { S: "N/A" },
-  },
-  {
-    GameTitle: { S: "Space Impact" },
-    YearDeveloped: { S: "1999" },
-    Developer: { S: "Nokia" },
-    City: { S: "Espoo" },
-    DeveloperLocation: { S: "Finland" },
-    GameWebsite: { S: "https://example.com" },
-    GameDescription: { S: "Side-scrolling shooter game pre-installed on Nokia mobile phones." },
-    Photos: { S: "/space-impact-nokia-game.jpg" },
-    Videos: { S: "" },
-    Articles: { S: "" },
-    Purpose: { S: "Entertainment" },
-    OpenSource: { S: "No" },
-    Players: { S: "1" },
-    SiteSpecific: { S: "No" },
-    Genre: { S: "Action, Shooter" },
-    HardwareFeatures: { S: "Nokia 3310" },
-    Connectivity: { S: "None" },
-    Contact: { S: "N/A" },
-  },
-  {
-    GameTitle: { S: "Pokemon Red" },
-    YearDeveloped: { S: "1996" },
-    Developer: { S: "Game Freak" },
-    City: { S: "Tokyo" },
-    DeveloperLocation: { S: "Japan" },
-    GameWebsite: { S: "https://example.com" },
-    GameDescription: { S: "RPG adventure where players catch and train creatures called Pokemon." },
-    Photos: { S: "/pokemon-red-game-boy.jpg" },
-    Videos: { S: "" },
-    Articles: { S: "" },
-    Purpose: { S: "Entertainment" },
-    OpenSource: { S: "No" },
-    Players: { S: "1-2" },
-    SiteSpecific: { S: "No" },
-    Genre: { S: "RPG, Adventure" },
-    HardwareFeatures: { S: "Game Boy" },
-    Connectivity: { S: "Link Cable" },
-    Contact: { S: "N/A" },
-  },
-  {
-    GameTitle: { S: "Bounce" },
-    YearDeveloped: { S: "2000" },
-    Developer: { S: "Nokia" },
-    City: { S: "Espoo" },
-    DeveloperLocation: { S: "Finland" },
-    GameWebsite: { S: "https://example.com" },
-    GameDescription: { S: "Platform game featuring a red ball navigating through various levels." },
-    Photos: { S: "/bounce-nokia-game.jpg" },
-    Videos: { S: "" },
-    Articles: { S: "" },
-    Purpose: { S: "Entertainment" },
-    OpenSource: { S: "No" },
-    Players: { S: "1" },
-    SiteSpecific: { S: "No" },
-    Genre: { S: "Platform, Action" },
-    HardwareFeatures: { S: "Nokia 6110" },
-    Connectivity: { S: "None" },
-    Contact: { S: "N/A" },
-  },
-  {
-    GameTitle: { S: "Super Mario Land" },
-    YearDeveloped: { S: "1989" },
-    Developer: { S: "Nintendo" },
-    City: { S: "Kyoto" },
-    DeveloperLocation: { S: "Japan" },
-    GameWebsite: { S: "https://example.com" },
-    GameDescription: { S: "Classic platformer featuring Mario in the Sarasaland kingdom." },
-    Photos: { S: "/super-mario-land-game-boy.jpg" },
-    Videos: { S: "" },
-    Articles: { S: "" },
-    Purpose: { S: "Entertainment" },
-    OpenSource: { S: "No" },
-    Players: { S: "1" },
-    SiteSpecific: { S: "No" },
-    Genre: { S: "Platform, Action" },
-    HardwareFeatures: { S: "Game Boy" },
-    Connectivity: { S: "None" },
-    Contact: { S: "N/A" },
-  },
-  {
-    GameTitle: { S: "Worms World Party" },
-    YearDeveloped: { S: "2001" },
-    Developer: { S: "Team17" },
-    City: { S: "Wakefield" },
-    DeveloperLocation: { S: "United Kingdom" },
-    GameWebsite: { S: "https://example.com" },
-    GameDescription: { S: "Turn-based strategy game featuring teams of worms battling with various weapons." },
-    Photos: { S: "/worms-mobile-game.jpg" },
-    Videos: { S: "" },
-    Articles: { S: "" },
-    Purpose: { S: "Entertainment" },
-    OpenSource: { S: "No" },
-    Players: { S: "1-4" },
-    SiteSpecific: { S: "No" },
-    Genre: { S: "Strategy, Action" },
-    HardwareFeatures: { S: "Nokia N-Gage" },
-    Connectivity: { S: "Bluetooth" },
-    Contact: { S: "N/A" },
-  },
-  {
-    GameTitle: { S: "Sonic Advance" },
-    YearDeveloped: { S: "2001" },
-    Developer: { S: "Sonic Team" },
-    City: { S: "Tokyo" },
-    DeveloperLocation: { S: "Japan" },
-    GameWebsite: { S: "https://example.com" },
-    GameDescription: { S: "Fast-paced platformer featuring Sonic the Hedgehog on Game Boy Advance." },
-    Photos: { S: "/sonic-advance-gba.jpg" },
-    Videos: { S: "" },
-    Articles: { S: "" },
-    Purpose: { S: "Entertainment" },
-    OpenSource: { S: "No" },
-    Players: { S: "1-4" },
-    SiteSpecific: { S: "No" },
-    Genre: { S: "Platform, Action" },
-    HardwareFeatures: { S: "Game Boy Advance" },
-    Connectivity: { S: "Link Cable" },
-    Contact: { S: "N/A" },
-  },
-  {
-    GameTitle: { S: "Bejeweled" },
-    YearDeveloped: { S: "2001" },
-    Developer: { S: "PopCap Games" },
-    City: { S: "Seattle" },
-    DeveloperLocation: { S: "United States" },
-    GameWebsite: { S: "https://example.com" },
-    GameDescription: { S: "Match-3 puzzle game where players swap gems to create lines of three or more." },
-    Photos: { S: "/bejeweled-mobile-game.jpg" },
-    Videos: { S: "" },
-    Articles: { S: "" },
-    Purpose: { S: "Entertainment" },
-    OpenSource: { S: "No" },
-    Players: { S: "1" },
-    SiteSpecific: { S: "No" },
-    Genre: { S: "Puzzle" },
-    HardwareFeatures: { S: "Palm Pilot" },
-    Connectivity: { S: "None" },
-    Contact: { S: "N/A" },
-  },
-  {
-    GameTitle: { S: "Doom RPG" },
-    YearDeveloped: { S: "2005" },
-    Developer: { S: "id Software" },
-    City: { S: "Dallas" },
-    DeveloperLocation: { S: "United States" },
-    GameWebsite: { S: "https://example.com" },
-    GameDescription: { S: "Turn-based RPG adaptation of the classic first-person shooter for mobile phones." },
-    Photos: { S: "/doom-rpg-mobile.jpg" },
-    Videos: { S: "" },
-    Articles: { S: "" },
-    Purpose: { S: "Entertainment" },
-    OpenSource: { S: "No" },
-    Players: { S: "1" },
-    SiteSpecific: { S: "No" },
-    Genre: { S: "RPG, Action" },
-    HardwareFeatures: { S: "Java Phone" },
-    Connectivity: { S: "None" },
-    Contact: { S: "N/A" },
-  },
-  {
-    GameTitle: { S: "Diner Dash" },
-    YearDeveloped: { S: "2005" },
-    Developer: { S: "PlayFirst" },
-    City: { S: "San Francisco" },
-    DeveloperLocation: { S: "United States" },
-    GameWebsite: { S: "https://example.com" },
-    GameDescription: { S: "Time management game where players help Flo serve customers in her restaurant." },
-    Photos: { S: "/diner-dash-mobile.jpg" },
-    Videos: { S: "" },
-    Articles: { S: "" },
-    Purpose: { S: "Entertainment" },
-    OpenSource: { S: "No" },
-    Players: { S: "1" },
-    SiteSpecific: { S: "No" },
-    Genre: { S: "Strategy, Casual" },
-    HardwareFeatures: { S: "Java Phone" },
-    Connectivity: { S: "None" },
-    Contact: { S: "N/A" },
-  },
-  {
-    GameTitle: { S: "Asphalt Urban GT" },
-    YearDeveloped: { S: "2004" },
-    Developer: { S: "Gameloft" },
-    City: { S: "Paris" },
-    DeveloperLocation: { S: "France" },
-    GameWebsite: { S: "https://example.com" },
-    GameDescription: { S: "Racing game featuring exotic cars and urban street racing." },
-    Photos: { S: "/asphalt-urban-gt-mobile.jpg" },
-    Videos: { S: "" },
-    Articles: { S: "" },
-    Purpose: { S: "Entertainment" },
-    OpenSource: { S: "No" },
-    Players: { S: "1-4" },
-    SiteSpecific: { S: "No" },
-    Genre: { S: "Racing, Sports" },
-    HardwareFeatures: { S: "Nokia N-Gage" },
-    Connectivity: { S: "Bluetooth" },
-    Contact: { S: "N/A" },
-  },
-]
-
-export async function GET() {
-  // Simulate API delay
-  await new Promise((resolve) => setTimeout(resolve, 500))
-
-  return NextResponse.json(mockGames)
+    {
+      Title: "Tetris",
+      Year: "1989",
+      Developers: "Nintendo",
+      City: "Kyoto",
+      Country: "Japan",
+      URL: "https://example.com",
+      Description: "Iconic puzzle game...",
+      Pictures: "/game-boy-tetris.jpg",
+      Documentation: "",
+      Articles: "",
+      Purpose: "Entertainment",
+      "Open Source": "No",
+      "# Players": "1-2",
+      Location: "No",
+      Genre: "Puzzle",
+      Hardware: "Game Boy",
+      Connectivity: "Link Cable",
+      Contact: "N/A",
+    },
+  ]
 }

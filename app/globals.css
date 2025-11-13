@@ -109,10 +109,10 @@
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-accent: var(--accent);
+  --color-sidebar-accent-foreground: var(--accent-foreground);
+  --color-sidebar-border: var(--border);
+  --color-sidebar-ring: var(--ring);
 }
 
 @layer base {
@@ -121,19 +121,12 @@
   }
   body {
     @apply bg-background text-foreground;
+    /* Prevent body scroll */
+   
   }
 }
 
-/* Enhanced animations with zoom pop effect */
-@keyframes slideBackground {
-  0% {
-    transform: translate(0, 0);
-  }
-  100% {
-    transform: translate(-70px, -70px);
-  }
-}
-
+/* Animations */
 @keyframes slide {
   0% {
     transform: translate(0, 0);
@@ -152,34 +145,6 @@
   }
 }
 
-/* Improved slideUp with scale and elevation for popping effect */
-@keyframes slideUp {
-  0% {
-    transform: translateY(80px) scale(0.95);
-    opacity: 0;
-  }
-  100% {
-    transform: translateY(0) scale(1);
-    opacity: 1;
-  }
-}
-
-/* Added zoom elevation effect for smooth section transitions */
-@keyframes zoomElevate {
-  0% {
-    transform: scale(0.98) translateY(20px);
-    opacity: 0;
-  }
-  100% {
-    transform: scale(1) translateY(0);
-    opacity: 1;
-  }
-}
-
-.animate-slideBackground {
-  animation: slideBackground 60s linear infinite;
-}
-
 .animate-slide {
   animation: slide 20s linear infinite;
 }
@@ -188,12 +153,35 @@
   animation: marquee 20s linear infinite;
 }
 
-/* Enhanced slide-up animation class with bounce */
-.animate-slideUp {
-  animation: slideUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  animation-fill-mode: both;
+/* Glow effect for red text */
+.text-glow {
+  text-shadow: 0 0 15px rgba(239, 68, 68, 0.6), 0 0 5px rgba(239, 68, 68, 0.5);
 }
 
-.animate-zoomElevate {
-  animation: zoomElevate 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+/* Parallax Container */
+.parallax-container {
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  perspective: 1px;
+  transform-style: preserve-3d;
+}
+
+/* Parallax Section (base layer) */
+.parallax-section {
+  position: relative;
+  transform-style: preserve-3d;
+  z-index: 1;
+}
+
+/* Parallax Background Element */
+.parallax-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+  /* This creates the parallax: moves up slower than the scroll */
+  transform: translateZ(-1px) scale(2);
 }
