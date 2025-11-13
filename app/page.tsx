@@ -217,7 +217,7 @@ export default function Page() {
           <div className="absolute inset-0 w-full h-full overflow-hidden z-0">
             <iframe
               className="absolute top-1/2 left-1/2 w-full h-full min-w-full min-h-full -translate-x-1/2 -translate-y-1/2 scale-150"
-              src="https://www.youtube.com/embed/DyXNJzSwR0o?si=0OaG0MtM4wZCgGNH&rel=0&modestbranding=1&autohide=1&showinfo=0&controls=0&loop=1&playlist=DyXNJzSwR0o&autoplay=1&mute=1"
+              src=""
               title="Retro Mobile Gaming History"
               frameBorder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
