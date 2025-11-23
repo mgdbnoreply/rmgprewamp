@@ -36,17 +36,38 @@ export default function ContactPage() {
         </div>
 
         {/* Title Section */}
-        <section className="relative pb-10 overflow-hidden bg-white pt-40">
-          <div className="relative w-full px-4 md:px-8 lg:px-16 flex flex-col items-center space-y-6">
-            <div className="text-center mb-12">
-              <h1 className="text-5xl md:text-6xl font-black text-gray-900 mb-4">Contact Us</h1>
-              <p className="text-xl text-gray-600 max-w-2xl mx-auto">Get In Touch • We'd Love To Hear From You</p>
+        
+        <section className="py-16 md:py-28 px-4 md:px-8 pt-48 pb-8 lg:px-16">
+          <div className="max-w-7xl mx-auto text-center">
+            <div className="bg-gradient-to-br from-red-50 to-white rounded-3xl p-8 md:p-12 border border-red-200 shadow-lg">
+              
+              {/* Logo text updated with gradient and font size */}
+              <div className="relative inline-flex items-center justify-center gap-2 group mb-8 p-6 bg-white/50 backdrop-blur-lg rounded-full border border-gray-200/50 shadow-2xl">
+                <span className="text-5xl font-black tracking-tight bg-gradient-to-r from-red-600 to-black bg-clip-text text-transparent">
+                  Contact Us
+                </span>
+                <div className="relative w-8 h-8 flex-shrink-0">
+                  <div className="w-7 h-7 rounded-full bg-gradient-to-br from-red-500 to-red-700 absolute left-0 top-1/2 -translate-y-1/2 z-0"></div>
+                  <div className="w-7 h-7 rounded-full bg-gradient-to-br from-gray-300 to-gray-500 absolute left-2.5 top-1/2 -translate-y-1/2 z-10"></div>
+                </div>
+                <span className="text-5xl font-black tracking-tight bg-gradient-to-r from-red-600 to-black bg-clip-text text-transparent">
+                  GET IN TOUCH
+                </span>
+              </div>
+
+              {/* Kept the main H1, made it bigger, and it already has the gradient */}
+              {/* <h1 className="text-6xl md:text-8xl font-black tracking-tighter mb-4 bg-gradient-to-r from-red-600 to-black bg-clip-text text-transparent">
+                Who We Are
+              </h1> */}
+              <p className="text-lg md:text-xl text-gray-700 max-w-3xl mx-auto">
+                Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quae suscipit laudantium impedit repellendus similique, animi numquam voluptatibus hic possimus quis? Magni exercitationem iste voluptatibus, facere esse aut autem veritatis molestiae.
+              </p>
             </div>
           </div>
         </section>
 
         {/* Contact Content */}
-        <section className="relative py-16 px-4 md:px-8 lg:px-16">
+        <section className="relative py-8 px-4 md:px-4 lg:px-16">
           <div className="max-w-6xl mx-auto">
             <div className="grid md:grid-cols-2 gap-12">
               {/* Contact Form */}

@@ -22,14 +22,14 @@ export default function AboutPage() {
       role: "Project Director",
       bio: "Ragan Glover leads the RMGP initiative as Project Director, and serves as Director of the Michigan Research and Discovery Scholars at University of Michigan. Her work focuses on the sociocultural impacts of mobile and immersive media. Ragan’s passion for uncovering overlooked mobile gaming histories in varied cultural settings has helped shape RMGP’s mission to chart mobile play’s global past.",
       link: "https://lsa.umich.edu/mrads/people/Leadership-Team/ragan-glover.html",
-      image: "https://d3tvevvhad9ws1.cloudfront.net/wp-content/uploads/2024/07/Adriana_de_Souza_e_Silva_1-1_headshot-549x600.jpg",
+      image: "https://d3tvevvhad9ws1.cloudfront.net/wp-content/uploads/2024/12/ragan-glover.jpg",
     },
     {
       name: "Logan Brown",
       role: "Historian & Preservation Specialist",
       bio: "Logan Brown is a media historian and educator whose scholarship examines issues of power and capital in the history of video games, with a special emphasis on early American mobile games. As the project’s preservation specialist, Logan leads efforts to catalogue, contextualize, and communicate the archival artifacts gathered by RMGP, ensuring they are both accessible and meaningful for future scholarship.",
       link: "https://www.loganbrown.info",
-      image: "/https://www.rmgd.org/images/logan-brown.jpeg",
+      image: "https://www.rmgd.org/images/logan-brown.jpeg",
     },
   ]
 
@@ -56,10 +56,16 @@ export default function AboutPage() {
 
   const researchAssistants = [
     {
+      name: "Sutanuka Jashu",
+      role: "Ph.D. Student",
+      bio: "Sutanuka Jashu is an interdisciplinary artist and researcher from West Bengal, India, working at the nexus of art, technology, and cultural resilience. Her current practice integrates AI, adaptive systems, and speculative storytelling to critique digital colonialism, reimagine historical narratives, and explore ecological futures.",
+      image: "https://d3tvevvhad9ws1.cloudfront.net/wp-content/uploads/2025/07/Sutanuka-Jashu-phd-student-207x300.png",
+    },
+    {
       name: "Arslan Parkar",
       role: "MS in Information Systems",
       bio: "Arslan is pursuing an MS in information systems at Northeastern. He has experience in leading an AI-driven startup and has done impactful research projects focusing on innovative, user-centric solutions.",
-      image: "https://coe.northeastern.edu/wp-content/uploads/images/spotlights/headshot_parkar.png",
+      image: "https://mobilecreativity.net/wp-content/uploads/2025/09/Arslan-Parkar-2.jpg",
     },
     {
       name: "Kaushik Manivannan",
@@ -68,10 +74,10 @@ export default function AboutPage() {
       image: "https://burnes.northeastern.edu/wp-content/uploads/Screenshot-2024-12-19-at-10.10.12%E2%80%AFAM.png",
     },
     {
-      name: "Sutanuka Jashu",
-      role: "Ph.D. Student",
-      bio: "Sutanuka Jashu is an interdisciplinary artist and researcher from West Bengal, India, working at the nexus of art, technology, and cultural resilience. Her current practice integrates AI, adaptive systems, and speculative storytelling to critique digital colonialism, reimagine historical narratives, and explore ecological futures.",
-      image: "https://d3tvevvhad9ws1.cloudfront.net/wp-content/uploads/2025/07/Sutanuka-Jashu-phd-student-207x300.png",
+      name: "Alessandra Diaz",
+      role: "Research Assistant ",
+      bio: "Ale is a third-year student at Northeastern University pursuing a combined major in Business Administration and Experience Design. As a research assistant, she brings both technical expertise and creative insight to her work. With hands-on experience in UX/UI, she has contributed to impactful projects centered on designing innovative, user-focused solutions that balance functionality with thoughtful design.",
+      image: "https://mobilecreativity.net/wp-content/uploads/2025/09/DSC6656-scaled.jpg",
     },
   ]
   const researchFocusAreas = [
@@ -191,60 +197,67 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* Leadership Team Section (Gradient Glass Cards on White BG) - Made Wider */}
-        <section className="py-8 md:py-12 px-4 md:px-8 lg:px-16 bg-gray-50">
-          <div className="max-w-7xl mx-auto w-full">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Our Leadership Team</h2>
+       {/* Leadership Team Section (Gradient Glass Cards on White BG) - Made Wider */}
+    <section className="py-8 md:py-12 px-4 md:px-8 lg:px-16 bg-gray-50">
+      <div className="max-w-7xl mx-auto w-full">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Our Leadership Team</h2>
+        </div>
+        {/* MODIFIED: Changed from grid to flex-col */}
+        <div className="flex flex-col gap-8">
+          {leadershipTeam.map((member, index) => (
+            // MODIFIED: Added md:flex-row and adjusted image/content divs
+            <div key={index} className="bg-gradient-to-br from-red-600/90 to-red-800/90 backdrop-blur-lg border border-red-700/30 rounded-2xl shadow-lg hover:shadow-red-500/40 transition-shadow flex flex-col md:flex-row overflow-hidden">
+              {/* Image */}
+              {/* FIXED: Replaced h-64 md:h-auto with aspect-square md:aspect-auto */}
+              <div className="relative w-full aspect-square md:aspect-auto md:w-1/3 flex-shrink-0">
+                <Image src={member.image || "/placeholder-user.jpg"} alt={member.name} fill className="object-cover" />
+              </div>
+              {/* Content */}
+              <div className="p-6 md:p-8 flex flex-col flex-grow text-white w-full md:w-2/3">
+                <h3 className="text-2xl font-bold mb-1">{member.name}</h3>
+                <p className="font-semibold text-red-100 mb-4">{member.role}</p>
+                <p className="text-red-50/90 leading-relaxed flex-grow mb-6">{member.bio}</p>
+                <Button asChild className="mt-auto w-full sm:w-auto self-start bg-white hover:bg-gray-200 text-red-600 font-bold">
+                  <a href={member.link} target="_blank" rel="noopener noreferrer">
+                    Learn more <ArrowRight className="ml-2 h-4 w-4" />
+                  </a>
+                </Button>
+              </div>
             </div>
-            <div className="grid md:grid-cols-3 gap-8">
-              {leadershipTeam.map((member, index) => (
-                <div key={index} className="bg-gradient-to-br from-red-600/90 to-red-800/90 backdrop-blur-lg border border-red-700/30 rounded-2xl shadow-lg hover:shadow-red-500/40 transition-shadow flex flex-col overflow-hidden">
-                  <div className="relative h-64 w-full">
-                    <Image src={member.image || "/placeholder-user.jpg"} alt={member.name} fill className="object-cover" />
-                  </div>
-                  <div className="p-6 flex flex-col flex-grow text-white">
-                    <h3 className="text-2xl font-bold mb-1">{member.name}</h3>
-                    <p className="font-semibold text-red-100 mb-4">{member.role}</p>
-                    <p className="text-red-50/90 leading-relaxed flex-grow mb-6">{member.bio}</p>
-                    <Button asChild className="mt-auto w-full bg-white hover:bg-gray-200 text-red-600 font-bold">
-                      <a href={member.link} target="_blank" rel="noopener noreferrer">
-                        Learn more <ArrowRight className="ml-2 h-4 w-4" />
-                      </a>
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+          ))}
+        </div>
+      </div>
+    </section>
 
-        {/* Research Assistants Section (Gradient Glass Cards on White BG) - Made Wider */}
-        <section className="py-8 md:py-12 px-4 md:px-8 lg:px-16 bg-white">
-          <div className="max-w-7xl mx-auto w-full">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Research Assistants</h2>
+    {/* Research Assistants Section (Gradient Glass Cards on White BG) - Made Wider */}
+    <section className="py-8 md:py-12 px-4 md:px-8 lg:px-16 bg-white">
+      <div className="max-w-7xl mx-auto w-full">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Research Assistants</h2>
+        </div>
+        {/* FIXED: Changed to md:grid-cols-3 */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+          {researchAssistants.map((member, index) => (
+            <div key={index} className="bg-gradient-to-br from-red-600/90 to-red-800/90 backdrop-blur-lg border border-red-700/30 rounded-2xl shadow-lg hover:shadow-red-500/40 transition-shadow flex flex-col overflow-hidden">
+              {/* FIXED: Changed h-64 to aspect-square */}
+              <div className="relative w-full aspect-square">
+                <Image src={member.image || "/placeholder-user.jpg"} alt={member.name} fill className="object-cover" />
+              </div>
+              <div className="p-6 flex flex-col flex-grow text-white">
+                <h3 className="text-2xl font-bold mb-1">{member.name}</h3>
+                <p className="font-semibold text-red-100 mb-4">{member.role}</p>
+                <p className="text-red-50/90 leading-relaxed flex-grow">{member.bio}</p>
+              </div>
             </div>
-            <div className="grid md:grid-cols-3 gap-8">
-              {researchAssistants.map((member, index) => (
-                <div key={index} className="bg-gradient-to-br from-red-600/90 to-red-800/90 backdrop-blur-lg border border-red-700/30 rounded-2xl shadow-lg hover:shadow-red-500/40 transition-shadow flex flex-col overflow-hidden">
-                  <div className="relative h-64 w-full">
-                    <Image src={member.image || "/placeholder-user.jpg"} alt={member.name} fill className="object-cover" />
-                  </div>
-                  <div className="p-6 flex flex-col flex-grow text-white">
-                    <h3 className="text-2xl font-bold mb-1">{member.name}</h3>
-                    <p className="font-semibold text-red-100 mb-4">{member.role}</p>
-                    <p className="text-red-50/90 leading-relaxed flex-grow">{member.bio}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-        
-      </main>
-      <Footer />
-      <DonationButton />
-    </div>
+          ))}
+        </div>
+      </div>
+    </section>
+    
+  </main>
+  <Footer />
+  <DonationButton />
+</div>
   )
 }

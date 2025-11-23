@@ -10,9 +10,6 @@ import {
   ChevronLeft,
   ChevronRight,
   ArrowRight,
-  Gamepad2,
-  Database,
-  Users,
   BookOpen,
   Trophy,
   Clock,
@@ -35,7 +32,7 @@ export default function Page() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [loading, setLoading] = useState(true)
   const carouselRef = useRef<HTMLDivElement>(null)
-  const [currentSlide, setCurrentSlide] = useState(0) // For carousel buttons
+  const [currentSlide, setCurrentSlide] = useState(0)
 
   // --- State for Filters ---
   const [searchQuery, setSearchQuery] = useState("")
@@ -44,15 +41,31 @@ export default function Page() {
   const [selectedYear, setSelectedYear] = useState<string>("all")
   const [selectedHardware, setSelectedHardware] = useState<string>("all")
 
+  // --- State for Intro Animation ---
+  const [showIntro, setShowIntro] = useState(true)
+  const videoRef = useRef<HTMLVideoElement>(null)
+
+  // --- Intro Animation & Video Effect ---
+  useEffect(() => {
+    // 1. Ensure muted is set for autoplay policies
+    if (videoRef.current) {
+      videoRef.current.muted = true;
+    }
+
+    // 2. Handle Text Fade Out Timer
+    const timer = setTimeout(() => {
+      setShowIntro(false)
+    }, 4000) // Text stays for 4 seconds before vanishing
+
+    return () => clearTimeout(timer)
+  }, [])
+
   // --- Data Fetching ---
   useEffect(() => {
     async function fetchGames() {
       try {
-        // The response from GameAPI.getAllGames() is now already in the correct GameData[] format
         const response: GameData[] = await GameAPI.getAllGames()
-
         if (Array.isArray(response)) {
-          // No mapping needed. Just slice the response and set it.
           setGames(response.slice(0, 12))
         }
         setLoading(false)
@@ -61,7 +74,6 @@ export default function Page() {
         setLoading(false)
       }
     }
-
     fetchGames()
   }, [])
   
@@ -106,30 +118,26 @@ export default function Page() {
   const scrollToSlide = (direction: "prev" | "next") => {
     const container = carouselRef.current
     if (!container) return
-
-    // Calculate scroll amount based on 4 items + gap
     const slideWidth = container.scrollWidth / games.length
-    const scrollAmount = slideWidth * 1 // Scroll one item at a time
-
+    const scrollAmount = slideWidth * 1
     if (direction === "prev") {
       container.scrollBy({ left: -scrollAmount, behavior: "smooth" })
       setCurrentSlide((prev) => Math.max(0, prev - 1))
     } else {
       container.scrollBy({ left: scrollAmount, behavior: "smooth" })
-      // This logic assumes 4 items are visible
       setCurrentSlide((prev) => Math.min(games.length - 4, prev + 1))
     }
   }
 
-  // --- Mock Data for Research Section ---
+  // --- Mock Data ---
   const researchArticles = [
     {
       title: "The Evolution of Mobile Gaming Interfaces: 1975-1990",
       description: "An in-depth analysis of how mobile gaming interfaces evolved from simple LED displays to early LCD screens...",
       category: "Interface Design",
       image: "/mobile-gaming-interface.jpg",
-      featured: true, // You can adjust which ones are featured
-      readTime: "10 min" // You can adjust read time
+      featured: true,
+      readTime: "10 min"
     },
     {
       title: "Nokia's Impact on Mobile Gaming Culture",
@@ -160,7 +168,7 @@ export default function Page() {
       description: "Investigating how early multiplayer mobile games fostered social connections and competitive play...",
       category: "Social Studies",
       image: "https://www.pcgamesn.com/wp-content/sites/pcgamesn/2025/07/best-multiplayer-games-peak.jpg",
-      featured: true, // You can adjust which ones are featured
+      featured: true,
       readTime: "9 min"
     },
     {
@@ -173,7 +181,6 @@ export default function Page() {
     },
   ]
 
-  // Mock Data for Discover Section
   const discoverItems = [
     {
       title: "Device of the Week",
@@ -200,52 +207,61 @@ export default function Page() {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      {/* This <style> tag adds the "text-glow" class to make the red text pop */}
       <style jsx>{`
         .text-glow {
           text-shadow: 0 0 15px rgba(239, 68, 68, 0.6), 0 0 5px rgba(239, 68, 68, 0.5);
         }
       `}</style>
 
-      {/* The Parallax Container */}
       <div className="parallax-container h-screen overflow-y-auto overflow-x-hidden">
         <Header />
 
-        {/* --- SECTION 1: VIDEO HERO --- */}
-        <section className="parallax-section h-screen min-h-[700px] flex items-center justify-center p-8 relative z-0">
-          {/* Background Video */}
-          <div className="absolute inset-0 w-full h-full overflow-hidden z-0">
-            <iframe
-              className="absolute top-1/2 left-1/2 w-full h-full min-w-full min-h-full -translate-x-1/2 -translate-y-1/2 scale-150"
-              src=""
-              title="Retro Mobile Gaming History"
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            ></iframe>
-            <div className="absolute inset-0 bg-black/70 z-10"></div>
+        {/* --- SECTION 1: HERO WITH VIDEO & OVERLAY --- */}
+        <section className="parallax-section h-screen min-h-[700px] flex items-center justify-center p-8 relative z-0 overflow-hidden">
+          {/* Main Video Background */}
+          <div className="absolute inset-0 w-full h-full bg-black">
+            <video
+              ref={videoRef}
+              className="w-full h-full object-cover opacity-90"
+              src="/RMGP.mp4"
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="auto"
+            />
+            {/* Dark Overlay - Fades Out */}
+            <div 
+              className={`absolute inset-0 bg-black z-10 transition-opacity duration-[2000ms] ease-in-out pointer-events-none ${
+                showIntro ? "opacity-80" : "opacity-0"
+              }`}
+            ></div>
           </div>
-          {/* Hero Text */}
-          <div className="text-center z-10 animate-in fade-in slide-in-from-bottom-10 duration-700">
-            <h1 className="text-6xl md:text-9xl font-black tracking-tighter uppercase">
+          
+          {/* Text Overlay - Fades Out */}
+          <div 
+            className={`relative z-20 text-center px-4 transition-all duration-[1500ms] ease-in-out ${
+              showIntro 
+                ? "opacity-100 translate-y-0 scale-100" 
+                : "opacity-0 translate-y-10 scale-95 pointer-events-none"
+            }`}
+          >
+            <h1 className="text-6xl md:text-9xl font-black tracking-tighter uppercase animate-in fade-in slide-in-from-bottom-10 duration-1000">
               Retro Mobile
             </h1>
-            <h2 className="text-6xl md:text-9xl font-black tracking-tighter uppercase text-red-600 ">
+            <h2 className="text-6xl md:text-9xl font-black tracking-tighter uppercase text-red-600 animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-300 fill-mode-backwards">
               Gaming Project
             </h2>
-            <p className="text-xl md:text-2xl text-neutral-400 mt-6 max-w-2xl mx-auto">
+            <p className="text-xl md:text-2xl text-neutral-300 mt-6 max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-700 fill-mode-backwards font-medium">
               Preserving the history of portable play from 1975 to 2008.
             </p>
           </div>
         </section>
 
-        {/* --- SECTION 2: ABOUT (MODIFIED per Screenshot) --- */}
+        {/* --- SECTION 2: ABOUT --- */}
         <section className="parallax-section relative py-16 px-8 z-10 bg-white text-black -mt-8 rounded-t-3xl">
-          {/* Content */}
           <div className="max-w-[100rem] mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-24 items-center relative z-10">
-            
-            {/* Image Column */}
-            <div className="relative w-full h-96 md:h-[500px] rounded-2xl overflow-hidden shadow-2xl animate-in fade-in slide-in-from-left-10 duration-700">
+            <div className="relative w-full h-96 md:h-[500px] rounded-2xl overflow-hidden shadow-2xl">
               <Image
                 src="/retro-gaming-collection.jpg"
                 alt="Retro Gaming Collection"
@@ -253,16 +269,10 @@ export default function Page() {
                 className="object-cover"
               />
             </div>
-            
-            {/* Text Column */}
-            <div className="animate-in fade-in slide-in-from-right-10 duration-700">
+            <div>
               <span className="text-sm font-bold text-neutral-500 uppercase">About RMGP</span>
               <h2 className="text-5xl md:text-6xl font-black tracking-tighter text-neutral-900 mt-4">
-                Preserving
-                <br />
-                Gaming's
-                <br />
-                <span className="text-red-600">Mobile Legacy</span>
+                Preserving<br />Gaming's<br /><span className="text-red-600">Mobile Legacy</span>
               </h2>
               <p className="text-lg text-neutral-700 mt-6">
                 The Retro Mobile Gaming Project (RMGP) is a comprehensive digital preservation initiative
@@ -273,10 +283,7 @@ export default function Page() {
                 industry. We preserve the rich history of mobile gaming technology, design principles, and cultural
                 significance for research and education.
               </p>
-              <Button
-                asChild
-                className="bg-red-600 hover:bg-red-700 text-white font-bold px-8 py-6 rounded-lg text-lg shadow-lg hover:shadow-xl hover:shadow-red-600/20 transition-all mt-10"
-              >
+              <Button asChild className="bg-red-600 hover:bg-red-700 text-white font-bold px-8 py-6 rounded-lg text-lg shadow-lg hover:shadow-xl hover:shadow-red-600/20 transition-all mt-10">
                 <Link href="/about">
                   Learn More <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
@@ -284,14 +291,9 @@ export default function Page() {
             </div>
           </div>
         </section>
-        {/* --- END OF MODIFIED SECTION --- */}
 
-
-        {/* --- SECTION 3: BROWSE GAMES (Red Block) --- */}
-        <section 
-          className="parallax-section relative py-16 px-8 z-20 text-white -mt-8 rounded-t-3xl"
-          style={{ background: "linear-gradient(to bottom right, #ef4444, #000000)" }}
-        >
+        {/* --- SECTION 3: BROWSE GAMES --- */}
+        <section className="parallax-section relative py-16 px-8 z-20 text-white -mt-8 rounded-t-3xl" style={{ background: "linear-gradient(to bottom right, #ef4444, #000000)" }}>
           <div className="max-w-[100rem] mx-auto">
             <h2 className="text-5xl md:text-7xl font-black tracking-tighter text-center">
               From The <span className="text-red-100">Archive</span>
@@ -301,7 +303,6 @@ export default function Page() {
             </p>
           </div>
 
-          {/* --- Search and Filter --- */}
           <div className="max-w-[100rem] mx-auto mt-16">
             <div className="bg-black/20 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-xl">
               <div className="flex flex-col md:flex-row gap-4 items-center">
@@ -315,11 +316,7 @@ export default function Page() {
                     className="pl-12 pr-4 py-6 bg-white/10 border-white/20 text-white placeholder:text-red-100/70 rounded-xl focus:border-white/50 focus:ring-red-500"
                   />
                 </div>
-
-                <Button
-                  onClick={() => setIsFilterOpen(!isFilterOpen)}
-                  className="bg-white/90 backdrop-blur-sm text-red-600 font-bold px-6 py-6 rounded-xl hover:bg-white transition-all flex items-center gap-2 w-full md:w-auto"
-                >
+                <Button onClick={() => setIsFilterOpen(!isFilterOpen)} className="bg-white/90 backdrop-blur-sm text-red-600 font-bold px-6 py-6 rounded-xl hover:bg-white transition-all flex items-center gap-2 w-full md:w-auto">
                   <SlidersHorizontal className="h-5 w-5" />
                   <span>Filter</span>
                   {activeFiltersCount > 0 && (
@@ -331,89 +328,45 @@ export default function Page() {
                 </Button>
               </div>
 
-              {/* Expandable Filters */}
               {isFilterOpen && (
                 <div className="mt-6 pt-6 border-t border-white/20 animate-in fade-in duration-300">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {/* Genre Filter */}
                     <div>
                       <label className="text-red-100 font-semibold mb-2 block">Genre</label>
-                      <select
-                        value={selectedCategory}
-                        onChange={(e) => setSelectedCategory(e.target.value)}
-                        className="w-full bg-white/10 border border-white/20 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-white/50"
-                      >
-                        {categories.map((cat) => (
-                          <option key={cat} value={cat} className="bg-black text-white">
-                            {cat === "all" ? "All Genres" : cat}
-                          </option>
-                        ))}
+                      <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)} className="w-full bg-white/10 border border-white/20 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-white/50">
+                        {categories.map((cat) => <option key={cat} value={cat} className="bg-black text-white">{cat === "all" ? "All Genres" : cat}</option>)}
                       </select>
                     </div>
-                    {/* Year Filter */}
                     <div>
                       <label className="text-red-100 font-semibold mb-2 block">Year</label>
-                      <select
-                        value={selectedYear}
-                        onChange={(e) => setSelectedYear(e.target.value)}
-                        className="w-full bg-white/10 border border-white/20 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-white/50"
-                      >
-                        {years.map((year) => (
-                          <option key={year} value={year} className="bg-black text-white">
-                            {year === "all" ? "All Years" : year}
-                          </option>
-                        ))}
+                      <select value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)} className="w-full bg-white/10 border border-white/20 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-white/50">
+                        {years.map((year) => <option key={year} value={year} className="bg-black text-white">{year === "all" ? "All Years" : year}</option>)}
                       </select>
                     </div>
-                    {/* Hardware Filter */}
                     <div>
                       <label className="text-red-100 font-semibold mb-2 block">Hardware</label>
-                      <select
-                        value={selectedHardware}
-                        onChange={(e) => setSelectedHardware(e.target.value)}
-                        className="w-full bg-white/10 border border-white/20 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-white/50"
-                      >
-                        {hardwareOptions.map((hw) => (
-                          <option key={hw} value={hw} className="bg-black text-white">
-                            {hw === "all" ? "All Hardware" : hw}
-                          </option>
-                        ))}
+                      <select value={selectedHardware} onChange={(e) => setSelectedHardware(e.target.value)} className="w-full bg-white/10 border border-white/20 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-white/50">
+                        {hardwareOptions.map((hw) => <option key={hw} value={hw} className="bg-black text-white">{hw === "all" ? "All Hardware" : hw}</option>)}
                       </select>
                     </div>
                   </div>
                   {activeFiltersCount > 0 && (
-                     <Button
-                      onClick={resetFilters}
-                      variant="ghost"
-                      className="text-white hover:text-red-100 hover:bg-white/10 mt-4"
-                    >
-                      <X className="h-4 w-4 mr-2" />
-                      Reset All Filters
+                     <Button onClick={resetFilters} variant="ghost" className="text-white hover:text-red-100 hover:bg-white/10 mt-4">
+                      <X className="h-4 w-4 mr-2" /> Reset All Filters
                     </Button>
                   )}
                 </div>
               )}
             </div>
           </div>
-          {/* --- End Search and Filter --- */}
-
 
           <div className="relative mt-16 max-w-[100rem] mx-auto w-full">
             {!loading && filteredGames.length > 4 && (
-              <button
-                onClick={() => scrollToSlide("prev")}
-                className="absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-black/30 rounded-full p-3 shadow-xl hover:bg-black/50 disabled:opacity-30 -translate-x-12 border border-white/20"
-                disabled={currentSlide === 0}
-              >
+              <button onClick={() => scrollToSlide("prev")} className="absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-black/30 rounded-full p-3 shadow-xl hover:bg-black/50 disabled:opacity-30 -translate-x-12 border border-white/20" disabled={currentSlide === 0}>
                 <ChevronLeft className="h-6 w-6 text-white" />
               </button>
             )}
-
-            <div
-              ref={carouselRef}
-              className="flex gap-6 overflow-x-auto scrollbar-hide scroll-smooth pb-4"
-              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-            >
+            <div ref={carouselRef} className="flex gap-6 overflow-x-auto scrollbar-hide scroll-smooth pb-4" style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}>
               {loading
                 ? [...Array(4)].map((_, i) => (
                     <div key={i} className="flex-none w-full sm:w-1/2 lg:w-[calc(25%-18px)]">
@@ -427,34 +380,22 @@ export default function Page() {
                     </div>
                   ))
                 : filteredGames.map((game, index) => (
-                    // --- NEW WHITE GAME CARD ---
-                    <div
-                      key={index}
-                      className="flex-none w-full sm:w-1/2 lg:w-[calc(25%-18px)] group cursor-pointer"
-                      onClick={() => openGameModal(game)}
-                    >
-                      <div className="bg-white text-black rounded-lg overflow-hidden h-full flex flex-col shadow-lg border-2 border-transparent transition-all duration-300 hover:bg-gradient-to-br from-black  to-red-600 hover:text-white hover:border-red-600 hover:shadow-2xl hover:shadow-red-900/40 transform hover:-translate-y-1">
-                        {/* Image container */}
+                    <div key={index} className="flex-none w-full sm:w-1/2 lg:w-[calc(25%-18px)] group cursor-pointer" onClick={() => openGameModal(game)}>
+                      <div className="bg-white text-black rounded-lg overflow-hidden h-full flex flex-col shadow-lg border-2 border-transparent transition-all duration-300 hover:bg-gradient-to-br from-black to-red-600 hover:text-white hover:border-red-600 hover:shadow-2xl hover:shadow-red-900/40 transform hover:-translate-y-1">
                         <div className="relative w-full h-64 overflow-hidden bg-gray-200">
                           <Image
                             src={getFirstImage(game.Pictures) || "/placeholder.jpg"}
                             alt={game.Title}
                             fill
                             className="object-cover group-hover:scale-110 transition-transform duration-700"
-                            onError={(e) => {
-                              ;(e.target as HTMLImageElement).src = "/placeholder.jpg"
-                            }}
+                            onError={(e) => { (e.target as HTMLImageElement).src = "/placeholder.jpg" }}
                           />
-                          {/* Year badge */}
                           <div className="absolute top-4 right-4 bg-black/50 text-white px-3 py-1 rounded-full text-xs font-bold backdrop-blur-sm">
                             {game.Year}
                           </div>
                         </div>
-                        {/* Content container */}
                         <div className="p-5 flex-grow flex flex-col">
-                          <h3 className="font-bold text-xl text-neutral-900 line-clamp-1 transition-colors group-hover:text-white">
-                            {game.Title}
-                          </h3>
+                          <h3 className="font-bold text-xl text-neutral-900 line-clamp-1 transition-colors group-hover:text-white">{game.Title}</h3>
                           <p className="text-sm text-neutral-600 mb-4 line-clamp-1 group-hover:text-red-100">{game.Developers}</p>
                           <div className="mt-auto flex justify-between items-center">
                             <span className="text-xs text-neutral-500 group-hover:text-red-200">{game.Hardware.split(",")[0]}</span>
@@ -463,23 +404,17 @@ export default function Page() {
                         </div>
                       </div>
                     </div>
-                    // --- END NEW WHITE GAME CARD ---
                   ))}
             </div>
-
             {!loading && filteredGames.length > 4 && (
-              <button
-                onClick={() => scrollToSlide("next")}
-                className="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-black/30 rounded-full p-3 shadow-xl hover:bg-black/50 disabled:opacity-30 translate-x-12 border border-white/20"
-                disabled={currentSlide >= filteredGames.length - 4}
-              >
+              <button onClick={() => scrollToSlide("next")} className="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-black/30 rounded-full p-3 shadow-xl hover:bg-black/50 disabled:opacity-30 translate-x-12 border border-white/20" disabled={currentSlide >= filteredGames.length - 4}>
                 <ChevronRight className="h-6 w-6 text-white" />
               </button>
             )}
           </div>
         </section>
 
-        {/* --- SECTION 4: DISCOVER & EXPLORE (Black Block) --- */}
+        {/* --- SECTION 4: DISCOVER & EXPLORE --- */}
         <section className="parallax-section relative py-16 px-8 z-30 bg-black text-white -mt-8 rounded-t-3xl">
           <div className="max-w-[100rem] mx-auto">
             <h2 className="text-5xl md:text-7xl font-black tracking-tighter text-center">
@@ -488,33 +423,17 @@ export default function Page() {
             <p className="text-lg text-neutral-400 text-center max-w-3xl mx-auto mt-6">
               Dive into our curated collections and stay updated with the latest in retro mobile gaming preservation.
             </p>
-
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
               {discoverItems.map((item, index) => {
                 const Icon = item.icon
                 return (
-                  <Link
-                    href="#"
-                    key={index}
-                    className="block border border-neutral-800 rounded-lg overflow-hidden transition-all duration-300 hover:border-red-600 hover:shadow-xl hover:shadow-red-600/10 group animate-in fade-in slide-in-from-bottom-10 duration-700"
-                    style={{ animationDelay: `${index * 150}ms` }}
-                  >
+                  <Link href="#" key={index} className="block border border-neutral-800 rounded-lg overflow-hidden transition-all duration-300 hover:border-red-600 hover:shadow-xl hover:shadow-red-600/10 group animate-in fade-in slide-in-from-bottom-10 duration-700" style={{ animationDelay: `${index * 150}ms` }}>
                     <div className="relative h-56 w-full overflow-hidden bg-neutral-900 grayscale group-hover:grayscale-0 transition-all duration-500">
-                      <Image
-                        src={item.image}
-                        alt={item.title}
-                        fill
-                        className="object-cover group-hover:scale-110 transition-transform duration-500 opacity-80 group-hover:opacity-100"
-                      />
+                      <Image src={item.image} alt={item.title} fill className="object-cover group-hover:scale-110 transition-transform duration-500 opacity-80 group-hover:opacity-100" />
                     </div>
                     <div className="p-6">
-                      <span className="inline-flex items-center gap-2 text-sm font-bold text-red-600 uppercase tracking-wider">
-                        <Icon className="w-4 h-4" />
-                        {item.category}
-                      </span>
-                      <h3 className="text-2xl font-bold text-white mt-2 group-hover:text-red-600 transition-colors">
-                        {item.title}
-                      </h3>
+                      <span className="inline-flex items-center gap-2 text-sm font-bold text-red-600 uppercase tracking-wider"><Icon className="w-4 h-4" />{item.category}</span>
+                      <h3 className="text-2xl font-bold text-white mt-2 group-hover:text-red-600 transition-colors">{item.title}</h3>
                       <p className="text-neutral-400 mt-2 line-clamp-2">{item.description}</p>
                     </div>
                   </Link>
@@ -524,95 +443,48 @@ export default function Page() {
           </div>
         </section>
 
-        {/* --- SECTION 5: LATEST RESEARCH (White Block) --- */}
-        <section
-          className="parallax-section relative py-16 px-8 z-40 text-black bg-white -mt-8 rounded-t-3xl"
-        >
+        {/* --- SECTION 5: LATEST RESEARCH --- */}
+        <section className="parallax-section relative py-16 px-8 z-40 text-black bg-white -mt-8 rounded-t-3xl">
           <div className="max-w-[100rem] mx-auto w-full">
             <div className="text-center mb-16">
-              <span className="inline-flex items-center gap-2 bg-red-100 text-red-600 px-4 py-2 rounded-full text-sm font-semibold mb-6">
-                <BookOpen className="w-4 h-4" />
-                Research & Publications
-              </span>
+              <span className="inline-flex items-center gap-2 bg-red-100 text-red-600 px-4 py-2 rounded-full text-sm font-semibold mb-6"><BookOpen className="w-4 h-4" />Research & Publications</span>
               <h2 className="text-4xl md:text-5xl font-black text-neutral-900 mb-4">Latest Research</h2>
-              <p className="text-neutral-600 text-lg max-w-3xl mx-auto">
-                Explore our academic papers, case studies, and in-depth analyses of mobile gaming history
-              </p>
+              <p className="text-neutral-600 text-lg max-w-3xl mx-auto">Explore our academic papers, case studies, and in-depth analyses of mobile gaming history</p>
             </div>
-
-            {/* --- Uniform 3-Column Grid --- */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {researchArticles.map((article, index) => (
-                <Link
-                  href="/publications"
-                  key={index}
-                  className="group transform transition-all duration-300 hover:-translate-y-2 cursor-pointer animate-in fade-in slide-in-from-bottom-10 duration-700"
-                  style={{ animationDelay: `${index * 100}ms` }}
-                >
-                  <div className="bg-gradient-to-br from-red-200 to-black/30  border border-transparent hover:border-red-500 rounded-2xl shadow-lg hover:shadow-red-500/10 transition-colors h-full flex flex-col overflow-hidden">
-                    {/* Image Container */}
+                <Link href="/publications" key={index} className="group transform transition-all duration-300 hover:-translate-y-2 cursor-pointer animate-in fade-in slide-in-from-bottom-10 duration-700" style={{ animationDelay: `${index * 100}ms` }}>
+                  <div className="bg-gradient-to-br from-red-200 to-black/30 border border-transparent hover:border-red-500 rounded-2xl shadow-lg hover:shadow-red-500/10 transition-colors h-full flex flex-col overflow-hidden">
                     <div className="relative w-full overflow-hidden h-56">
-                      <Image
-                        src={article.image || "/placeholder.jpg"}
-                        alt={article.title}
-                        fill
-                        className="object-cover group-hover:scale-110 transition-transform duration-700"
-                        onError={(e) => {
-                          ;(e.target as HTMLImageElement).src = "/placeholder.jpg"
-                        }}
-                      />
+                      <Image src={article.image || "/placeholder.jpg"} alt={article.title} fill className="object-cover group-hover:scale-110 transition-transform duration-700" onError={(e) => { (e.target as HTMLImageElement).src = "/placeholder.jpg" }} />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                      <span className="absolute top-4 left-4 bg-white/10 text-white px-3 py-1 rounded-full font-semibold border border-white/20 text-xs backdrop-blur-sm">
-                        {article.category}
-                      </span>
+                      <span className="absolute top-4 left-4 bg-white/10 text-white px-3 py-1 rounded-full font-semibold border border-white/20 text-xs backdrop-blur-sm">{article.category}</span>
                     </div>
-
-                    {/* Card Content */}
                     <div className="p-6 text-white flex-grow flex flex-col">
-                      <h3
-                        className="font-bold text-xl text-red-600 group-hover:text-red-900 mb-3 transition-colors line-clamp-3"
-                      >
-                        {article.title}
-                      </h3>
-                      <p className="text-neutral-600/90 text-sm line-clamp-3 flex-grow">
-                        {article.description}
-                      </p>
+                      <h3 className="font-bold text-xl text-red-600 group-hover:text-red-900 mb-3 transition-colors line-clamp-3">{article.title}</h3>
+                      <p className="text-neutral-600/90 text-sm line-clamp-3 flex-grow">{article.description}</p>
                       <div className="mt-5 flex items-center justify-between text-red-700">
-                         <span className="flex items-center gap-1.5 text-xs">
-                            <Clock className="w-3 h-3" />
-                            {article.readTime} read
-                          </span>
-                        <span className="flex items-center gap-1 text-sm font-semibold group-hover:gap-2 transition-all">
-                          Read More
-                          <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
-                        </span>
+                         <span className="flex items-center gap-1.5 text-xs"><Clock className="w-3 h-3" />{article.readTime} read</span>
+                        <span className="flex items-center gap-1 text-sm font-semibold group-hover:gap-2 transition-all">Read More<ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" /></span>
                       </div>
                     </div>
                   </div>
                 </Link>
               ))}
             </div>
-            
             <div className="text-center mt-16">
-              <Button
-                asChild
-                className="bg-red-600 hover:bg-red-700 text-white font-bold px-10 py-6 rounded-2xl text-lg shadow-lg hover:shadow-2xl hover:shadow-red-500/20 transition-all transform hover:scale-105"
-              >
-                <Link href="/publications">
-                  View All Research <ArrowRight className="ml-3 h-5 w-5" />
-                </Link>
+              <Button asChild className="bg-red-600 hover:bg-red-700 text-white font-bold px-10 py-6 rounded-2xl text-lg shadow-lg hover:shadow-2xl hover:shadow-red-500/20 transition-all transform hover:scale-105">
+                <Link href="/publications">View All Research <ArrowRight className="ml-3 h-5 w-5" /></Link>
               </Button>
             </div>
           </div>
         </section>
 
         {/* --- SECTION 6: FOOTER --- */}
-        <section className="parallax-section relative z-50  rounded-t-3xl">
+        <section className="parallax-section relative z-50 rounded-t-3xl">
           <Footer />
         </section>
       </div>
-
-     
 
       <GameModal game={selectedGame} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
