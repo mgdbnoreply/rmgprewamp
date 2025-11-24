@@ -115,35 +115,48 @@ export default function AboutPage() {
       {/* Main content floats on the white bg */}
       <main className="relative z-10">
         
-        {/* Hero Section (Cleaned up) - Added pt-48 */}
-        <section className="py-16 md:py-28 px-4 md:px-8 pt-48 lg:px-16">
-          <div className="max-w-7xl mx-auto text-center">
-            <div className="bg-gradient-to-br from-red-50 to-white rounded-3xl p-8 md:p-12 border border-red-200 shadow-lg">
-              
-              {/* Logo text updated with gradient and font size */}
-              <div className="relative inline-flex items-center justify-center gap-2 group mb-8 p-6 bg-white/50 backdrop-blur-lg rounded-full border border-gray-200/50 shadow-2xl">
-                <span className="text-5xl font-black tracking-tight bg-gradient-to-r from-red-600 to-black bg-clip-text text-transparent">
-                  ABOUT US
-                </span>
-                <div className="relative w-8 h-8 flex-shrink-0">
-                  <div className="w-7 h-7 rounded-full bg-gradient-to-br from-red-500 to-red-700 absolute left-0 top-1/2 -translate-y-1/2 z-0"></div>
-                  <div className="w-7 h-7 rounded-full bg-gradient-to-br from-gray-300 to-gray-500 absolute left-2.5 top-1/2 -translate-y-1/2 z-10"></div>
-                </div>
-                <span className="text-5xl font-black tracking-tight bg-gradient-to-r from-red-600 to-black bg-clip-text text-transparent">
-                  WHO WE ARE
-                </span>
-              </div>
-
-              {/* Kept the main H1, made it bigger, and it already has the gradient */}
-              {/* <h1 className="text-6xl md:text-8xl font-black tracking-tighter mb-4 bg-gradient-to-r from-red-600 to-black bg-clip-text text-transparent">
-                Who We Are
-              </h1> */}
-              <p className="text-lg md:text-xl text-gray-700 max-w-3xl mx-auto">
-                RMGP is an interdisciplinary initiative bringing together game historians, media scholars, archivists, developers, and mobile-gaming enthusiasts to document, preserve, and interpret the evolution of mobile games and devices.
-              </p>
-            </div>
-          </div>
-        </section>
+        {/* --- Full Width Hero Section --- */}
+                        <section className="relative w-full mt-16 py-24 md:py-32 overflow-hidden">
+                          {/* Background Image & Overlay */}
+                          <div className="absolute inset-0 z-0">
+                            <Image
+                              src="/page/about.jpg"
+                              alt="Collection Background"
+                              fill
+                              className="object-cover grayscale opacity-80"
+                              priority
+                            />
+                            {/* Changed white gradient to black gradient */}
+                            <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/80"></div>
+                          </div>
+                
+                          {/* Content Container (Constrained width) */}
+                          <div className="container relative z-10 mx-auto px-4">
+                            <div className="max-w-8xl mx-auto text-center">
+                              {/* Changed inner container background to white for contrast */}
+                              <div className="bg-white/40 backdrop-blur-md rounded-3xl p-8 md:p-12 border border-white/50 shadow-xl">
+                                <div className="relative inline-flex items-center justify-center gap-5 group mb-8 p-6 bg-white/80 backdrop-blur-xl rounded-full border border-white/60 shadow-2xl">
+                                  <span className="text-4xl md:text-6xl font-black tracking-tight bg-gradient-to-r from-red-600 to-black bg-clip-text text-transparent">
+                                    ABOUT US
+        
+                                  </span>
+                                  <div className="relative w-8 h-8 flex-shrink-0 hidden sm:block">
+                                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-red-500 to-red-700 absolute left- top-1/2 -translate-y-1/2 z-0"></div>
+                                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-300 to-gray-500 absolute left-2.5 top-1/2 -translate-y-1/2 z-10"></div>
+                                  </div>
+                                  <span className="text-4xl md:text-6xl font-black tracking-tight bg-gradient-to-r from-red-600 to-black bg-clip-text text-transparent">
+                                    WHO WE ARE
+                                  </span>
+                                </div>
+                
+                                <p className="text-lg md:text-xl text-gray-800 font-semibold max-w-3xl mx-auto leading-relaxed">
+                                                  RMGP is an interdisciplinary initiative bringing together game historians, media scholars, archivists, developers, and mobile-gaming enthusiasts to document, preserve, and interpret the evolution of mobile games and devices.
+</p>
+                              </div>
+                            </div>
+                          </div>
+                        </section>
+        
 
         
         {/* What is RMGP Section (Red/Black Gradient Glass) - Made Wider */}

@@ -13,6 +13,16 @@ function unwrapDynamoDBValue(value: any): any {
   if (value.N !== undefined) return value.N
   if (value.BOOL !== undefined) return value.BOOL
   if (value.NULL !== undefined) return null
+  
+  // Handle String Set (SS) - join into a single, comma-separated string
+  if (value.SS !== undefined && Array.isArray(value.SS)) {
+    return value.SS.join(", ")
+  }
+  // Handle Number Set (NS)
+  if (value.NS !== undefined && Array.isArray(value.NS)) {
+    return value.NS.join(", ")
+  }
+
   if (value.L !== undefined) return value.L.map(unwrapDynamoDBValue)
   if (value.M !== undefined) {
     const obj: any = {}
@@ -72,7 +82,7 @@ export async function GET(request: Request) {
     }
 
     const data = await response.json()
-    console.log("📦 Raw API response:", JSON.stringify(data).substring(0, 200))
+    // console.log("📦 Raw API response:", JSON.stringify(data).substring(0, 200))
 
     // Handle different response structures
     let collections: CollectionData[] = []
@@ -86,7 +96,7 @@ export async function GET(request: Request) {
     } else if (data.Item) {
       // DynamoDB GetItem response format (single item)
       collections = [transformDynamoDBItem(data.Item)]
-    } else if (typeof data === "object" && data.ProductID) {
+    } else if (typeof data === "object" && (data.ProductID || data.id)) {
       // Single item response
       collections = [transformDynamoDBItem(data)]
     } else if (data.body) {
@@ -113,7 +123,7 @@ export async function GET(request: Request) {
   } catch (error) {
     console.error("❌ Error fetching collections:", error)
 
-    // Return fallback data from CSV
+    // Return fallback data from CSV if API fails
     return NextResponse.json(getFallbackCollections(), {
       headers: {
         "X-Fallback": "true",
@@ -177,4 +187,3 @@ function getFallbackCollections(): CollectionData[] {
     },
   ]
 }
-

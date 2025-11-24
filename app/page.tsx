@@ -24,9 +24,11 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { GameAPI } from "@/services/api"
 import type { GameData } from "@/lib/types"
+// Import the shared data
+import { publicationsData } from "@/lib/publications-data"
 
 export default function Page() {
-  // --- State for Game Data ---
+  // ... (Keep all your existing state variables and useEffects for Game Data, Filters, Intro, Helper Functions, etc.) ...
   const [games, setGames] = useState<GameData[]>([])
   const [selectedGame, setSelectedGame] = useState<GameData | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -34,33 +36,98 @@ export default function Page() {
   const carouselRef = useRef<HTMLDivElement>(null)
   const [currentSlide, setCurrentSlide] = useState(0)
 
-  // --- State for Filters ---
   const [searchQuery, setSearchQuery] = useState("")
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState<string>("all")
   const [selectedYear, setSelectedYear] = useState<string>("all")
   const [selectedHardware, setSelectedHardware] = useState<string>("all")
 
-  // --- State for Intro Animation ---
   const [showIntro, setShowIntro] = useState(true)
   const videoRef = useRef<HTMLVideoElement>(null)
 
-  // --- Intro Animation & Video Effect ---
   useEffect(() => {
-    // 1. Ensure muted is set for autoplay policies
-    if (videoRef.current) {
-      videoRef.current.muted = true;
+  const initVideo = async () => {
+    if (!videoRef.current) return;
+    
+    // Set up video properties
+    videoRef.current.muted = true;
+    videoRef.current.defaultMuted = true;
+    
+    // Method 1: Try immediate play with retries
+    const attemptPlay = async (retries = 3) => {
+      for (let i = 0; i < retries; i++) {
+        try {
+          // Small delay between retries
+          if (i > 0) {
+            await new Promise(resolve => setTimeout(resolve, 100 * i));
+          }
+          
+          await videoRef.current?.play();
+          console.log(`Video started on attempt ${i + 1}`);
+          return true;
+        } catch (error) {
+          console.log(`Attempt ${i + 1} failed:`, error);
+        }
+      }
+      return false;
+    };
+    
+    // Method 2: Wait for user interaction if immediate play fails
+    const playOnInteraction = () => {
+      if (videoRef.current && videoRef.current.paused) {
+        videoRef.current.play().catch(console.error);
+      }
+    };
+    
+    // Try to play immediately
+    const playSuccess = await attemptPlay();
+    
+    if (!playSuccess) {
+      console.log("Immediate autoplay failed, setting up interaction listeners");
+      
+      // Set up multiple event listeners for fallback
+      const events = ['click', 'scroll', 'touchstart', 'mousemove'];
+      const options = { once: true, passive: true };
+      
+      events.forEach(event => {
+        document.addEventListener(event, playOnInteraction, options);
+      });
+      
+      // Clean up function to remove listeners
+      return () => {
+        events.forEach(event => {
+          document.removeEventListener(event, playOnInteraction);
+        });
+      };
     }
+  };
+  
+  // Method 3: Use visibility API for better handling
+  const handleVisibilityChange = () => {
+    if (!document.hidden && videoRef.current?.paused) {
+      videoRef.current.play().catch(console.error);
+    }
+  };
+  
+  // Add visibility change listener
+  document.addEventListener('visibilitychange', handleVisibilityChange);
+  
+  // Initialize video with a slight delay to ensure DOM is ready
+  const initTimer = setTimeout(initVideo, 50);
+  
+  // Text fade out timer (keep your existing logic)
+  const textTimer = setTimeout(() => {
+    setShowIntro(false);
+  }, 4000);
+  
+  // Cleanup
+  return () => {
+    clearTimeout(initTimer);
+    clearTimeout(textTimer);
+    document.removeEventListener('visibilitychange', handleVisibilityChange);
+  };
+}, []);
 
-    // 2. Handle Text Fade Out Timer
-    const timer = setTimeout(() => {
-      setShowIntro(false)
-    }, 4000) // Text stays for 4 seconds before vanishing
-
-    return () => clearTimeout(timer)
-  }, [])
-
-  // --- Data Fetching ---
   useEffect(() => {
     async function fetchGames() {
       try {
@@ -77,7 +144,6 @@ export default function Page() {
     fetchGames()
   }, [])
   
-  // --- Filter Logic ---
   const categories = ["all", ...Array.from(new Set(games.map((g) => g.Genre).filter(Boolean)))]
   const years = ["all", ...Array.from(new Set(games.map((g) => g.Year).filter(Boolean))).sort().reverse()]
   const hardwareOptions = ["all", ...Array.from(new Set(games.map((g) => g.Hardware.split(",")[0].trim()).filter(Boolean)))]
@@ -103,7 +169,6 @@ export default function Page() {
     setSearchQuery("")
   }
 
-  // --- Helper Functions ---
   const getFirstImage = (pictures: string | undefined) => {
     if (!pictures) return "/placeholder.jpg"
     const imageUrls = pictures.split(",").map((url) => url.trim())
@@ -129,57 +194,15 @@ export default function Page() {
     }
   }
 
-  // --- Mock Data ---
-  const researchArticles = [
-    {
-      title: "The Evolution of Mobile Gaming Interfaces: 1975-1990",
-      description: "An in-depth analysis of how mobile gaming interfaces evolved from simple LED displays to early LCD screens...",
-      category: "Interface Design",
-      image: "/mobile-gaming-interface.jpg",
-      featured: true,
-      readTime: "10 min"
-    },
-    {
-      title: "Nokia's Impact on Mobile Gaming Culture",
-      description: "Exploring how Nokia's pre-installed games like Snake became cultural phenomena...",
-      category: "Cultural Studies",
-      image: "/nokia-snake-game.jpg",
-      featured: false,
-      readTime: "7 min"
-    },
-    {
-      title: "Game Boy: Revolutionizing Portable Entertainment",
-      description: "A comprehensive study of the Game Boy's technical innovations and its lasting influence...",
-      category: "Hardware",
-      image: "/game-boy-tetris.jpg",
-      featured: false,
-      readTime: "8 min"
-    },
-    {
-      title: "Preservation Challenges in Early Mobile Gaming",
-      description: "Addressing the unique challenges of preserving early mobile games, including hardware degradation...",
-      category: "Preservation",
-      image: "/preservation-archiving.jpg",
-      featured: false,
-      readTime: "6 min"
-    },
-    {
-      title: "The Social Dynamics of Multiplayer Mobile Games",
-      description: "Investigating how early multiplayer mobile games fostered social connections and competitive play...",
-      category: "Social Studies",
-      image: "https://www.pcgamesn.com/wp-content/sites/pcgamesn/2025/07/best-multiplayer-games-peak.jpg",
-      featured: true,
-      readTime: "9 min"
-    },
-    {
-      title: "Audio Design in Constrained Mobile Environments",
-      description: "Examining the creative approaches developers used to create memorable audio experiences...",
-      category: "Audio Design",
-      image: "/audio-design-gaming.jpg",
-      featured: false,
-      readTime: "5 min"
-    },
-  ]
+  // --- Get Top 6 Recent Research Articles ---
+  const researchArticles = publicationsData.slice(0, 6).map(pub => ({
+    title: pub.title,
+    description: pub.description,
+    category: pub.topic || "Research",
+    image: pub.thumbnail,
+    featured: pub.id === 1, // Make the first one featured if you like
+    readTime: "5 min" // Placeholder read time
+  }))
 
   const discoverItems = [
     {
@@ -187,21 +210,21 @@ export default function Page() {
       description: "Explore the iconic Nokia N-Gage and its revolutionary features.",
       category: "Featured",
       icon: Trophy,
-      image: "/game-boy-tetris.jpg",
+      image: "/deviceofweek.jpg",
     },
     {
       title: "Latest Publications",
       description: "Fresh research on the impact of Java games on mobile gaming.",
       category: "New",
       icon: Clock,
-      image: "/gaming-historian.jpg",
+      image: "/latestpublic.jpg",
     },
     {
       title: "Ongoing Work",
       description: "Currently digitizing Game Boy Advance classics and preserving source code.",
       category: "Active",
       icon: Star,
-      image: "/data-manager.jpg",
+      image: "/ongoing.jpeg",
     },
   ]
 
@@ -221,15 +244,18 @@ export default function Page() {
           {/* Main Video Background */}
           <div className="absolute inset-0 w-full h-full bg-black">
             <video
-              ref={videoRef}
-              className="w-full h-full object-cover opacity-90"
-              src="/RMGP.mp4"
-              autoPlay
-              loop
-              muted
-              playsInline
-              preload="auto"
-            />
+  ref={videoRef}
+  className="w-full h-full object-cover opacity-90"
+  src="/RMGP.mp4"
+  autoPlay
+  loop
+  muted
+  playsInline
+  preload="auto"
+  webkit-playsinline="true"  // Add this for iOS Safari
+  disablePictureInPicture     // Add this to prevent PiP mode
+  controlsList="nodownload"   // Add this to prevent download
+/>
             {/* Dark Overlay - Fades Out */}
             <div 
               className={`absolute inset-0 bg-black z-10 transition-opacity duration-[2000ms] ease-in-out pointer-events-none ${
@@ -258,6 +284,7 @@ export default function Page() {
           </div>
         </section>
 
+        {/* ... (SECTIONS 2, 3, 4 Remain Unchanged) ... */}
         {/* --- SECTION 2: ABOUT --- */}
         <section className="parallax-section relative py-16 px-8 z-10 bg-white text-black -mt-8 rounded-t-3xl">
           <div className="max-w-[100rem] mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-24 items-center relative z-10">

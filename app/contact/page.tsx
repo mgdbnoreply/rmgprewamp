@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Mail } from "lucide-react"
 import { useState } from "react"
+import Image from "next/image"
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -35,36 +36,49 @@ export default function ContactPage() {
           <div className="absolute bottom-20 right-10 w-96 h-96 bg-red-500/5 rounded-full blur-3xl animate-pulse delay-1000"></div>
         </div>
 
-        {/* Title Section */}
         
-        <section className="py-16 md:py-28 px-4 md:px-8 pt-48 pb-8 lg:px-16">
-          <div className="max-w-7xl mx-auto text-center">
-            <div className="bg-gradient-to-br from-red-50 to-white rounded-3xl p-8 md:p-12 border border-red-200 shadow-lg">
-              
-              {/* Logo text updated with gradient and font size */}
-              <div className="relative inline-flex items-center justify-center gap-2 group mb-8 p-6 bg-white/50 backdrop-blur-lg rounded-full border border-gray-200/50 shadow-2xl">
-                <span className="text-5xl font-black tracking-tight bg-gradient-to-r from-red-600 to-black bg-clip-text text-transparent">
-                  Contact Us
-                </span>
-                <div className="relative w-8 h-8 flex-shrink-0">
-                  <div className="w-7 h-7 rounded-full bg-gradient-to-br from-red-500 to-red-700 absolute left-0 top-1/2 -translate-y-1/2 z-0"></div>
-                  <div className="w-7 h-7 rounded-full bg-gradient-to-br from-gray-300 to-gray-500 absolute left-2.5 top-1/2 -translate-y-1/2 z-10"></div>
-                </div>
-                <span className="text-5xl font-black tracking-tight bg-gradient-to-r from-red-600 to-black bg-clip-text text-transparent">
-                  GET IN TOUCH
-                </span>
-              </div>
-
-              {/* Kept the main H1, made it bigger, and it already has the gradient */}
-              {/* <h1 className="text-6xl md:text-8xl font-black tracking-tighter mb-4 bg-gradient-to-r from-red-600 to-black bg-clip-text text-transparent">
-                Who We Are
-              </h1> */}
-              <p className="text-lg md:text-xl text-gray-700 max-w-3xl mx-auto">
-                Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quae suscipit laudantium impedit repellendus similique, animi numquam voluptatibus hic possimus quis? Magni exercitationem iste voluptatibus, facere esse aut autem veritatis molestiae.
-              </p>
-            </div>
-          </div>
-        </section>
+        {/* --- Full Width Hero Section --- */}
+                                <section className="relative w-full mt-16 py-24 md:py-32 overflow-hidden">
+                                  {/* Background Image & Overlay */}
+                                  <div className="absolute inset-0 z-0">
+                                    <Image
+                                      src="/page/contact.jpg"
+                                      alt="Contact Background"
+                                      fill
+                                      className="object-cover grayscale opacity-80"
+                                      priority
+                                    />
+                                    {/* Changed white gradient to black gradient */}
+                                    <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/80"></div>
+                                  </div>
+                        
+                                  {/* Content Container (Constrained width) */}
+                                  <div className="container relative z-10 mx-auto px-4">
+                                    <div className="max-w-8xl mx-auto text-center">
+                                      {/* Changed inner container background to white for contrast */}
+                                      <div className="bg-white/40 backdrop-blur-md rounded-3xl p-8 md:p-12 border border-white/50 shadow-xl">
+                                        <div className="relative inline-flex items-center justify-center gap-5 group mb-8 p-6 bg-white/80 backdrop-blur-xl rounded-full border border-white/60 shadow-2xl">
+                                          <span className="text-4xl md:text-6xl font-black tracking-tight bg-gradient-to-r from-red-600 to-black bg-clip-text text-transparent">
+                                            CONTACT US
+                
+                                          </span>
+                                          <div className="relative w-8 h-8 flex-shrink-0 hidden sm:block">
+                                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-red-500 to-red-700 absolute left- top-1/2 -translate-y-1/2 z-0"></div>
+                                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-300 to-gray-500 absolute left-2.5 top-1/2 -translate-y-1/2 z-10"></div>
+                                          </div>
+                                          <span className="text-4xl md:text-6xl font-black tracking-tight bg-gradient-to-r from-red-600 to-black bg-clip-text text-transparent">
+                                            GET IN TOUCH
+                                          </span>
+                                        </div>
+                        
+                                        <p className="text-lg md:text-xl text-gray-800 font-semibold max-w-3xl mx-auto leading-relaxed">
+                                          We'd love to hear from you! Whether you have questions, feedback, or
+                                          collaboration ideas, feel free to reach out to us using the contact form below.
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </section>
 
         {/* Contact Content */}
         <section className="relative py-8 px-4 md:px-4 lg:px-16">
