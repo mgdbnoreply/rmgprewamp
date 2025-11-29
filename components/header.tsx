@@ -59,104 +59,108 @@ export function Header() {
             </span>
           </Link>
 
-          {/* Desktop Navigation - NEW Simple CSS Hover Structure */}
-          <nav className="hidden md:flex items-center gap-1 lg:gap-2">
-            
-            <Link href="/" className={navLinkStyle}>
-              Home
-            </Link>
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center gap-4">
+            <nav className="flex items-center gap-1 lg:gap-2">
+              <Link href="/" className={navLinkStyle}>
+                Home
+              </Link>
 
-            {/* Publications Dropdown */}
-            <div className="relative group">
-              <div className={navLinkStyle + " cursor-default"}>
-                <a href="/publications">Publications</a>
-                <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180" />
+              {/* Publications Dropdown */}
+              <div className="relative group">
+                <div className={navLinkStyle + " cursor-default"}>
+                  <a href="/publications">Publications</a>
+                  <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180" />
+                </div>
+                <div className="absolute top-full left-0 z-[200] hidden group-hover:block pt-2">
+                  <ul className="bg-white border border-gray-200 shadow-2xl rounded-2xl min-w-56 p-1">
+                    <NavLink href="/publications?type=book">Book</NavLink>
+                    <NavLink href="/publications?type=book-chapters">Book Chapters</NavLink>
+                    <NavLink href="/publications?type=conference">Conference Proceedings</NavLink>
+                    <NavLink href="/publications?type=interviews">Interviews</NavLink>
+                    <NavLink href="/publications?type=journal">Journal Article</NavLink>
+                  </ul>
+                </div>
               </div>
-              <div className="absolute top-full left-0 z-[200] hidden group-hover:block pt-2">
-                <ul className="bg-white border border-gray-200 shadow-2xl rounded-2xl min-w-56 p-1">
-                  
-                  <NavLink href="/publications?type=book">Book</NavLink>
-                  <NavLink href="/publications?type=book-chapters">Book Chapters</NavLink>
-                  <NavLink href="/publications?type=conference">Conference Proceedings</NavLink>
-                  <NavLink href="/publications?type=interviews">Interviews</NavLink>
-                  <NavLink href="/publications?type=journal">Journal Article</NavLink>
-                </ul>
-              </div>
-            </div>
 
-            {/* Archive Dropdown */}
-            <div className="relative group">
-              <div className={navLinkStyle + " cursor-default"}>
-                <a href="/archive">Archive</a>
-                <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180" />
+              {/* Archive Dropdown */}
+              <div className="relative group">
+                <div className={navLinkStyle + " cursor-default"}>
+                  <a href="/archive">Archive</a>
+                  <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180" />
+                </div>
+                <div className="absolute top-full left-0 z-[200] hidden group-hover:block pt-2">
+                  <ul className="bg-white border border-gray-200 shadow-2xl rounded-2xl min-w-56 p-1">
+                    <NavLink href="/database">Database</NavLink>
+                    <NavLink href="/collection">Collection</NavLink>
+                    {/* <NavLink href="/database?filter=games">Games</NavLink>
+                    <NavLink href="/database?filter=devices">Devices</NavLink>
+                    <NavLink href="/database?filter=platform">Platform</NavLink>
+                    <NavLink href="/database?filter=runtime">Runtime</NavLink>
+                    <NavLink href="/database?filter=emulators">Emulators</NavLink> */}
+                  </ul>
+                </div>
               </div>
-              <div className="absolute top-full left-0 z-[200] hidden group-hover:block pt-2">
-                <ul className="bg-white border border-gray-200 shadow-2xl rounded-2xl min-w-56 p-1">
-                  <NavLink href="/database">Database</NavLink>
-                  <NavLink href="/collection">Collection</NavLink>
-                  <NavLink href="/database?filter=games">Games</NavLink>
-                  <NavLink href="/database?filter=devices">Devices</NavLink>
-                  <NavLink href="/database?filter=platform">Platform</NavLink>
-                  <NavLink href="/database?filter=runtime">Runtime</NavLink>
-                  <NavLink href="/database?filter=emulators">Emulators</NavLink>
-                </ul>
-              </div>
-            </div>
 
-            {/* Education Dropdown */}
-            <div className="relative group">
-              <div className={navLinkStyle + " cursor-default"}>
-                Education
-                <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180" />
+              {/* Education Dropdown */}
+              <div className="relative group">
+                <div className={navLinkStyle + " cursor-default"}>
+                  Education
+                  <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180" />
+                </div>
+                <div className="absolute top-full left-0 z-[200] hidden group-hover:block pt-2">
+                  <ul className="bg-white border border-gray-200 shadow-2xl rounded-2xl min-w-56 p-1">
+                    <NavLink href="/education">All Education</NavLink>
+                    <NavLink href="/education#what-is-mobile-ai">What is Mobile Games</NavLink>
+                    <NavLink href="/education#videos">Videos</NavLink>
+                    <NavLink href="/education#class-activities">Class Activities</NavLink>
+                  </ul>
+                </div>
               </div>
-              <div className="absolute top-full left-0 z-[200] hidden group-hover:block pt-2">
-                <ul className="bg-white border border-gray-200 shadow-2xl rounded-2xl min-w-56 p-1">
-                  <NavLink href="/education">All Education</NavLink>
-                  <NavLink href="/education#what-is-mobile-ai">What is Mobile Games</NavLink>
-                  <NavLink href="/education#videos">Videos</NavLink>
-                  <NavLink href="/education#class-activities">Class Activities</NavLink>
-                </ul>
-              </div>
-            </div>
 
-            {/* News Dropdown */}
-            <div className="relative group">
-              <div className={navLinkStyle + " cursor-default"}>
-                <a href="/news">News</a>
-                <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-1CH.svg" />
+              {/* News Dropdown */}
+              <div className="relative group">
+                <div className={navLinkStyle + " cursor-default"}>
+                  <a href="/news">News</a>
+                  {/* <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180" /> */}
+                </div>
+                {/* <div className="absolute top-full left-0 z-[200] hidden group-hover:block pt-2">
+                  <ul className="bg-white border border-gray-200 shadow-2xl rounded-2xl min-w-56 p-1">
+                    <NavLink href="/news?category=blog">Blog</NavLink>
+                    <NavLink href="/news?category=updates">Updates</NavLink>
+                    <NavLink href="/news?category=articles">Articles</NavLink>
+                    <NavLink href="/news?category=features">Features</NavLink>
+                    <NavLink href="/news?category=spotlight">Spotlight</NavLink>
+                  </ul>
+                </div> */}
               </div>
-              <div className="absolute top-full left-0 z-[200] hidden group-hover:block pt-2">
-                <ul className="bg-white border border-gray-200 shadow-2xl rounded-2xl min-w-56 p-1">
-                  
-                  <NavLink href="/news?category=blog">Blog</NavLink>
-                  <NavLink href="/news?category=updates">Updates</NavLink>
-                  <NavLink href="/news?category=articles">Articles</NavLink>
-                  <NavLink href="/news?category=features">Features</NavLink>
-                  <NavLink href="/news?category=spotlight">Spotlight</NavLink>
-                </ul>
-              </div>
-            </div>
 
-            {/* ----- MODIFIED "ABOUT" DROPDOWN ----- */}
-            <div className="relative group">
-              <div className={navLinkStyle + " cursor-default"}>
-                <a href="/about">About</a>
-                <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180" />
+              {/* About Dropdown */}
+              <div className="relative group">
+                <div className={navLinkStyle + " cursor-default"}>
+                  <a href="/about">About</a>
+                  <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180" />
+                </div>
+                <div className="absolute top-full left-0 z-[200] hidden group-hover:block pt-2">
+                  <ul className="bg-white border border-gray-200 shadow-2xl rounded-2xl min-w-56 p-1">
+                    <NavLink href="/faq">FAQs</NavLink>
+                  </ul>
+                </div>
               </div>
-              <div className="absolute top-full left-0 z-[200] hidden group-hover:block pt-2">
-                <ul className="bg-white border border-gray-200 shadow-2xl rounded-2xl min-w-56 p-1">
-                  
-                  <NavLink href="/faq">FAQs</NavLink>
-                </ul>
-              </div>
-            </div>
 
-            {/* Contact Link (Direct) */}
-            <Link href="/contact" className={navLinkStyle}>
-              Contact
-            </Link>
-            
-          </nav>
+              {/* Contact Link */}
+              <Link href="/contact" className={navLinkStyle}>
+                Contact
+              </Link>
+            </nav>
+
+            {/* Contribute Button */}
+            <Button asChild className="bg-red-600 hover:bg-red-700 text-white font-bold rounded-full">
+              <a href="https://rmgd-official-backend.vercel.app/" target="_blank" rel="noopener noreferrer">
+                Contribute
+              </a>
+            </Button>
+          </div>
 
           {/* Mobile Menu Button */}
           <Button
@@ -196,7 +200,6 @@ export function Header() {
                 All News
               </Link>
               
-              {/* ----- MODIFIED "ABOUT" SECTION FOR MOBILE ----- */}
               <div className="text-gray-300 font-semibold py-2">About</div>
               <Link href="/about" className="text-gray-300 hover:text-white transition-colors py-2 pl-8">
                 About
@@ -208,6 +211,16 @@ export function Header() {
               <Link href="/contact" className="text-gray-300 hover:text-white font-semibold transition-colors py-2">
                 Contact
               </Link>
+
+              {/* Mobile Contribute Button */}
+              <a 
+                href="https://rmgd-official-backend.vercel.app/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg text-center mt-2 transition-colors"
+              >
+                Contribute
+              </a>
             </div>
           </nav>
         )}

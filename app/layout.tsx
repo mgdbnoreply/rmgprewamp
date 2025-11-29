@@ -2,6 +2,7 @@ import type React from "react"
 import type { Metadata } from "next/font/google"
 import { Geist, Geist_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
+import { Footer } from "@/components/footer"
 import "./globals.css"
 
 const _geist = Geist({ subsets: ["latin"] })
@@ -20,7 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`font-sans antialiased`}>
+      <body className={`font-sans antialiased flex flex-col min-h-screen`}>
         <div className="fixed inset-0 w-full h-full -z-10">
           <div
             className="absolute inset-0"
@@ -39,7 +40,10 @@ export default function RootLayout({
           </div>
         </div>
 
-        {children}
+        <div className="flex-1 w-full">
+          {children}
+        </div>
+        {/* <Footer /> */}
         <Analytics />
       </body>
     </html>

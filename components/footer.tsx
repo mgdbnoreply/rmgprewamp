@@ -3,7 +3,8 @@ import { Github, Twitter, Mail } from "lucide-react"
 
 export function Footer() {
   return (
-    <footer className="relative border-t border-gray-800/50 bg-black/60 backdrop-blur-md">
+    // Changed bg-black/60 backdrop-blur-md to bg-black for a solid black background
+    <footer className="relative border-t border-gray-800 bg-black text-white">
       <div className="max-w-[100rem] mx-auto px-4 md:px-8 lg:px-16 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           {/* About */}
@@ -70,7 +71,7 @@ export function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 border-t border-gray-800/50">
+        <div className="pt-8 border-t border-gray-800">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-gray-400 text-sm">
               © {new Date().getFullYear()} Retro Mobile Gaming Project. All rights reserved.
