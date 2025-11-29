@@ -24,7 +24,7 @@ export function GameModal({ game, isOpen, onClose }: GameModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-gradient-to-br from-gray-900 to-black border-gray-800">
+      <DialogContent className="max-w-8xl max-h-[90vh] mt-10 overflow-y-auto bg-gradient-to-br from-gray-900 to-black border-gray-800">
         <DialogHeader>
           <DialogTitle className="text-3xl font-black text-white mb-2">{game.Title}</DialogTitle>
         </DialogHeader>
