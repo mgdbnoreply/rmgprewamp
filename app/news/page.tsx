@@ -1,283 +1,105 @@
 "use client"
 
-import { useState } from "react"
 import Header from "@/components/header"
-import Footer from "@/components/footer"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Search, ChevronDown, Calendar, User } from "lucide-react"
+import { Footer } from "@/components/footer"
 import Image from "next/image"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Calendar, ExternalLink, ArrowRight } from "lucide-react"
 
 export default function NewsPage() {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState("all")
-  const [isFilterOpen, setIsFilterOpen] = useState(false)
-  const [activeFilters, setActiveFilters] = useState<string[]>([])
-
-  const categories = [
-    { id: "all", label: "All News" },
-    { id: "blog", label: "Blog" },
-    { id: "updates", label: "Updates" },
-    { id: "articles", label: "Articles" },
-    { id: "features", label: "Features" },
-    { id: "spotlight", label: "Spotlight" },
-  ]
-
-  const newsItems = [
-    {
-      id: 1,
-      title: "The Evolution of Snake: From Nokia to Modern Gaming",
-      category: "articles",
-      author: "Dr. Sarah Chen",
-      date: "2024-03-15",
-      excerpt:
-        "Exploring how the simple Snake game became a cultural phenomenon and influenced modern mobile game design.",
-      image: "/nokia-snake-game-evolution.jpg",
-      featured: true,
-    },
-    {
-      id: 2,
-      title: "New Additions to Our Collection: Game Boy Color Variants",
-      category: "updates",
-      author: "Collection Team",
-      date: "2024-03-10",
-      excerpt: "We've recently acquired several rare Game Boy Color special editions for our archive.",
-      image: "/game-boy-color-special-editions.jpg",
-      featured: false,
-    },
-    {
-      id: 3,
-      title: "Spotlight: The Impact of Mobile Gaming on Social Connectivity",
-      category: "spotlight",
-      author: "Prof. Michael Torres",
-      date: "2024-03-05",
-      excerpt:
-        "How early mobile games created new forms of social interaction and community building in the pre-smartphone era.",
-      image: "/people-playing-mobile-games-together.jpg",
-      featured: true,
-    },
-    {
-      id: 4,
-      title: "Behind the Scenes: Preserving Retro Gaming Hardware",
-      category: "blog",
-      author: "Emily Rodriguez",
-      date: "2024-02-28",
-      excerpt: "A look at the challenges and techniques involved in maintaining vintage gaming devices.",
-      image: "/vintage-gaming-device-restoration.jpg",
-      featured: false,
-    },
-    {
-      id: 5,
-      title: "Feature: The Rise and Fall of N-Gage",
-      category: "features",
-      author: "James Wilson",
-      date: "2024-02-20",
-      excerpt: "An in-depth analysis of Nokia's ambitious gaming phone and what we can learn from its story.",
-      image: "/nokia-n-gage-gaming-phone.jpg",
-      featured: false,
-    },
-    {
-      id: 6,
-      title: "Research Update: Mobile Gaming Demographics 1990-2008",
-      category: "updates",
-      author: "Research Team",
-      date: "2024-02-15",
-      excerpt: "New findings on who played mobile games and how demographics shifted over two decades.",
-      image: "/mobile-gaming-demographics-research.jpg",
-      featured: false,
-    },
-  ]
-
-  const filteredNews = newsItems.filter((item) => {
-    const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesCategory = selectedCategory === "all" || item.category === selectedCategory
-    return matchesSearch && matchesCategory
-  })
-
-  const featuredNews = filteredNews.filter((item) => item.featured)
-  const regularNews = filteredNews.filter((item) => !item.featured)
-
   return (
-    <div className="min-h-screen bg-white text-gray-900">
-      {/* Removed z-10 from this div to fix header dropdown issue */}
-      <div className="relative">
-        <Header />
+    <div className="min-h-screen bg-neutral-50 text-gray-900 font-sans">
+      <Header />
 
-       <section className="container mx-auto px-4 mt-16 py-8 md:py-12">
-          <div className="max-w-8xl mx-auto text-center">
-            <div className="bg-gradient-to-br from-red-50 to-white rounded-3xl p-8 md:p-12 border border-red-200 shadow-lg">
-              
-              {/* Logo text updated with gradient and font size */}
-              <div className="relative inline-flex items-center justify-center gap-5 group mb-8 p-6 bg-white/50 backdrop-blur-lg rounded-full border border-gray-200/50 shadow-2xl">
-                <span className="text-6xl font-black tracking-tight bg-gradient-to-r from-red-600 to-black bg-clip-text text-transparent">
-                  News
-                </span>
-                <div className="relative w-8 h-8 flex-shrink-0">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-red-500 to-red-700 absolute left- top-1/2 -translate-y-1/2 z-0"></div>
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-300 to-gray-500 absolute left-2.5 top-1/2 -translate-y-1/2 z-10"></div>
-                </div>
-                <span className="text-6xl font-black tracking-tight bg-gradient-to-r from-red-600 to-black bg-clip-text text-transparent">
-                  & Media
-                </span>
-              </div>
+      <main className="relative z-10 pb-0">
+        
+        {/* --- Hero Section (Education Style) --- */}
+        <section className="relative w-full mt-20 py-24 overflow-hidden bg-black">
+          <div className="absolute inset-0 z-0">
+            <Image
+              src="/page/news.avif"
+              alt="News Background"
+              fill
+              className="object-cover opacity-40"
+              priority
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent"></div>
+          </div>
 
-              
-              <p className="text-lg md:text-xl text-gray-700 max-w-3xl mx-auto">
-                
-                Lorem ipsum, dolor sit amet consectetur adipisicing elit. Totam laudantium voluptates nemo mollitia ipsum odit minima ipsa nostrum eius accusantium facere, officia veritatis quibusdam amet adipisci quo magnam obcaecati earum.
+          <div className="container relative z-10 mx-auto px-4">
+            <div className="max-w-4xl mx-auto text-center">
+              <Badge className="mb-6 bg-red-600 hover:bg-red-700 text-white px-4 py-1.5 text-sm uppercase tracking-widest border-none">
+                Latest Updates
+              </Badge>
+              <h1 className="text-5xl md:text-7xl font-black text-white mb-6 tracking-tight leading-tight">
+                News & <br/>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500">
+                  Announcements
+                </span>
+              </h1>
+              <p className="text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
+                Stay up to date with the latest developments, featured stories, and press releases from the Retro Mobile Gaming Project.
               </p>
             </div>
           </div>
         </section>
 
-        {/* Search and Filter Section (Light Glass) */}
-        <section className="relative py-8 px-4 md:px-8 lg:px-16">
-          <div className="max-w-[100rem] mx-auto">
-            <div className="bg-white/50 backdrop-blur-lg rounded-2xl p-6 border border-gray-200/50 shadow-xl">
-              <div className="flex flex-col md:flex-row gap-4 items-center">
-                <div className="relative flex-1 w-full">
-                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 h-5 w-5" />
-                  <Input
-                    type="text"
-                    placeholder="Search news..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-12 pr-4 py-6 bg-white/80 border-gray-300 text-gray-900 placeholder:text-gray-500 rounded-xl focus:border-red-500 focus:ring-red-500"
+        {/* --- Featured Article Section --- */}
+        <section className="container mx-auto px-4 py-16 md:py-24 relative z-20 -mt-16">
+          <div className="max-w-6xl mx-auto">
+            <div className="bg-white rounded-3xl overflow-hidden shadow-2xl border border-gray-100 flex flex-col lg:flex-row group hover:shadow-3xl transition-all duration-300">
+               
+               {/* Image Side */}
+               <div className="lg:w-1/2 relative min-h-[300px] lg:min-h-[500px] overflow-hidden">
+                  <Image
+                    src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/032725_MM_Adriana_De_Souza_E_Silva_008.jpg-2-ZYoi1aCXZZbDq3CzkwwZefwjTXczRi.webp"
+                    alt="Game Preservation Database Launch"
+                    fill
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
                   />
-                </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent lg:bg-gradient-to-r lg:from-transparent lg:to-black/10"></div>
+               </div>
 
-                <Button
-                  onClick={() => setIsFilterOpen(!isFilterOpen)}
-                  className="bg-gradient-to-r from-red-600 to-red-700 text-white px-6 py-6 rounded-xl hover:shadow-lg hover:shadow-red-500/50 transition-all flex items-center gap-2"
-                >
-                  <span className="font-bold">Filter</span>
-                  {activeFilters.length > 0 && (
-                    <span className="bg-white text-red-600 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">
-                      {activeFilters.length}
-                    </span>
-                  )}
-                  <ChevronDown className={`h-5 w-5 transition-transform ${isFilterOpen ? "rotate-180" : ""}`} />
-                </Button>
-              </div>
-
-              {isFilterOpen && (
-                <div className="mt-6 pt-6 border-t border-gray-300/50">
-                  <div className="space-y-4">
-                    <div>
-                      <label className="text-sm font-bold text-gray-700 mb-2 block">Category</label>
-                      <div className="flex flex-wrap gap-2">
-                        {categories.map((category) => (
-                          <Button
-                            key={category.id}
-                            onClick={() => setSelectedCategory(category.id)}
-                            className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${
-                              selectedCategory === category.id
-                                ? "bg-gradient-to-r from-red-600 to-black text-white shadow-lg"
-                                : "bg-white/70 text-gray-700 hover:bg-white"
-                            }`}
-                          >
-                            {category.label}
-                          </Button>
-                        ))}
-                      </div>
-                    </div>
+               {/* Content Side */}
+               <div className="lg:w-1/2 p-8 md:p-12 lg:p-16 flex flex-col justify-center bg-white">
+                  <div className="flex items-center gap-3 mb-6">
+                     <Badge variant="outline" className="text-red-600 border-red-200 bg-red-50 px-3 py-1 uppercase tracking-wider text-xs font-bold">
+                        Featured
+                     </Badge>
+                     <span className="text-gray-400 text-sm font-medium flex items-center gap-1">
+                        <Calendar className="w-3 h-3" /> April 1, 2025
+                     </span>
                   </div>
-                </div>
-              )}
+
+                  <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-6 leading-tight">
+                    Northeastern University Launches Game Preservation Database
+                  </h2>
+
+                  <p className="text-lg text-gray-600 mb-8 leading-relaxed">
+                    The Center for Transformative Media at Northeastern University has launched a comprehensive database dedicated to preserving the history of mobile gaming. This initiative aims to document and archive mobile games from 1975 to 2008, providing researchers, developers, and enthusiasts with a valuable resource for understanding the evolution of mobile gaming.
+                  </p>
+                  
+                  <div className="mt-auto pt-4">
+                    <Button asChild className="bg-red-600 hover:bg-red-700 text-white rounded-full px-8 py-6 text-lg font-semibold shadow-lg hover:shadow-red-500/30 transition-all">
+                        <a 
+                          href="https://news.northeastern.edu/2025/04/01/game-preservation-database/?utm_source=News%40Northeastern&utm_campaign=5ca18ea199-EMAIL_CAMPAIGN_2022_09_22_11_00_COPY_01&utm_medium=email&utm_term=0_508ab516a3-5ca18ea199-279529680" 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2"
+                        >
+                        Read Full Article <ExternalLink className="w-5 h-5" />
+                        </a>
+                    </Button>
+                  </div>
+               </div>
             </div>
           </div>
         </section>
 
-        {/* Featured News (Gradient Glass Cards) */}
-        {featuredNews.length > 0 && (
-          <section className="relative py-8 px-4 md:px-8 lg:px-16">
-            <div className="max-w-[100rem] mx-auto">
-              <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-8">Featured Stories</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {featuredNews.map((item) => (
-                  <div
-                    key={item.id}
-                    className="group relative bg-gradient-to-br from-red-600/90 to-red-800/90 backdrop-blur-lg rounded-2xl overflow-hidden border border-red-700/30 shadow-lg hover:shadow-red-500/40 transition-shadow"
-                  >
-                    <div className="relative h-80 overflow-hidden">
-                      <Image
-                        src={item.image || "/placeholder.svg"}
-                        alt={item.title}
-                        fill
-                        className="object-cover group-hover:scale-110 transition-transform duration-500"
-                      />
-                      <div className="absolute top-4 left-4 bg-black/50 text-white px-4 py-2 rounded-full font-bold text-sm uppercase backdrop-blur-sm">
-                        {item.category}
-                      </div>
-                    </div>
-                    <div className="p-6 text-white">
-                      <h3 className="text-2xl font-bold mb-3 group-hover:text-red-100 transition-colors">
-                        {item.title}
-                      </h3>
-                      <p className="text-red-50/90 mb-4 leading-relaxed">{item.excerpt}</p>
-                      <div className="flex items-center gap-4 text-sm text-red-100/80">
-                        <div className="flex items-center gap-2">
-                          <User className="h-4 w-4" />
-                          <span>{item.author}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Calendar className="h-4 w-4" />
-                          <span>{new Date(item.date).toLocaleDateString()}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
+      </main>
 
-        {/* All News (Gradient Glass Cards) */}
-        <section className="relative py-8 px-4 md:px-8 lg:px-16 pb-20">
-          <div className="max-w-[100rem] mx-auto">
-            <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-8">All News</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {regularNews.map((item) => (
-                <div
-                  key={item.id}
-                  className="group relative bg-gradient-to-br from-red-600/90 to-red-800/90 backdrop-blur-lg rounded-2xl overflow-hidden border border-red-700/30 shadow-lg hover:shadow-red-500/40 transition-shadow"
-                >
-                  <div className="relative h-48 overflow-hidden">
-                    <Image
-                      src={item.image || "/placeholder.svg"}
-                      alt={item.title}
-                      fill
-                      className="object-cover group-hover:scale-110 transition-transform duration-500"
-                    />
-                    <div className="absolute top-4 left-4 bg-black/50 text-white px-3 py-1 rounded-full font-bold text-xs uppercase backdrop-blur-sm">
-                      {item.category}
-                    </div>
-                  </div>
-                  <div className="p-6 text-white">
-                    <h3 className="text-xl font-bold mb-2 group-hover:text-red-100 transition-colors">
-                      {item.title}
-                    </h3>
-                    <p className="text-red-50/90 text-sm mb-4 leading-relaxed line-clamp-3">{item.excerpt}</p>
-                    <div className="flex flex-col gap-2 text-xs text-red-100/80">
-                      <div className="flex items-center gap-2">
-                        <User className="h-3 w-3" />
-                        <span>{item.author}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Calendar className="h-3 w-3" />
-                        <span>{new Date(item.date).toLocaleDateString()}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <Footer />
-      </div>
+      <Footer />
     </div>
   )
 }

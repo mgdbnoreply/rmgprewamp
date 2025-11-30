@@ -8,17 +8,12 @@ import Link from "next/link"
 import { 
   Play, 
   User, 
-  Calendar, 
-  BookOpen, 
   FileText, 
   Search, 
-  ExternalLink,
   GraduationCap,
   Library,
-  CheckCircle2
+  ArrowRight,
 } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -77,7 +72,7 @@ export default function EducationPage() {
       date: "March 1, 2022",
       description:
         "Professor Shira Chess shares her thoughts on how the invention of mobile games represents the point where we stop being held by old-school constraints of time and place.",
-      youtubeId: "CXxPej4dKZM", // Note: Ensure distinct ID if available in source
+      youtubeId: "CXxPej4dKZM", 
     },
     {
       id: "nick-taylor",
@@ -235,7 +230,6 @@ export default function EducationPage() {
                         }`}
                       >
                         <div className="relative flex-shrink-0 w-28 h-16 bg-gray-200 rounded-md overflow-hidden shadow-sm">
-                          {/* We don't have real thumbnails, so we use a placeholder color block */}
                           <div className={`absolute inset-0 flex items-center justify-center ${isActive ? "bg-neutral-800" : "bg-neutral-300 group-hover:bg-neutral-400"} transition-colors`}>
                             <Play className={`w-6 h-6 text-white`} fill="currentColor" />
                           </div>
@@ -255,7 +249,7 @@ export default function EducationPage() {
           </div>
         </section>
 
-        {/* --- Educational Resources / Assignment Section --- */}
+        {/* --- Educational Resources / Assignment Section (New Horizontal Layout) --- */}
         <section id="educational-resources" className="bg-gray-900 text-white py-24 relative overflow-hidden">
             {/* Background elements */}
             <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-red-900/20 rounded-full blur-[120px] -mr-40 -mt-40 pointer-events-none"></div>
@@ -263,187 +257,85 @@ export default function EducationPage() {
             
             <div className="container mx-auto px-4 relative z-10">
                 {/* Header */}
-                <div className="mb-16">
+                <div className="mb-12">
                     <div className="flex items-center gap-3 mb-6">
                       <div className="p-2 bg-red-600 rounded-lg shadow-lg shadow-red-900/20">
                         <GraduationCap className="w-6 h-6 text-white" />
                       </div>
                       <span className="text-red-400 font-bold tracking-widest uppercase text-sm">Educational Resources</span>
                     </div>
-                    <h2 className="text-4xl md:text-6xl font-black mb-6 tracking-tight">Media History Assignment</h2>
+                    <h2 className="text-4xl md:text-6xl font-black mb-6 tracking-tight">Course Materials</h2>
                     <p className="text-gray-300 text-lg md:text-xl max-w-3xl leading-relaxed">
-                      Research an early mobile game and contribute an entry to the Retro Mobile Gaming Database. Your entry will support the Center for Transformative Media's efforts to preserve the history of mobile games.
+                      Access comprehensive assignment details, evaluation rubrics, and research guidelines for contributing to the Retro Mobile Gaming Database.
                     </p>
-                    
-                    {/* Topics Tags */}
-                    <div className="flex flex-wrap gap-2 mt-8">
-                        {["Media History", "Media Archaeology", "Internet Archival Research", "Media Studies", "Game Studies", "Mobile Media"].map((topic, i) => (
-                            <Badge key={i} variant="secondary" className="bg-gray-800/80 hover:bg-gray-700 text-gray-300 border-gray-700 px-3 py-1.5">{topic}</Badge>
-                        ))}
-                    </div>
                 </div>
 
-                <div className="grid lg:grid-cols-12 gap-8">
-                    {/* Left Column: Assignment Details (Steps, Submission, Evaluation) */}
-                    <div className="lg:col-span-7 space-y-8">
-                        {/* Assignment Steps */}
-                        <Card className="bg-gray-800/40 border-gray-700 backdrop-blur-sm shadow-xl">
-                            <CardContent className="p-8">
-                                <h3 className="text-2xl font-bold mb-8 flex items-center gap-3 text-white">
-                                    <FileText className="w-6 h-6 text-red-500" /> Assignment Steps
-                                </h3>
-                                <div className="space-y-8">
-                                    {/* Step 1: Register */}
-                                    <div className="flex gap-5 group">
-                                        <div className="flex-shrink-0 w-10 h-10 rounded-full bg-red-600/10 text-red-500 flex items-center justify-center font-bold border border-red-600/30 group-hover:bg-red-600 group-hover:text-white transition-all">1</div>
-                                        <div>
-                                            <h4 className="text-lg font-bold text-white mb-2">Register for an Account</h4>
-                                            <p className="text-gray-400 text-sm leading-relaxed">
-                                                Visit the Retro Mobile Gaming Database platform and follow the instructions to create an account using your <span className="text-white font-medium">university email</span>.
-                                            </p>
-                                        </div>
-                                    </div>
-                                    {/* Step 2: Research */}
-                                    <div className="flex gap-5 group">
-                                        <div className="flex-shrink-0 w-10 h-10 rounded-full bg-red-600/10 text-red-500 flex items-center justify-center font-bold border border-red-600/30 group-hover:bg-red-600 group-hover:text-white transition-all">2</div>
-                                        <div>
-                                            <h4 className="text-lg font-bold text-white mb-2">Conduct Research</h4>
-                                            <p className="text-gray-400 text-sm leading-relaxed mb-3">
-                                                Select an early mobile game not already in the database (e.g., specific Game Boy Color titles). Use internet and archival strategies to gather:
-                                            </p>
-                                            <ul className="list-disc list-inside text-gray-400 text-sm pl-1 space-y-1 marker:text-red-500">
-                                                <li>Game history & development</li>
-                                                <li>Impact & reception</li>
-                                                <li>Technical specifications</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    {/* Step 3: Add Entry */}
-                                    <div className="flex gap-5 group">
-                                        <div className="flex-shrink-0 w-10 h-10 rounded-full bg-red-600/10 text-red-500 flex items-center justify-center font-bold border border-red-600/30 group-hover:bg-red-600 group-hover:text-white transition-all">3</div>
-                                        <div>
-                                            <h4 className="text-lg font-bold text-white mb-2">Add Entry</h4>
-                                            <p className="text-gray-400 text-sm leading-relaxed">
-                                                Write a comprehensive entry including Game Overview, Developer Information, Release Date, and Connectivity Type. Use the Glossary to understand terms.
-                                            </p>
-                                        </div>
-                                    </div>
-                                     {/* Step 4: Submission */}
-                                    <div className="flex gap-5 group">
-                                        <div className="flex-shrink-0 w-10 h-10 rounded-full bg-red-600/10 text-red-500 flex items-center justify-center font-bold border border-red-600/30 group-hover:bg-red-600 group-hover:text-white transition-all">4</div>
-                                        <div>
-                                            <h4 className="text-lg font-bold text-white mb-2">Submission</h4>
-                                            <p className="text-gray-400 text-sm leading-relaxed">
-                                                Submit your completed entry directly on the RMGP platform. Additionally, upload a copy of your entry to your Learning Management System.
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
-
-                        {/* Evaluation Criteria */}
-                        <Card className="bg-gray-800/20 border-gray-700/50">
-                            <CardContent className="p-6">
-                                <h4 className="font-bold text-gray-200 mb-3 flex items-center gap-2">
-                                    <CheckCircle2 className="w-5 h-5 text-green-500" /> Evaluation Criteria
-                                </h4>
-                                <p className="text-gray-400 text-sm leading-relaxed">
-                                    Your entry will be evaluated based on <strong className="text-gray-200">completeness, accuracy, depth of research, and clarity of writing</strong>. Originality and contribution to the historical understanding of early mobile games will also be considered.
-                                </p>
-                            </CardContent>
-                        </Card>
+                <div className="grid grid-cols-1 gap-8 max-w-8xl mx-auto">
+                  
+                  {/* Card 1: Assignment */}
+                  <Link href="/education/assignment" className="group block">
+                    <div className="bg-white rounded-3xl overflow-hidden shadow-xl border border-gray-100 hover:shadow-2xl transition-all duration-300 flex flex-col md:flex-row h-full transform hover:-translate-y-1">
+                      {/* Image Side */}
+                      <div className="relative w-full md:w-1/3 min-h-[240px] overflow-hidden">
+                        <Image 
+                          src="/page/education.avif" 
+                          alt="Media History Assignment" 
+                          fill 
+                          className="object-cover transition-transform duration-700 group-hover:scale-110" 
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity"></div>
+                        <div className="absolute bottom-6 left-6 p-3 bg-black/50 backdrop-blur-md rounded-xl border border-white/10">
+                          <FileText className="w-6 h-6 text-white" />
+                        </div>
+                      </div>
+                      
+                      {/* Text Side */}
+                      <div className="p-8 md:w-2/3 flex flex-col justify-center">
+                        <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-red-600 transition-colors">
+                          Media History Assignment: Retro Mobile Gaming Database Entry
+                        </h3>
+                        <p className="text-gray-600 mb-6 leading-relaxed">
+                          A comprehensive assignment for students to research and contribute to the Retro Mobile Gaming Database. Includes step-by-step instructions and evaluation criteria for academic submissions.
+                        </p>
+                        <div className="flex items-center text-red-600 font-bold text-sm uppercase tracking-wide group-hover:gap-2 transition-all mt-auto">
+                          View Assignment <ArrowRight className="w-4 h-4 ml-1" />
+                        </div>
+                      </div>
                     </div>
+                  </Link>
 
-                    {/* Right Column: Guidelines & Readings */}
-                    <div className="lg:col-span-5 space-y-8">
-                        
-                        {/* Archival Search Guidelines */}
-                        <Card className="bg-gradient-to-b from-gray-800 to-gray-900 border-gray-700 shadow-xl overflow-hidden">
-                            <div className="bg-gray-800/80 p-6 border-b border-gray-700">
-                                <h3 className="text-xl font-bold flex items-center gap-3 text-white">
-                                    <Search className="w-5 h-5 text-blue-400" /> 
-                                    Internet Archival Research
-                                </h3>
-                            </div>
-                            <CardContent className="p-6">
-                                <div className="space-y-4">
-                                    {/* Guideline Items */}
-                                    <div className="bg-gray-950/30 p-4 rounded-xl border border-gray-700/30 hover:border-blue-500/30 transition-colors">
-                                        <h5 className="text-blue-300 font-bold text-xs uppercase mb-2">Narrow Your Search</h5>
-                                        <p className="text-gray-400 text-sm mb-2">Use quotation marks for exact phrases.</p>
-                                        <code className="text-xs bg-black/50 px-2 py-1 rounded text-green-400 font-mono block w-fit border border-gray-800">"Gameboy Color"</code>
-                                    </div>
-
-                                    <div className="bg-gray-950/30 p-4 rounded-xl border border-gray-700/30 hover:border-blue-500/30 transition-colors">
-                                        <h5 className="text-blue-300 font-bold text-xs uppercase mb-2">Exclude Irrelevant Results</h5>
-                                        <p className="text-gray-400 text-sm mb-2">Use the minus sign.</p>
-                                        <code className="text-xs bg-black/50 px-2 py-1 rounded text-green-400 font-mono block w-fit border border-gray-800">Gameboy -color -advance</code>
-                                    </div>
-
-                                    <div className="bg-gray-950/30 p-4 rounded-xl border border-gray-700/30 hover:border-blue-500/30 transition-colors">
-                                        <h5 className="text-blue-300 font-bold text-xs uppercase mb-2">File Type Search</h5>
-                                        <p className="text-gray-400 text-sm mb-2">Find specific documents.</p>
-                                        <code className="text-xs bg-black/50 px-2 py-1 rounded text-green-400 font-mono block w-fit border border-gray-800">Slots of Fun filetype:pdf</code>
-                                    </div>
-
-                                    <div className="bg-gray-950/30 p-4 rounded-xl border border-gray-700/30 hover:border-blue-500/30 transition-colors">
-                                        <h5 className="text-blue-300 font-bold text-xs uppercase mb-2">Specific Site Search</h5>
-                                        <p className="text-gray-400 text-sm mb-2">Search within a specific URL.</p>
-                                        <code className="text-xs bg-black/50 px-2 py-1 rounded text-green-400 font-mono block w-fit border border-gray-800">site:mgrl.ncsu.chass.edu</code>
-                                    </div>
-
-                                    <div className="bg-gray-950/30 p-4 rounded-xl border border-gray-700/30 hover:border-blue-500/30 transition-colors">
-                                        <h5 className="text-blue-300 font-bold text-xs uppercase mb-2">Search by Domain</h5>
-                                        <p className="text-gray-400 text-sm mb-2">Limit to academic resources.</p>
-                                        <code className="text-xs bg-black/50 px-2 py-1 rounded text-green-400 font-mono block w-fit border border-gray-800">Gameboy site:.edu</code>
-                                    </div>
-
-                                    <div className="bg-gray-950/30 p-4 rounded-xl border border-gray-700/30 hover:border-blue-500/30 transition-colors">
-                                        <h5 className="text-blue-300 font-bold text-xs uppercase mb-2">Wayback Machine</h5>
-                                        <p className="text-gray-400 text-sm">
-                                          Use <a href="http://web.archive.org/" target="_blank" className="text-blue-400 hover:text-blue-300 underline underline-offset-4">archive.org</a> to view cached versions of defunct gaming websites.
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div className="mt-6 pt-4 border-t border-gray-700">
-                                    <Link 
-                                        href="https://digitalcommons.law.uga.edu/cgi/viewcontent.cgi?article=1066&context=cle" 
-                                        target="_blank"
-                                        className="flex items-center justify-between text-xs text-gray-400 hover:text-white transition-colors group p-2 hover:bg-gray-800 rounded-lg"
-                                    >
-                                        <span className="font-medium">Advanced Internet Research Techniques (PDF)</span>
-                                        <ExternalLink className="w-3 h-3 group-hover:text-blue-400" />
-                                    </Link>
-                                </div>
-                            </CardContent>
-                        </Card>
-
-                        {/* Recommended Readings (Moved from bottom) */}
-                        <Card className="bg-gray-800/20 border-gray-700 shadow-lg">
-                            <CardContent className="p-6">
-                                <h4 className="font-bold text-gray-200 mb-6 flex items-center gap-2">
-                                    <BookOpen className="w-4 h-4 text-red-500" /> Recommended Readings
-                                </h4>
-                                <ul className="space-y-6 text-sm text-gray-400">
-                                    <li className="pl-4 border-l-2 border-red-500/30 hover:border-red-500 transition-colors">
-                                        <p className="italic text-gray-300 mb-1 font-medium leading-tight">Playful urban spaces: A historical approach to mobile games</p>
-                                        <p className="text-xs text-gray-500 mt-1">de Souza e Silva, A., & Hjorth, L. (2009)</p>
-                                    </li>
-                                    <li className="pl-4 border-l-2 border-red-500/30 hover:border-red-500 transition-colors">
-                                        <p className="italic text-gray-300 mb-1 font-medium leading-tight">Victorian snakes? Towards a cultural history of mobile games</p>
-                                        <p className="text-xs text-gray-500 mt-1">Parikka, J., & Suominen, J. (2006)</p>
-                                    </li>
-                                    <li className="pl-4 border-l-2 border-red-500/30 hover:border-red-500 transition-colors">
-                                        <p className="italic text-gray-300 mb-1 font-medium leading-tight">Software presentation: The retro mobile gaming database</p>
-                                        <p className="text-xs text-gray-500 mt-1">Silva, A. D. S. E., & Glover-Rijkse, R. (2023)</p>
-                                    </li>
-                                </ul>
-                            </CardContent>
-                        </Card>
-
+                  {/* Card 2: Guidelines */}
+                  <Link href="/education/guidelines" className="group block">
+                    <div className="bg-white rounded-3xl overflow-hidden shadow-xl border border-gray-100 hover:shadow-2xl transition-all duration-300 flex flex-col md:flex-row h-full transform hover:-translate-y-1">
+                      {/* Image Side */}
+                      <div className="relative w-full md:w-1/3 min-h-[240px] overflow-hidden">
+                        <Image 
+                          src="/preservation-archiving.jpg" 
+                          alt="Research Guidelines" 
+                          fill 
+                          className="object-cover transition-transform duration-700 group-hover:scale-110" 
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity"></div>
+                        <div className="absolute bottom-6 left-6 p-3 bg-black/50 backdrop-blur-md rounded-xl border border-white/10">
+                          <Search className="w-6 h-6 text-white" />
+                        </div>
+                      </div>
+                      
+                      {/* Text Side */}
+                      <div className="p-8 md:w-2/3 flex flex-col justify-center">
+                        <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-red-600 transition-colors">
+                          Guidelines for Internet Archival Research
+                        </h3>
+                        <p className="text-gray-600 mb-6 leading-relaxed">
+                          Learn effective strategies for researching the history of mobile games using digital archives. Discover techniques for exact phrase searching, file type filtering, and utilizing the Wayback Machine.
+                        </p>
+                        <div className="flex items-center text-red-600 font-bold text-sm uppercase tracking-wide group-hover:gap-2 transition-all mt-auto">
+                          View Guidelines <ArrowRight className="w-4 h-4 ml-1" />
+                        </div>
+                      </div>
                     </div>
+                  </Link>
+
                 </div>
             </div>
         </section>

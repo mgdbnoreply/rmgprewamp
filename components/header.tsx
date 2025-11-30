@@ -105,12 +105,11 @@ export function Header() {
               {/* Education Dropdown */}
               <div className="relative group">
                 <div className={navLinkStyle + " cursor-default"}>
-                  Education
+                  <a href="/education">Education</a>
                   <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180" />
                 </div>
                 <div className="absolute top-full left-0 z-[200] hidden group-hover:block pt-2">
                   <ul className="bg-white border border-gray-200 shadow-2xl rounded-2xl min-w-56 p-1">
-                    <NavLink href="/education">All Education</NavLink>
                     <NavLink href="/education#what-is-mobile-ai">What is Mobile Games</NavLink>
                     <NavLink href="/education#videos">Videos</NavLink>
                     <NavLink href="/education#class-activities">Class Activities</NavLink>
