@@ -98,7 +98,7 @@ export default function EducationPage() {
         <section className="relative w-full mt-20 py-24 overflow-hidden bg-black">
           <div className="absolute inset-0 z-0">
             <Image
-              src="/mobile-gaming-interface.jpg"
+              src="/page/education.avif"
               alt="Education Background"
               fill
               className="object-cover opacity-40"

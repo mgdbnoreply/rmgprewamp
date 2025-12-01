@@ -8,6 +8,7 @@ export interface Publication {
   categories: string[]
   topic: string
   link?: string
+  pdfUrl?: string; // Add this new optional field
 }
 
 export const publicationsData: Publication[] = [
@@ -141,6 +142,18 @@ export const publicationsData: Publication[] = [
     categories: ["Conference Paper", "Social Networks"],
     topic: "Social Networks",
   },
+  {
+    id: 14,
+    title: "Funding Mobile Content",
+    authors: ["Elizabeth Biddlecombe"],
+    year: 2003,
+    description: "An analysis of venture capital trends...",
+    thumbnail: "/page/publications.jpg",
+    categories: ["Industry Report"],
+    topic: "Industry Analysis",
+    // Add the path to your file here
+    pdfUrl: "/documents/mea2003-05.pdf" 
+  },
 ]
 
 // Alternative custom image paths if you want to use your own hosted images
@@ -183,3 +196,4 @@ export function getTopicImage(topic: string): string {
   }
   return topicImages[topic] || "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&q=80"
 }
+

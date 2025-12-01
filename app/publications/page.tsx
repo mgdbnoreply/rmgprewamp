@@ -5,9 +5,48 @@ import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Search, ChevronRight, ChevronLeft } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import { 
+  Search, 
+  ChevronRight, 
+  ChevronLeft, 
+  User, 
+  Calendar, 
+  ExternalLink, 
+  FileText, 
+  Eye, 
+  X, 
+  ArrowRight
+} from "lucide-react"
 import Image from "next/image"
-import { publicationsData } from "@/lib/publications-data" // Import real data
+import { publicationsData } from "@/lib/publications-data"
+import { DonationButton } from "@/components/donation-button"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog"
+
+// Mock data for the 8 Mobile Entertainment Analyst PDFs
+const mobileEntertainmentReviews = [
+  {
+    id: "mea-2003-03",
+    title: "Mobile Entertainment Analyst: Vol 2, No 3",
+    date: "March 2003",
+    description: "Featuring 'Opportunities and Threats in Mobile Entertainment' and 'The Wireless Retail Point of Sale'.",
+    pdfUrl: "/documents/mea2003-03.pdf", 
+  },
+  {
+    id: "mea-2003-05",
+    title: "Mobile Entertainment Analyst: Vol 2, No 5",
+    date: "May 2003",
+    description: "Covering 'Funding Mobile Content' and 'The Coming Wave of Mobile RPGs'.",
+    pdfUrl: "/documents/mea2003-05.pdf", 
+  },
+  // Placeholders
+  { id: "mea-3", title: "Mobile Entertainment Analyst: Vol 2, No 6", date: "June 2003", description: "Special report on mobile gaming demographics and emerging markets.", pdfUrl: "#" },
+  { id: "mea-4", title: "Mobile Entertainment Analyst: Vol 2, No 7", date: "July 2003", description: "Analysis of early J2ME game performance and carrier strategies.", pdfUrl: "#" },
+  { id: "mea-5", title: "Mobile Entertainment Analyst: Vol 2, No 8", date: "August 2003", description: "The rise of multiplayer mobile gaming and network latency challenges.", pdfUrl: "#" },
+  { id: "mea-6", title: "Mobile Entertainment Analyst: Vol 2, No 9", date: "September 2003", description: "Investment trends in mobile content: A quarterly review.", pdfUrl: "#" },
+  { id: "mea-7", title: "Mobile Entertainment Analyst: Vol 2, No 10", date: "October 2003", description: "Interview with leading mobile game publishers of the early 2000s.", pdfUrl: "#" },
+  { id: "mea-8", title: "Mobile Entertainment Analyst: Vol 2, No 11", date: "November 2003", description: "Year-end summary and predictions for the future of mobile entertainment.", pdfUrl: "#" },
+]
 
 export default function PublicationsPage() {
   const [searchQuery, setSearchQuery] = useState("")
@@ -15,9 +54,12 @@ export default function PublicationsPage() {
   const [selectedTopic, setSelectedTopic] = useState("")
   const [selectedAuthor, setSelectedAuthor] = useState("")
   const [currentPage, setCurrentPage] = useState(0)
+  
+  // State for the PDF Viewer
+  const [viewingPdf, setViewingPdf] = useState<string | null>(null)
 
-  const itemsPerPage = 4
-  // Dynamically get unique years and topics for filters
+  const itemsPerPage = 6
+  
   const years = Array.from(new Set(publicationsData.map(p => p.year))).sort((a, b) => b - a)
   const topics = Array.from(new Set(publicationsData.map(p => p.topic))).sort()
 
@@ -35,150 +77,136 @@ export default function PublicationsPage() {
   const totalPages = Math.ceil(filteredPublications.length / itemsPerPage)
   const paginatedPublications = filteredPublications.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage)
 
+  const featuredPublication = publicationsData[0]
+  const showFeatured = !searchQuery && !selectedYear && !selectedTopic && !selectedAuthor && currentPage === 0
+
   return (
-    <div className="min-h-screen bg-white">
-      <div className="relative z-10">
-        <Header />
+    <div className="min-h-screen bg-white text-gray-900 font-sans">
+      <Header />
 
-        {/* --- Full Width Hero Section --- */}
-                <section className="relative w-full mt-16 py-24 md:py-32 overflow-hidden">
-                  {/* Background Image & Overlay */}
-                  <div className="absolute inset-0 z-0">
-                    <Image
-                      src="/page/publications.jpeg"
-                      alt="Collection Background"
-                      fill
-                      className="object-cover grayscale opacity-40"
-                      priority
-                    />
-                    {/* Changed white gradient to black gradient */}
-                    <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/80"></div>
-                  </div>
+      <main className="relative z-10 pb-0">
         
-                  {/* Content Container (Constrained width) */}
-                  <div className="container relative z-10 mx-auto px-4">
-                    <div className="max-w-8xl mx-auto text-center">
-                      {/* Changed inner container background to white for contrast */}
-                      <div className="bg-white/90 backdrop-blur-md rounded-3xl p-8 md:p-12 border border-white/50 shadow-xl">
-                        <div className="relative inline-flex items-center justify-center gap-5 group mb-8 p-6 bg-white/80 backdrop-blur-xl rounded-full border border-white/60 shadow-2xl">
-                          <span className="text-4xl md:text-6xl font-black tracking-tight bg-gradient-to-r from-red-600 to-black bg-clip-text text-transparent">
-                            Publications
-                          </span>
-                          <div className="relative w-8 h-8 flex-shrink-0 hidden sm:block">
-                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-red-500 to-red-700 absolute left- top-1/2 -translate-y-1/2 z-0"></div>
-                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-300 to-gray-500 absolute left-2.5 top-1/2 -translate-y-1/2 z-10"></div>
-                          </div>
-                          <span className="text-4xl md:text-6xl font-black tracking-tight bg-gradient-to-r from-red-600 to-black bg-clip-text text-transparent">
-                            & Research
-                          </span>
-                        </div>
-        
-                        <p className="text-lg md:text-xl text-gray-800 font-semibold max-w-3xl mx-auto leading-relaxed">
-                          Discover groundbreaking research in retro mobile gaming preservation and analysis
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </section>
-        
+        {/* --- Hero Section --- */}
+        <section className="relative w-full mt-20 py-24 md:py-32 overflow-hidden bg-black">
+          <div className="absolute inset-0 z-0">
+            <Image
+              src="/page/publications.jpg"
+              alt="Publications Background"
+              fill
+              className="object-cover opacity-50"
+              priority
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent"></div>
+          </div>
 
-        {/* Featured Publication */}
-        {/* {paginatedPublications.length > 0 && (
-          <section className="py-8 px-4 md:px-8 lg:px-16 bg-white">
-            <div className="max-w-[100rem] mx-auto">
-              <div className="rounded-2xl bg-gradient-to-br from-red-600 via-red-500 to-red-900/20 overflow-hidden shadow-2xl border border-red-700/30">
-                <div className="relative h-64 md:h-96 bg-gradient-to-br from-red-600 to-black flex items-center justify-center">
-                  <Image
-                    src={paginatedPublications[0].thumbnail || "/placeholder.svg"}
-                    alt="Featured publication"
-                    fill
-                    className="object-cover opacity-30"
+          <div className="container relative z-10 mx-auto px-4">
+            <div className="max-w-4xl mx-auto text-center">
+              <Badge className="mb-6 bg-red-600 hover:bg-red-700 text-white px-4 py-1.5 text-sm uppercase tracking-widest border-none">
+                Academic Research
+              </Badge>
+              <h1 className="text-5xl md:text-7xl font-black text-white mb-6 tracking-tight leading-tight">
+                Publications & <br/>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500">
+                  Scholarship
+                </span>
+              </h1>
+              <p className="text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
+                Discover groundbreaking research, books, and articles analyzing the cultural and technological evolution of mobile gaming from 1975 to 2008.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* --- Featured Publication --- */}
+        {showFeatured && (
+          <section className="container mx-auto px-4 -mt-20 relative z-20 pb-16">
+            <div className="bg-white rounded-3xl p-8 md:p-12 shadow-2xl border border-gray-100">
+              <div className="grid md:grid-cols-2 gap-12 items-center">
+                <div className="relative h-[300px] md:h-[450px] rounded-2xl overflow-hidden shadow-lg border border-gray-100 group">
+                  <Image 
+                    src={featuredPublication.thumbnail || "/placeholder.svg"}
+                    alt={featuredPublication.title}
+                    fill 
+                    className="object-cover transition-transform duration-700 group-hover:scale-105" 
                   />
-                  <div className="relative z-10 text-center px-8 max-w-4xl">
-                    <span className="inline-block px-4 py-1 mb-4 text-sm font-bold tracking-wider text-red-100 uppercase bg-white/10 rounded-full backdrop-blur-md border border-white/20">
-                      Latest Research
-                    </span>
-                    <h2 className="text-2xl md:text-4xl font-bold text-white mb-4">{paginatedPublications[0].title}</h2>
-                    <p className="text-white/90 text-lg max-w-2xl mx-auto line-clamp-2">
-                      {paginatedPublications[0].description}
-                    </p>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                  <div className="absolute top-6 left-6">
+                    <Badge className="bg-red-600 text-white border-0">Featured Work</Badge>
                   </div>
+                </div>
+                <div className="flex flex-col justify-center">
+                  <div className="inline-flex items-center gap-2 mb-4 text-gray-500 text-sm font-medium">
+                    <Calendar className="w-4 h-4 text-red-500" />
+                    <span>{featuredPublication.year}</span>
+                    <span className="w-1 h-1 bg-gray-300 rounded-full mx-1"></span>
+                    <span className="text-red-600 font-bold uppercase">{featuredPublication.topic}</span>
+                  </div>
+                  <h2 className="text-3xl md:text-4xl font-black mb-4 text-gray-900 leading-tight">
+                    {featuredPublication.title}
+                  </h2>
+                  <div className="flex items-center gap-2 mb-6 text-gray-600">
+                    <User className="w-4 h-4" />
+                    <span className="italic">{featuredPublication.authors.join(", ")}</span>
+                  </div>
+                  <p className="text-gray-600 text-lg leading-relaxed mb-8 border-l-4 border-red-100 pl-4">
+                    {featuredPublication.description}
+                  </p>
+                  <Button asChild className="self-start bg-gradient-to-r from-red-600 to-red-800 hover:from-red-700 hover:to-red-900 text-white font-bold rounded-full px-8 py-6 text-base shadow-lg transition-all hover:scale-105">
+                    <a href={featuredPublication.link || "#"} target="_blank" rel="noopener noreferrer">
+                      Read Publication <ExternalLink className="ml-2 h-4 w-4" />
+                    </a>
+                  </Button>
                 </div>
               </div>
             </div>
           </section>
-        )} */}
+        )}
 
-        {/* Filter Section */}
-        <section className="py-8 px-4 md:px-8 lg:px-16 bg-white">
-          <div className="max-w-[100rem] mx-auto">
-            <div className="rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200 p-6 md:p-8 shadow-lg">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Filter Papers</h2>
-
-              <div className="relative mb-6">
+        {/* --- Search & Filter Section --- */}
+        <section className={`container mx-auto px-4 ${showFeatured ? 'pt-8' : '-mt-16 relative z-20'} pb-12`}>
+          <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-6 md:p-8">
+            <div className="flex flex-col md:flex-row gap-6 items-center">
+              <div className="relative flex-1 w-full">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                 <Input
                   type="text"
-                  placeholder="Search publications..."
+                  placeholder="Search publications by title, abstract..."
                   value={searchQuery}
                   onChange={(e) => {
                     setSearchQuery(e.target.value)
                     setCurrentPage(0)
                   }}
-                  className="pl-12 h-12 bg-white border-gray-300 text-gray-900 placeholder:text-gray-500 focus:border-red-500"
+                  className="pl-12 h-14 bg-gray-50 border-gray-200 text-gray-900 rounded-xl focus:border-red-500 focus:ring-red-500/20 text-lg"
                 />
               </div>
-
-              <div className="flex flex-wrap items-center gap-4">
-                <div className="flex items-center gap-2">
-                  <label className="text-gray-700 font-medium">Year</label>
-                  <select
-                    value={selectedYear}
-                    onChange={(e) => {
-                      setSelectedYear(e.target.value)
-                      setCurrentPage(0)
-                    }}
-                    className="px-4 py-2 rounded-lg bg-white border border-gray-300 text-gray-900 focus:border-red-500 focus:outline-none"
-                  >
-                    <option value="">All</option>
-                    {years.map(year => (
-                      <option key={year} value={year}>{year}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <label className="text-gray-700 font-medium">Topic</label>
-                  <select
-                    value={selectedTopic}
-                    onChange={(e) => {
-                      setSelectedTopic(e.target.value)
-                      setCurrentPage(0)
-                    }}
-                    className="px-4 py-2 rounded-lg bg-white border border-gray-300 text-gray-900 focus:border-red-500 focus:outline-none"
-                  >
-                    <option value="">All</option>
-                    {topics.map(topic => (
-                      <option key={topic} value={topic}>{topic}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <label className="text-gray-700 font-medium">Author</label>
-                  <Input
-                    type="text"
-                    placeholder="Search author..."
-                    value={selectedAuthor}
-                    onChange={(e) => {
-                      setSelectedAuthor(e.target.value)
-                      setCurrentPage(0)
-                    }}
-                    className="w-48 bg-white border-gray-300 text-gray-900 placeholder:text-gray-500 focus:border-red-500"
-                  />
-                </div>
-
-                <Button
+              <div className="flex flex-wrap gap-3 w-full md:w-auto">
+                <select
+                  value={selectedYear}
+                  onChange={(e) => {
+                    setSelectedYear(e.target.value)
+                    setCurrentPage(0)
+                  }}
+                  className="h-14 px-4 bg-white border border-gray-200 text-gray-700 rounded-xl focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 cursor-pointer hover:bg-gray-50 transition-colors"
+                >
+                  <option value="">All Years</option>
+                  {years.map(year => (
+                    <option key={year} value={year}>{year}</option>
+                  ))}
+                </select>
+                <select
+                  value={selectedTopic}
+                  onChange={(e) => {
+                    setSelectedTopic(e.target.value)
+                    setCurrentPage(0)
+                  }}
+                  className="h-14 px-4 bg-white border border-gray-200 text-gray-700 rounded-xl focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 cursor-pointer hover:bg-gray-50 transition-colors"
+                >
+                  <option value="">All Topics</option>
+                  {topics.map(topic => (
+                    <option key={topic} value={topic}>{topic}</option>
+                  ))}
+                </select>
+                <Button 
                   onClick={() => {
                     setSearchQuery("")
                     setSelectedYear("")
@@ -186,83 +214,187 @@ export default function PublicationsPage() {
                     setSelectedAuthor("")
                     setCurrentPage(0)
                   }}
-                  className="ml-auto bg-gradient-to-r from-red-600 to-black hover:from-red-700 hover:to-gray-900 text-white"
+                  variant="outline"
+                  className="h-14 px-6 border-red-100 text-red-600 hover:bg-red-50 hover:text-red-700 rounded-xl font-semibold"
                 >
-                  Reset Filters
-                  <ChevronRight className="ml-2 h-4 w-4" />
+                  Reset
                 </Button>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Publications List */}
-        <section className="py-8 px-4 md:px-8 lg:px-16 bg-white">
-          <div className="max-w-[100rem] mx-auto">
-            <div className="space-y-6">
-              {paginatedPublications.length === 0 ? (
-                <div className="text-center py-10 text-gray-500">No publications found matching your criteria.</div>
-              ) : (
-                paginatedPublications.map((pub) => (
-                  <div
-                    key={pub.id}
-                    className="rounded-xl bg-white border-2 border-gray-200 p-6 hover:border-red-500 hover:shadow-lg transition-all duration-300"
-                  >
-                    <div className="flex flex-col md:flex-row gap-6">
-                      <div className="flex-1">
-                        <h3 className="text-2xl font-bold text-gray-900 mb-2">{pub.title}</h3>
-                        <div className="text-gray-600 text-sm mb-1 italic">{pub.authors.join(", ")}</div>
-                        <div className="text-gray-500 text-sm mb-4 font-semibold text-red-600">{pub.year}</div>
-                        <p className="text-gray-700 mb-4 leading-relaxed text-sm">{pub.description}</p>
-                        <div className="flex flex-wrap items-center gap-3">
-                          {pub.categories.map((category, idx) => (
-                            <span
-                              key={idx}
-                              className="px-3 py-1 rounded-full bg-gray-100 border border-gray-300 text-gray-700 text-xs font-medium uppercase tracking-wide"
-                            >
-                              {category}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                      <div className="relative w-full md:w-48 h-48 rounded-lg overflow-hidden flex-shrink-0 shadow-md bg-gray-100">
-                        <Image src={pub.thumbnail || "/placeholder.svg"} alt={pub.title} fill className="object-cover" />
-                      </div>
-                    </div>
+        {/* --- Publications Grid --- */}
+        <section className="container mx-auto px-4 pb-24">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {paginatedPublications.map((pub) => (
+              <div
+                key={pub.id}
+                className="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-red-100 transition-all duration-300 flex flex-col overflow-hidden h-full transform hover:-translate-y-1"
+              >
+                <div className="relative h-48 w-full bg-gray-100 overflow-hidden">
+                  <Image 
+                    src={pub.thumbnail || "/placeholder.svg"} 
+                    alt={pub.title} 
+                    fill 
+                    className="object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100" 
+                  />
+                  <div className="absolute top-4 left-4">
+                    <Badge className="bg-white/90 backdrop-blur-md text-gray-900 border border-white/20 shadow-sm hover:bg-white">
+                      {pub.topic}
+                    </Badge>
                   </div>
-                ))
-              )}
+                </div>
+                <div className="p-6 flex flex-col flex-grow">
+                  <div className="flex items-center justify-between text-xs text-gray-500 mb-3 font-medium uppercase tracking-wide">
+                    <span>{pub.categories[0]}</span>
+                    <span>{pub.year}</span>
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-red-600 transition-colors">
+                    {pub.title}
+                  </h3>
+                  <p className="text-gray-600 text-sm leading-relaxed mb-6 line-clamp-3 flex-grow">
+                    {pub.description}
+                  </p>
+                  <div className="pt-4 border-t border-gray-50 flex items-center justify-between mt-auto">
+                    <div className="flex items-center gap-2 text-xs text-gray-500 font-medium">
+                      <User className="w-3 h-3" />
+                      <span className="truncate max-w-[120px]">{pub.authors[0]}</span>
+                      {pub.authors.length > 1 && <span>+{pub.authors.length - 1}</span>}
+                    </div>
+                    <a 
+                      href={pub.link || "#"} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1 text-sm font-bold text-red-600 group-hover:gap-2 transition-all"
+                    >
+                      Read <ArrowRight className="w-4 h-4" />
+                    </a>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-center gap-2 mt-16">
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => {
+                  setCurrentPage(Math.max(0, currentPage - 1))
+                  window.scrollTo({ top: 0, behavior: 'smooth' })
+                }}
+                disabled={currentPage === 0}
+                className="rounded-full w-12 h-12 border-gray-200 hover:bg-gray-50 hover:text-red-600"
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </Button>
+              <div className="flex items-center gap-1 px-4">
+                <span className="text-sm font-semibold text-gray-900">Page {currentPage + 1}</span>
+                <span className="text-sm text-gray-400">/</span>
+                <span className="text-sm text-gray-500">{totalPages}</span>
+              </div>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => {
+                  setCurrentPage(Math.min(totalPages - 1, currentPage + 1))
+                  window.scrollTo({ top: 0, behavior: 'smooth' })
+                }}
+                disabled={currentPage === totalPages - 1}
+                className="rounded-full w-12 h-12 border-gray-200 hover:bg-gray-50 hover:text-red-600"
+              >
+                <ChevronRight className="h-5 w-5" />
+              </Button>
+            </div>
+          )}
+        </section>
+
+        {/* --- NEW SECTION: Mobile Entertainment Review Archive --- */}
+        <section className="bg-gray-900 text-white py-20 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-red-900/20 rounded-full blur-[120px] -mr-40 -mt-40 pointer-events-none"></div>
+          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-900/10 rounded-full blur-[100px] -ml-20 -mb-20 pointer-events-none"></div>
+
+          <div className="container mx-auto px-4 relative z-10">
+            <div className="mb-12">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-900/30 text-red-400 border border-red-800/50 text-sm font-bold mb-4">
+                <FileText className="w-4 h-4" />
+                <span>Historical Archives</span>
+              </div>
+              <h2 className="text-3xl md:text-5xl font-black mb-4 tracking-tight">Mobile Entertainment Review</h2>
+              <p className="text-gray-400 text-lg max-w-3xl">
+                Access digitized issues of the "Mobile Entertainment Analyst" (2003), providing a rare window into the early days of the mobile gaming industry.
+              </p>
             </div>
 
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="flex items-center justify-center gap-2 mt-8">
-                <button
-                  onClick={() => setCurrentPage(Math.max(0, currentPage - 1))}
-                  disabled={currentPage === 0}
-                  className="p-2 rounded-lg bg-gray-200 border border-gray-300 text-gray-900 hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
-                  <ChevronLeft className="h-5 w-5" />
-                </button>
-
-                <span className="text-sm text-gray-600 font-medium px-2">
-                  Page {currentPage + 1} of {totalPages}
-                </span>
-
-                <button
-                  onClick={() => setCurrentPage(Math.min(totalPages - 1, currentPage + 1))}
-                  disabled={currentPage === totalPages - 1}
-                  className="p-2 rounded-lg bg-gray-200 border border-gray-300 text-gray-900 hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
-                  <ChevronRight className="h-5 w-5" />
-                </button>
-              </div>
-            )}
+            {/* 4-Column Grid for PDFs */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {mobileEntertainmentReviews.map((item) => (
+                <div key={item.id} className="group bg-gray-800/50 rounded-xl border border-gray-700/50 hover:border-red-500/50 hover:bg-gray-800 transition-all duration-300 overflow-hidden flex flex-col h-full">
+                  {/* Thumbnail / Header */}
+                  {/* <div className="h-32 bg-gradient-to-br from-gray-700 to-gray-800 relative overflow-hidden p-6 flex items-center justify-center">
+                    <FileText className="w-12 h-12 text-gray-500 group-hover:text-red-400 transition-colors" />
+                    <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
+                  </div> */}
+                  
+                  <div className="p-5 flex flex-col flex-grow">
+                    <div className="text-xs font-bold text-red-400 mb-2 uppercase tracking-wide">
+                      {item.date}
+                    </div>
+                    <h3 className="font-bold text-white text-lg leading-tight mb-3 line-clamp-2 group-hover:text-red-400 transition-colors">
+                      {item.title}
+                    </h3>
+                    <p className="text-sm text-gray-400 leading-relaxed mb-4 line-clamp-3 flex-grow">
+                      {item.description}
+                    </p>
+                    
+                    {/* View Button Triggers Modal */}
+                    <Button 
+                      onClick={() => setViewingPdf(item.pdfUrl)}
+                      variant="outline" 
+                      className="w-full border-gray-600 text-red-600 hover:bg-white hover:text-gray-900 hover:border-white transition-all mt-auto group/btn"
+                    >
+                      <Eye className="w-4 h-4 mr-2 group-hover/btn:scale-110 transition-transform" /> View Archive
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 
-        <Footer />
-      </div>
+      </main>
+
+      <Footer />
+      <DonationButton />
+
+      {/* PDF Viewer Modal */}
+      <Dialog open={!!viewingPdf} onOpenChange={(open) => !open && setViewingPdf(null)}>
+        <DialogContent className="w-[90vw] max-w-[90vw] h-[90vh] mt-10 p-0 bg-gray-950 border-gray-800 flex flex-col overflow-hidden sm:max-w-[95vw]">
+          <DialogHeader className="px-6 py-4 border-b border-gray-800 flex-shrink-0 flex flex-row items-center justify-between bg-gray-900">
+            <DialogTitle className="text-white text-lg font-bold">Document Viewer</DialogTitle>
+            <DialogClose className="text-gray-400 hover:text-white transition-colors" />
+          </DialogHeader>
+          
+          <div className="flex-1 w-full h-full bg-gray-900 relative">
+            {viewingPdf ? (
+              <iframe 
+                src={`${viewingPdf}#view=FitH`} 
+                className="w-full h-full border-none" 
+                title="PDF Viewer"
+                allowFullScreen
+              />
+            ) : (
+              <div className="flex items-center justify-center h-full text-gray-500">
+                Loading document...
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
     </div>
   )
 }

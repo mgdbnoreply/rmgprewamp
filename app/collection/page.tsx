@@ -6,7 +6,7 @@ import Footer from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import { DonationButton } from "@/components/donation-button"
-import { ChevronLeft, ChevronRight, Search } from "lucide-react"
+import { ChevronLeft, ChevronRight, Search, SlidersHorizontal, X, Smartphone, Gamepad, Monitor, ArrowRight } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { GameAPI } from "@/services/api"
 import type { CollectionData } from "@/lib/types"
@@ -18,21 +18,22 @@ import {
   PaginationEllipsis,
 } from "@/components/ui/pagination"
 import { cn } from "@/lib/utils"
+import { Badge } from "@/components/ui/badge"
 
 // Filter tabs
 const filters = [
-  { id: "all", label: "All Devices" },
-  { id: "console", label: "Consoles" },
-  { id: "proprietary", label: "Proprietary" },
-  { id: "phone", label: "Phones" },
+  { id: "all", label: "All Devices", icon: Gamepad },
+  { id: "console", label: "Consoles", icon: Monitor },
+  { id: "proprietary", label: "Proprietary", icon: Gamepad },
+  { id: "phone", label: "Phones", icon: Smartphone },
 ]
 
 // Badge color helper
 const badgeColorClasses: { [key: string]: string } = {
-  phone: "bg-green-800/50 text-green-200 border border-green-500/50",
-  game: "bg-blue-800/50 text-blue-200 border border-blue-500/50",
-  console: "bg-red-800/50 text-red-200 border border-red-500/50",
-  proprietary: "bg-purple-800/50 text-purple-200 border border-purple-500/50",
+  phone: "bg-green-100 text-green-700 border-green-200",
+  game: "bg-blue-100 text-blue-700 border-blue-200",
+  console: "bg-red-100 text-red-700 border-red-200",
+  proprietary: "bg-purple-100 text-purple-700 border-purple-200",
 }
 
 export default function CollectionPage() {
@@ -81,6 +82,13 @@ export default function CollectionPage() {
 
   // --- Pagination Logic ---
   const totalPages = Math.ceil(filteredItems.length / itemsPerPage)
+  
+  useEffect(() => {
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(1)
+    }
+  }, [filteredItems.length, totalPages, currentPage])
+
   const paginatedItems = filteredItems.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
@@ -141,117 +149,148 @@ export default function CollectionPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white text-gray-900">
+    <div className="min-h-screen bg-neutral-50 text-gray-900 font-sans">
       <Header />
 
-      <main className="relative z-10">
-        {/* --- Full Width Hero Section --- */}
-        <section className="relative w-full mt-16 py-24 md:py-32 overflow-hidden">
-          {/* Background Image & Overlay */}
+      <main className="relative z-10 pb-0">
+        
+        {/* --- Hero Section (New Design) --- */}
+        <section className="relative w-full mt-20 py-24 overflow-hidden bg-black">
           <div className="absolute inset-0 z-0">
             <Image
-              src="/page/publications.jpg"
+              src="/page/collection.jpg"
               alt="Collection Background"
               fill
-              className="object-cover  opacity-100"
+              className="object-cover opacity-50"
               priority
             />
-            {/* Changed white gradient to black gradient */}
-            <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/80"></div>
+            {/* Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent"></div>
           </div>
 
-          {/* Content Container (Constrained width) */}
           <div className="container relative z-10 mx-auto px-4">
-            <div className="max-w-8xl mx-auto text-center">
-              {/* Changed inner container background to white for contrast */}
-              <div className="bg-white/10 backdrop-blur-md rounded-3xl p-8 md:p-12 border border-white/50 shadow-xl">
-                <div className="relative inline-flex items-center justify-center gap-5 group mb-8 p-6 bg-white/80 backdrop-blur-xl rounded-full border border-white/60 shadow-2xl">
-                  <span className="text-4xl md:text-6xl font-black tracking-tight bg-gradient-to-r from-red-600 to-black bg-clip-text text-transparent">
-                    COLLECTION
-                  </span>
-                  <div className="relative w-8 h-8 flex-shrink-0 hidden sm:block">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-red-500 to-red-700 absolute left- top-1/2 -translate-y-1/2 z-0"></div>
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-300 to-gray-500 absolute left-2.5 top-1/2 -translate-y-1/2 z-10"></div>
-                  </div>
-                  <span className="text-4xl md:text-6xl font-black tracking-tight bg-gradient-to-r from-red-600 to-black bg-clip-text text-transparent">
-                    & EXPERIENCE
-                  </span>
-                </div>
-
-                <p className="text-lg md:text-xl text-white font-semibold max-w-3xl mx-auto leading-relaxed">
-                  Explore our comprehensive collection of retro mobile gaming devices from 1975 to 2008, including
-                  handheld consoles, proprietary systems, and mobile phones that shaped the history of mobile gaming.
-                </p>
-              </div>
+            <div className="max-w-7xl mx-auto text-center">
+              <Badge className="mb-6 bg-red-600 hover:bg-red-700 text-white px-4 py-1.5 text-sm uppercase tracking-widest border-none">
+                Hardware Archive
+              </Badge>
+              <h1 className="text-5xl md:text-7xl font-black text-white mb-6 tracking-tight leading-tight">
+                Device & &nbsp;
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500">
+                  Console Collection
+                </span>
+              </h1>
+              <p className="text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
+                Explore our comprehensive collection of retro mobile gaming devices from 1975 to 2008, including handheld consoles, proprietary systems, and mobile phones.
+              </p>
             </div>
           </div>
         </section>
 
-        {/* Filter Tabs + Search */}
-        <section className="relative py-8 md:py-12 px-4 md:px-8 lg:px-16 bg-gray-50/50">
-          <div className="max-w-7xl mx-auto p-6 bg-white backdrop-blur-lg rounded-3xl border border-gray-200/50 shadow-xl">
-            <div className="flex flex-col md:flex-row gap-6 items-center justify-between mb-4">
-              <div className="relative flex-1 w-full md:w-auto">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 h-5 w-5" />
-                <Input
-                  type="text"
-                  placeholder="Search collection..."
-                  value={searchQuery}
-                  onChange={(e) => {
-                    setSearchQuery(e.target.value)
-                    setCurrentPage(1)
-                  }}
-                  className="pl-12 pr-4 py-6 h-16 bg-gray-50 border-gray-200 text-lg text-gray-900 placeholder:text-gray-500 rounded-xl focus:border-red-500 focus:ring-red-500"
-                />
-              </div>
-              <div className="flex flex-wrap justify-center gap-3">
-                {filters.map((filter) => (
-                  <Button
-                    key={filter.id}
-                    onClick={() => {
-                      setActiveFilter(filter.id)
+        {/* --- Filter & Search Section --- */}
+        <section className="container mx-auto px-4 -mt-16 relative z-20 mb-12">
+          <div className="max-w-7xl mx-auto">
+            <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 md:p-8">
+              
+              <div className="flex flex-col lg:flex-row gap-6 items-center">
+                {/* Search */}
+                <div className="relative flex-1 w-full">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <Input
+                    type="text"
+                    placeholder="Search collection..."
+                    value={searchQuery}
+                    onChange={(e) => {
+                      setSearchQuery(e.target.value)
                       setCurrentPage(1)
                     }}
-                    className={`px-6 py-5 text-base font-bold rounded-xl transition-all shadow-md hover:shadow-lg ${
-                      activeFilter === filter.id
-                        ? "bg-red-600 text-white"
-                        : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-200"
-                    }`}
+                    className="pl-12 h-14 bg-gray-50 border-gray-200 text-gray-900 rounded-xl focus:border-red-500 focus:ring-red-500/20 text-lg"
+                  />
+                </div>
+
+                {/* Filter Tabs */}
+                <div className="flex flex-wrap gap-2 w-full lg:w-auto justify-center">
+                  {filters.map((filter) => {
+                    const Icon = filter.icon
+                    return (
+                      <Button
+                        key={filter.id}
+                        onClick={() => {
+                          setActiveFilter(filter.id)
+                          setCurrentPage(1)
+                        }}
+                        variant={activeFilter === filter.id ? "default" : "outline"}
+                        className={`h-12 px-6 rounded-xl font-semibold transition-all flex items-center gap-2 ${
+                          activeFilter === filter.id
+                            ? "bg-gray-900 text-white hover:bg-black border-transparent"
+                            : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:text-gray-900 hover:border-gray-300"
+                        }`}
+                      >
+                        <Icon className="w-4 h-4" />
+                        {filter.label}
+                      </Button>
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* Active Filter Summary */}
+              <div className="mt-6 flex items-center justify-between border-t border-gray-100 pt-4">
+                <p className="text-gray-500 text-sm font-medium">
+                  {loading ? "Loading items..." : `Showing ${filteredItems.length} devices`}
+                </p>
+                {(activeFilter !== "all" || searchQuery) && (
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => { setActiveFilter("all"); setSearchQuery(""); }}
+                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
                   >
-                    {filter.label}
+                    Clear Filters <X className="ml-1 h-3 w-3" />
                   </Button>
-                ))}
+                )}
               </div>
             </div>
           </div>
         </section>
 
-        {/* Collection Grid */}
-        <section className="relative py-8 md:py-12 px-4 md:px-8 lg:px-16 bg-white">
+        {/* --- Collection Grid --- */}
+        <section className="container mx-auto px-4 pb-24">
           <div className="max-w-7xl mx-auto">
             {loading ? (
-              <div className="text-center py-20">
-                <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-red-600 border-t-transparent"></div>
-                <p className="mt-4 text-gray-600 text-lg">Loading collection...</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {[...Array(6)].map((_, i) => (
+                  <div key={i} className="bg-white rounded-2xl h-[400px] animate-pulse border border-gray-100 shadow-sm">
+                    <div className="h-64 bg-gray-100 rounded-t-2xl"></div>
+                    <div className="p-6 space-y-3">
+                      <div className="h-6 bg-gray-100 rounded w-3/4"></div>
+                      <div className="h-4 bg-gray-100 rounded w-1/2"></div>
+                    </div>
+                  </div>
+                ))}
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {paginatedItems.length === 0 ? (
-                  <div className="md:col-span-3 text-center py-20 bg-gray-50 rounded-2xl border border-dashed border-gray-300">
-                    <p className="text-gray-500 text-lg">No items found. Try adjusting your search or filters.</p>
+                  <div className="col-span-full py-20 text-center bg-white rounded-3xl border border-gray-100 shadow-sm">
+                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Search className="w-8 h-8 text-gray-400" />
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">No items found</h3>
+                    <p className="text-gray-500">Try adjusting your filters or search terms.</p>
                   </div>
                 ) : (
                   paginatedItems.map((item, index) => (
                     <div
                       key={item.id || index}
-                      className="group relative bg-white rounded-2xl shadow-lg hover:shadow-red-500/20 transition-all duration-300 flex flex-col overflow-hidden border border-gray-100 hover:border-red-200 hover:-translate-y-1"
+                      className="group relative bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col overflow-hidden border border-gray-100 hover:border-red-100 transform hover:-translate-y-1"
                     >
-                      <div className="relative h-64 w-full bg-gray-50 p-6 flex items-center justify-center">
+                      {/* Image Area */}
+                      <div className="relative h-72 w-full bg-gray-50 p-8 flex items-center justify-center group-hover:bg-white transition-colors">
                         <Image
                           src={getImage(item.image)}
                           alt={item.name || "Collection item"}
                           fill
-                          className="object-contain p-4 group-hover:scale-105 transition-transform duration-500"
+                          className="object-contain p-4 group-hover:scale-110 transition-transform duration-500 drop-shadow-sm"
                           onError={(e) => {
                             ;(e.target as HTMLImageElement).src = "/placeholder.svg"
                           }}
@@ -262,25 +301,37 @@ export default function CollectionPage() {
                           </div>
                         )}
                       </div>
-                      <div className="p-6 flex flex-col flex-grow">
+
+                      {/* Content Area */}
+                      <div className="p-6 flex flex-col flex-grow border-t border-gray-50">
                         <div className="flex items-center gap-2 mb-3">
                           {item.category && (
-                            <span
-                              className={cn(
-                                "px-3 py-1 rounded-full font-semibold text-xs backdrop-blur-sm",
-                                badgeColorClasses[item.category.toLowerCase()] ||
-                                  "bg-gray-100 text-gray-600 border border-gray-200"
-                              )}
-                            >
+                            <Badge variant="outline" className={cn(
+                              "border-0 font-bold px-2.5 py-0.5",
+                              badgeColorClasses[item.category.toLowerCase()] || "bg-gray-100 text-gray-600"
+                            )}>
                               {item.category.charAt(0).toUpperCase() + item.category.slice(1)}
+                            </Badge>
+                          )}
+                          {item.maker && (
+                            <span className="text-xs font-bold text-gray-400 uppercase tracking-wide">
+                              {item.maker}
                             </span>
                           )}
-                          {item.maker && <span className="text-sm font-semibold text-red-600">{item.maker}</span>}
                         </div>
-                        <h3 className="text-xl font-bold mb-2 text-gray-900 line-clamp-1">{item.name}</h3>
-                        <p className="text-gray-500 text-sm leading-relaxed flex-grow line-clamp-3">
+                        
+                        <h3 className="text-xl font-bold mb-2 text-gray-900 line-clamp-1 group-hover:text-red-600 transition-colors">
+                          {item.name}
+                        </h3>
+                        <p className="text-gray-500 text-sm leading-relaxed flex-grow line-clamp-3 mb-4">
                           {item.description}
                         </p>
+                        
+                        <div className="pt-4 border-t border-gray-100 mt-auto">
+                           <span className="text-red-600 text-sm font-bold flex items-center gap-1 group-hover:gap-2 transition-all">
+                             View Details <ArrowRight className="w-4 h-4" />
+                           </span>
+                        </div>
                       </div>
                     </div>
                   ))
@@ -298,46 +349,48 @@ export default function CollectionPage() {
                         onClick={goToPreviousPage}
                         disabled={currentPage === 1}
                         variant="ghost"
-                        className="hover:bg-gray-100 text-gray-700"
+                        className="hover:bg-gray-100 text-gray-600"
                       >
-                        <ChevronLeft className="h-4 w-4" />
-                        <span className="ml-2">Previous</span>
+                        <ChevronLeft className="h-4 w-4 mr-2" />
+                        Previous
                       </Button>
                     </PaginationItem>
 
-                    {getPageNumbers().map((page, index) => (
-                      <PaginationItem key={index}>
-                        {page === "..." ? (
-                          <PaginationEllipsis />
-                        ) : (
-                          <PaginationLink
-                            href="#"
-                            onClick={(e) => {
-                              e.preventDefault()
-                              handlePageChange(page as number)
-                            }}
-                            isActive={currentPage === page}
-                            className={`rounded-lg ${
-                              currentPage === page
-                                ? "bg-red-600 text-white hover:bg-red-700 hover:text-white"
-                                : "hover:bg-gray-100 text-gray-700"
-                            }`}
-                          >
-                            {page}
-                          </PaginationLink>
-                        )}
-                      </PaginationItem>
-                    ))}
+                    <div className="hidden md:flex items-center gap-1">
+                      {getPageNumbers().map((page, index) => (
+                        <PaginationItem key={index}>
+                          {page === "..." ? (
+                            <PaginationEllipsis />
+                          ) : (
+                            <PaginationLink
+                              href="#"
+                              onClick={(e) => {
+                                e.preventDefault()
+                                handlePageChange(page as number)
+                              }}
+                              isActive={currentPage === page}
+                              className={`rounded-lg ${
+                                currentPage === page
+                                  ? "bg-gray-900 text-white hover:bg-black hover:text-white"
+                                  : "hover:bg-gray-100 text-gray-600"
+                              }`}
+                            >
+                              {page}
+                            </PaginationLink>
+                          )}
+                        </PaginationItem>
+                      ))}
+                    </div>
 
                     <PaginationItem>
                       <Button
                         onClick={goToNextPage}
                         disabled={currentPage === totalPages}
                         variant="ghost"
-                        className="hover:bg-gray-100 text-gray-700"
+                        className="hover:bg-gray-100 text-gray-600"
                       >
-                        <span className="mr-2">Next</span>
-                        <ChevronRight className="h-4 w-4" />
+                        Next
+                        <ChevronRight className="h-4 w-4 ml-2" />
                       </Button>
                     </PaginationItem>
                   </PaginationContent>
