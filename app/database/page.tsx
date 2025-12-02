@@ -1,12 +1,12 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import Image from "next/image"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Search, ChevronLeft, ChevronRight, Gamepad2, Filter } from "lucide-react"
+import { Search, SlidersHorizontal, X, ChevronLeft, ChevronRight, Gamepad2, Calendar, HardDrive, Wifi, Filter } from "lucide-react"
 import { GameAPI } from "@/services/api"
 import type { GameData } from "@/lib/types"
 import { GameModal } from "@/components/game-modal"
@@ -18,18 +18,34 @@ import {
   PaginationEllipsis,
 } from "@/components/ui/pagination"
 import { Badge } from "@/components/ui/badge"
+import { Slider } from "@/components/ui/slider"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Label } from "@/components/ui/label"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 export default function DatabasePage() {
   const [searchQuery, setSearchQuery] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState<string>("")
-  const [selectedYear, setSelectedYear] = useState<string>("")
-  const [selectedHardware, setSelectedHardware] = useState<string>("")
+  
+  // Filter States
+  const [yearRange, setYearRange] = useState<[number, number]>([1975, 2008])
+  const [selectedGenres, setSelectedGenres] = useState<string[]>([])
+  const [selectedHardware, setSelectedHardware] = useState<string>("all")
+  const [selectedConnectivity, setSelectedConnectivity] = useState<string>("all")
+  
+  const [isFilterOpen, setIsFilterOpen] = useState(true) // Default open to show new controls
   const [games, setGames] = useState<GameData[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedGame, setSelectedGame] = useState<GameData | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  // --- Pagination State ---
+  // Pagination
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 12
 
@@ -37,9 +53,15 @@ export default function DatabasePage() {
     async function fetchGames() {
       try {
         const response = await GameAPI.getAllGames()
-
         if (Array.isArray(response)) {
           setGames(response)
+          // Initialize year range based on data
+          const years = response.map(g => parseInt(g.Year)).filter(y => !isNaN(y))
+          if (years.length > 0) {
+            const minYear = Math.min(...years)
+            const maxYear = Math.max(...years)
+            setYearRange([minYear, maxYear])
+          }
         }
         setLoading(false)
       } catch (error) {
@@ -47,99 +69,84 @@ export default function DatabasePage() {
         setLoading(false)
       }
     }
-
     fetchGames()
   }, [])
 
-  const categories = Array.from(new Set(games.map((g) => g.Genre?.split(",")[0]).filter(Boolean))).sort()
-  const years = Array.from(new Set(games.map((g) => g.Year).filter(Boolean))).sort().reverse()
-  const hardwareOptions = Array.from(new Set(games.map((g) => g.Hardware?.split(",")[0].trim()).filter(Boolean))).sort()
+  // Derive unique filter options
+  const allGenres = useMemo(() => 
+    Array.from(new Set(games.flatMap(g => g.Genre?.split(",").map(s => s.trim()) || []))).filter(Boolean).sort(),
+    [games]
+  )
 
+  const hardwareOptions = useMemo(() => 
+    Array.from(new Set(games.map(g => g.Hardware?.split(",")[0].trim()).filter(Boolean))).sort(),
+    [games]
+  )
+
+  const connectivityOptions = useMemo(() => 
+    Array.from(new Set(games.map(g => g.Connectivity?.trim()).filter(Boolean))).sort(),
+    [games]
+  )
+
+  const minGameYear = useMemo(() => {
+    const years = games.map(g => parseInt(g.Year)).filter(y => !isNaN(y))
+    return years.length ? Math.min(...years) : 1975
+  }, [games])
+
+  const maxGameYear = useMemo(() => {
+    const years = games.map(g => parseInt(g.Year)).filter(y => !isNaN(y))
+    return years.length ? Math.max(...years) : 2008
+  }, [games])
+
+  // Filtering Logic
   const filteredGames = games.filter((game) => {
+    const searchLower = searchQuery.toLowerCase()
     const matchesSearch =
-      game.Title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      game.Genre.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      game.Hardware.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      game.Developers.toLowerCase().includes(searchQuery.toLowerCase())
+      game.Title.toLowerCase().includes(searchLower) ||
+      game.Developers.toLowerCase().includes(searchLower)
     
-    const matchesCategory = !selectedCategory || game.Genre.includes(selectedCategory)
-    const matchesYear = !selectedYear || game.Year === selectedYear
-    const matchesHardware = !selectedHardware || game.Hardware.includes(selectedHardware)
+    const gameYear = parseInt(game.Year)
+    const matchesYear = !isNaN(gameYear) ? (gameYear >= yearRange[0] && gameYear <= yearRange[1]) : true
     
-    return matchesSearch && matchesCategory && matchesYear && matchesHardware
+    const matchesGenre = selectedGenres.length === 0 || 
+      selectedGenres.some(genre => game.Genre?.includes(genre))
+
+    const matchesHardware = selectedHardware === "all" || game.Hardware.includes(selectedHardware)
+    
+    const matchesConnectivity = selectedConnectivity === "all" || game.Connectivity?.includes(selectedConnectivity)
+    
+    return matchesSearch && matchesYear && matchesGenre && matchesHardware && matchesConnectivity
   })
 
+  const activeFiltersCount = (selectedGenres.length > 0 ? 1 : 0) + 
+                             (selectedHardware !== "all" ? 1 : 0) + 
+                             (selectedConnectivity !== "all" ? 1 : 0) +
+                             (yearRange[0] !== minGameYear || yearRange[1] !== maxGameYear ? 1 : 0)
+
   const resetFilters = () => {
-    setSelectedCategory("")
-    setSelectedYear("")
-    setSelectedHardware("")
+    setYearRange([minGameYear, maxGameYear])
+    setSelectedGenres([])
+    setSelectedHardware("all")
+    setSelectedConnectivity("all")
     setSearchQuery("")
     setCurrentPage(1)
   }
 
-  // --- Pagination Logic ---
+  // Pagination Logic
   const totalPages = Math.ceil(filteredGames.length / itemsPerPage)
-  
-  useEffect(() => {
-    if (currentPage > totalPages && totalPages > 0) {
-      setCurrentPage(1)
-    }
-  }, [filteredGames.length, totalPages, currentPage])
-
   const paginatedGames = filteredGames.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   )
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page)
-    window.scrollTo({ top: 0, behavior: "smooth" })
+  const handleGenreChange = (genre: string, checked: boolean) => {
+    setSelectedGenres(prev => 
+      checked ? [...prev, genre] : prev.filter(g => g !== genre)
+    )
+    setCurrentPage(1)
   }
 
-  const goToPreviousPage = () => {
-    setCurrentPage((prev) => Math.max(prev - 1, 1))
-    window.scrollTo({ top: 0, behavior: "smooth" })
-  }
-
-  const goToNextPage = () => {
-    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-    window.scrollTo({ top: 0, behavior: "smooth" })
-  }
-
-  const getPageNumbers = () => {
-    const pages = []
-    const maxPagesToShow = 5
-    const half = Math.floor(maxPagesToShow / 2)
-
-    if (totalPages <= maxPagesToShow) {
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push(i)
-      }
-    } else {
-      let start = Math.max(currentPage - half, 1)
-      let end = Math.min(start + maxPagesToShow - 1, totalPages)
-
-      if (end - start < maxPagesToShow - 1) {
-        start = Math.max(end - maxPagesToShow + 1, 1)
-      }
-      
-      if (start > 1) {
-        pages.push(1)
-        if (start > 2) pages.push("...")
-      }
-
-      for (let i = start; i <= end; i++) {
-        pages.push(i)
-      }
-
-      if (end < totalPages) {
-        if (end < totalPages - 1) pages.push("...")
-        pages.push(totalPages)
-      }
-    }
-    return pages
-  }
-
+  // Helper to get first image
   const getFirstImage = (pictures: string | undefined) => {
     if (!pictures) return "/placeholder.svg"
     const imageUrls = pictures.split(",").map((url) => url.trim())
@@ -182,91 +189,165 @@ export default function DatabasePage() {
                 </span>
               </h1>
               <p className="text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
-                Dive into our comprehensive collection of retro mobile gaming history, featuring thousands of games, technical specifications, and historical context.
+                Dive into our comprehensive collection of retro mobile gaming history. Use the advanced filters below to find games by year, genre, platform, and more.
               </p>
             </div>
           </div>
         </section>
 
-        {/* --- Filter Section (Updated Style) --- */}
+        {/* --- Advanced Filter Section --- */}
         <section className="container mx-auto px-4 -mt-16 relative z-20 mb-12">
           <div className="max-w-7xl mx-auto">
-            <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-6 md:p-8">
-              <div className="flex flex-col md:flex-row gap-6 items-center">
-                {/* Search */}
-                <div className="relative flex-1 w-full">
+            <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 md:p-8">
+              
+              {/* Top Bar: Search & Toggle */}
+              <div className="flex flex-col md:flex-row gap-4 items-center justify-between mb-8">
+                 <div className="relative w-full md:max-w-lg">
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                   <Input
                     type="text"
-                    placeholder="Search games by title, genre, developer..."
+                    placeholder="Search by title or developer..."
                     value={searchQuery}
                     onChange={(e) => {
                       setSearchQuery(e.target.value)
                       setCurrentPage(1)
                     }}
-                    className="pl-12 h-14 bg-gray-50 border-gray-200 text-gray-900 rounded-xl focus:border-red-500 focus:ring-red-500/20 text-lg"
+                    className="pl-12 h-12 bg-gray-50 border-gray-200 text-gray-900 rounded-xl focus:border-red-500 focus:ring-red-500/20 text-base"
                   />
                 </div>
-
-                {/* Filter Controls */}
-                <div className="flex flex-wrap gap-3 w-full md:w-auto">
-                  {/* Genre Filter */}
-                  <div className="relative">
-                     <Filter className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 pointer-events-none" />
-                     <select
-                      value={selectedCategory}
-                      onChange={(e) => {
-                        setSelectedCategory(e.target.value)
-                        setCurrentPage(1)
-                      }}
-                      className="h-14 pl-10 pr-8 bg-white border border-gray-200 text-gray-700 rounded-xl focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 cursor-pointer hover:bg-gray-50 transition-colors appearance-none min-w-[160px]"
-                    >
-                      <option value="">All Genres</option>
-                      {categories.map(cat => (
-                        <option key={cat} value={cat}>{cat}</option>
-                      ))}
-                    </select>
-                  </div>
-
-                  {/* Year Filter */}
-                  <select
-                    value={selectedYear}
-                    onChange={(e) => {
-                      setSelectedYear(e.target.value)
-                      setCurrentPage(1)
-                    }}
-                    className="h-14 px-4 bg-white border border-gray-200 text-gray-700 rounded-xl focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 cursor-pointer hover:bg-gray-50 transition-colors"
+                
+                <div className="flex items-center gap-3 w-full md:w-auto">
+                  <Button
+                    onClick={() => setIsFilterOpen(!isFilterOpen)}
+                    variant={isFilterOpen ? "secondary" : "outline"}
+                    className="h-12 px-6 rounded-xl font-semibold border-gray-200"
                   >
-                    <option value="">All Years</option>
-                    {years.map(year => (
-                      <option key={year} value={year}>{year}</option>
-                    ))}
-                  </select>
-
-                  {/* Hardware Filter */}
-                  <select
-                    value={selectedHardware}
-                    onChange={(e) => {
-                      setSelectedHardware(e.target.value)
-                      setCurrentPage(1)
-                    }}
-                    className="h-14 px-4 bg-white border border-gray-200 text-gray-700 rounded-xl focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 cursor-pointer hover:bg-gray-50 transition-colors max-w-[160px]"
-                  >
-                    <option value="">All Hardware</option>
-                    {hardwareOptions.map(hw => (
-                      <option key={hw} value={hw}>{hw}</option>
-                    ))}
-                  </select>
-
-                  <Button 
-                    onClick={resetFilters}
-                    variant="outline"
-                    className="h-14 px-6 border-red-100 text-red-600 hover:bg-red-50 hover:text-red-700 rounded-xl font-semibold"
-                  >
-                    Reset
+                    <SlidersHorizontal className="h-4 w-4 mr-2" />
+                    {isFilterOpen ? "Hide Filters" : "Show Filters"}
+                    {activeFiltersCount > 0 && (
+                      <Badge className="ml-2 bg-red-600 text-white h-5 w-5 p-0 flex items-center justify-center rounded-full">
+                        {activeFiltersCount}
+                      </Badge>
+                    )}
                   </Button>
+                  {activeFiltersCount > 0 && (
+                     <Button onClick={resetFilters} variant="ghost" className="h-12 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-xl">
+                       Reset
+                     </Button>
+                  )}
                 </div>
               </div>
+
+              {/* Expanded Filter Controls */}
+              {isFilterOpen && (
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pt-6 border-t border-gray-100 animate-in fade-in slide-in-from-top-2">
+                  
+                  {/* Left Column: Genre Checkboxes */}
+                  <div className="lg:col-span-3 space-y-4">
+                    <div className="flex items-center gap-2 text-gray-900 font-bold">
+                      <Gamepad2 className="w-4 h-4 text-red-500" /> Genres
+                    </div>
+                    <ScrollArea className="h-[280px] w-full rounded-xl border border-gray-100 bg-gray-50 p-4">
+                      <div className="space-y-3">
+                        {allGenres.map((genre) => (
+                          <div key={genre} className="flex items-center space-x-2">
+                            <Checkbox 
+                              id={`genre-${genre}`} 
+                              checked={selectedGenres.includes(genre)}
+                              onCheckedChange={(checked) => handleGenreChange(genre, checked as boolean)}
+                              className="data-[state=checked]:bg-red-600 data-[state=checked]:border-red-600"
+                            />
+                            <label
+                              htmlFor={`genre-${genre}`}
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer text-gray-700 hover:text-gray-900"
+                            >
+                              {genre}
+                            </label>
+                          </div>
+                        ))}
+                      </div>
+                    </ScrollArea>
+                  </div>
+
+                  {/* Middle Column: Year Slider & Connectivity */}
+                  <div className="lg:col-span-5 space-y-8 px-0 lg:px-4">
+                    {/* Year Slider */}
+                    <div className="space-y-4 bg-gray-50 p-6 rounded-xl border border-gray-100">
+                      <div className="flex items-center justify-between">
+                         <div className="flex items-center gap-2 text-gray-900 font-bold">
+                            <Calendar className="w-4 h-4 text-red-500" /> Release Year
+                         </div>
+                         <span className="text-sm font-mono text-red-600 font-bold bg-white px-2 py-1 rounded border border-red-100">
+                           {yearRange[0]} - {yearRange[1]}
+                         </span>
+                      </div>
+                      <Slider
+                        defaultValue={[minGameYear, maxGameYear]}
+                        value={[yearRange[0], yearRange[1]]}
+                        min={minGameYear}
+                        max={maxGameYear}
+                        step={1}
+                        minStepsBetweenThumbs={1}
+                        onValueChange={(value) => {
+                          setYearRange(value as [number, number])
+                          setCurrentPage(1)
+                        }}
+                        className="py-4"
+                      />
+                      <div className="flex justify-between text-xs text-gray-400">
+                        <span>{minGameYear}</span>
+                        <span>{maxGameYear}</span>
+                      </div>
+                    </div>
+
+                     {/* Connectivity Select */}
+                     <div className="space-y-2">
+                       <label className="text-sm font-bold text-gray-900 flex items-center gap-2">
+                          <Wifi className="w-4 h-4 text-red-500" /> Connectivity
+                       </label>
+                       <Select value={selectedConnectivity} onValueChange={(val) => {setSelectedConnectivity(val); setCurrentPage(1)}}>
+                        <SelectTrigger className="w-full h-12 bg-white border-gray-200 rounded-xl">
+                          <SelectValue placeholder="Select Connectivity" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All Connectivity Types</SelectItem>
+                          {connectivityOptions.map((conn) => (
+                            <SelectItem key={conn} value={conn}>{conn}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  {/* Right Column: Hardware */}
+                  <div className="lg:col-span-4 space-y-4">
+                    <div className="space-y-2">
+                       <label className="text-sm font-bold text-gray-900 flex items-center gap-2">
+                          <HardDrive className="w-4 h-4 text-red-500" /> Platform / Hardware
+                       </label>
+                       <Select value={selectedHardware} onValueChange={(val) => {setSelectedHardware(val); setCurrentPage(1)}}>
+                        <SelectTrigger className="w-full h-12 bg-white border-gray-200 rounded-xl">
+                          <SelectValue placeholder="Select Hardware" />
+                        </SelectTrigger>
+                        <SelectContent className="max-h-[300px]">
+                          <SelectItem value="all">All Platforms</SelectItem>
+                          {hardwareOptions.map((hw) => (
+                            <SelectItem key={hw} value={hw}>{hw}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Results Summary Box */}
+                    <div className="bg-red-50 rounded-xl p-6 border border-red-100 mt-6 text-center">
+                      <p className="text-red-900 font-medium mb-1">Found</p>
+                      <p className="text-4xl font-black text-red-600">{filteredGames.length}</p>
+                      <p className="text-red-800/70 text-sm mt-1">Games matching criteria</p>
+                    </div>
+                  </div>
+
+                </div>
+              )}
             </div>
           </div>
         </section>
@@ -355,7 +436,7 @@ export default function DatabasePage() {
                   <PaginationContent>
                     <PaginationItem>
                       <Button
-                        onClick={goToPreviousPage}
+                        onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                         disabled={currentPage === 1}
                         variant="ghost"
                         className="hover:bg-red-50 text-gray-600 hover:text-red-600"
@@ -364,33 +445,15 @@ export default function DatabasePage() {
                       </Button>
                     </PaginationItem>
                     
-                    {getPageNumbers().map((page, index) => (
-                      <PaginationItem key={index}>
-                        {page === "..." ? (
-                          <PaginationEllipsis />
-                        ) : (
-                          <PaginationLink
-                            href="#"
-                            onClick={(e) => {
-                              e.preventDefault()
-                              handlePageChange(page as number)
-                            }}
-                            isActive={currentPage === page}
-                            className={`rounded-lg w-10 h-10 ${
-                              currentPage === page 
-                                ? 'bg-red-600 text-white hover:bg-red-700 hover:text-white' 
-                                : 'hover:bg-red-50 text-gray-600'
-                            }`}
-                          >
-                            {page}
-                          </PaginationLink>
-                        )}
-                      </PaginationItem>
-                    ))}
+                    <div className="hidden md:flex items-center gap-1">
+                      <span className="text-sm font-medium text-gray-600 px-4">
+                         Page {currentPage} of {totalPages}
+                      </span>
+                    </div>
 
                     <PaginationItem>
                       <Button
-                        onClick={goToNextPage}
+                        onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                         disabled={currentPage === totalPages}
                         variant="ghost"
                         className="hover:bg-red-50 text-gray-600 hover:text-red-600"

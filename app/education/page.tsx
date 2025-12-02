@@ -264,7 +264,7 @@ export default function EducationPage() {
                       </div>
                       <span className="text-red-400 font-bold tracking-widest uppercase text-sm">Educational Resources</span>
                     </div>
-                    <h2 className="text-4xl md:text-6xl font-black mb-6 tracking-tight">Course Materials</h2>
+                    <h2 className="text-4xl md:text-6xl font-black mb-6 tracking-tight">Class Activities</h2>
                     <p className="text-gray-300 text-lg md:text-xl max-w-3xl leading-relaxed">
                       Access comprehensive assignment details, evaluation rubrics, and research guidelines for contributing to the Retro Mobile Gaming Database.
                     </p>

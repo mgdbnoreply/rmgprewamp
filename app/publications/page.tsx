@@ -71,26 +71,140 @@ function PublicationsContent() {
 
   // --- Local Data for the Mobile Entertainment Archive (Bottom Section) ---
   const mobileEntertainmentReviews = [
-    {
-      id: "mea-2003-03",
-      title: "Mobile Entertainment Analyst: Vol 2, No 3",
-      date: "March 2003",
-      description: "Includes 'Opportunities and Threats in Mobile Entertainment' and 'The Wireless Retail Point of Sale'.",
-      pdfUrl: "/documents/mea2003-03.pdf", 
-    },
-    {
-      id: "mea-2003-05",
-      title: "Mobile Entertainment Analyst: Vol 2, No 5",
-      date: "May 2003",
-      description: "Includes 'Funding Mobile Content', 'Are Mobile Games Disruptive?', and 'The Coming Wave of Mobile RPGs'.",
-      pdfUrl: "/documents/mea2003-05.pdf", 
-    },
-     // Placeholders
-     { id: "mea-6", title: "Mobile Entertainment Analyst: Vol 2, No 9", date: "September 2003", description: "Investment trends in mobile content: A quarterly review.", pdfUrl: "#" },
-     { id: "mea-7", title: "Mobile Entertainment Analyst: Vol 2, No 10", date: "October 2003", description: "Interview with leading mobile game publishers of the early 2000s.", pdfUrl: "#" },
-     { id: "mea-8", title: "Mobile Entertainment Analyst: Vol 2, No 11", date: "November 2003", description: "Year-end summary and predictions for the future of mobile entertainment.", pdfUrl: "#" },
-     { id: "mea-9", title: "Mobile Entertainment Analyst: Vol 3, No 1", date: "January 2004", description: "The rise of 3D mobile gaming: A look ahead.", pdfUrl: "#" },
-  ]
+  {
+    id: "mea-2002-07",
+    title: "Mobile Entertainment Analyst: Vol 1, No 1",
+    date: "July 2002",
+    description: "The inaugural issue covering 'MVNOs: Marketing Goes Mobile' (Virgin Mobile launch), 'Microsoft Plus Mobile Equals What?', and cultural clashes between telecom and game developers[cite: 19209].",
+    pdfUrl: "/documents/mea2002-07.pdf",
+  },
+  {
+    id: "mea-2002-08",
+    title: "Mobile Entertainment Analyst: Vol 1, No 2",
+    date: "August 2002",
+    description: "Features 'Current Content Strategies in Japan' regarding carrier control vs. open internet, and 'Hollywood Sees Money in Mobile' regarding ancillary revenue streams[cite: 12306].",
+    pdfUrl: "/documents/mea2002-08.pdf",
+  },
+  {
+    id: "mea-2002-09",
+    title: "Mobile Entertainment Analyst: Vol 1, No 3",
+    date: "September 2002",
+    description: "Includes 'MMS DOA?' analyzing the future of multimedia messaging, and a review of the 'Sprint Vision Launch'[cite: 14471].",
+    pdfUrl: "/documents/mea2002-09.pdf",
+  },
+  {
+    id: "mea-2002-10",
+    title: "Mobile Entertainment Analyst: Vol 1, No 4",
+    date: "October 2002",
+    description: "Covers 'Mobile Entertainment Pricing Schemes' across the globe and 'Tokyo Tama Part Two', offering insights into Japanese handset differences[cite: 15752].",
+    pdfUrl: "/documents/mea2002-10.pdf",
+  },
+  {
+    id: "mea-2002-11",
+    title: "Mobile Entertainment Analyst: Vol 1, No 5",
+    date: "November 2002",
+    description: "Features 'Television on Mobile Phones: The State of the Art', a review of the Tokyo Game Show, and an update on Mobile Entertainment in India[cite: 17998].",
+    pdfUrl: "/documents/mea2002-11.pdf",
+  },
+  {
+    id: "mea-2002-12",
+    title: "Mobile Entertainment Analyst: Vol 1, No 6",
+    date: "December 2002",
+    description: "Discusses the delicate act of 'Wireless Pornography' for carriers, 'Mobile Games in Korea', and the Mobile Games Interoperability Forum (MGIF)[cite: 21355].",
+    pdfUrl: "/documents/mea2002-12.pdf",
+  },
+  {
+    id: "mea-2003-01",
+    title: "Mobile Entertainment Analyst: Vol 2, No 1",
+    date: "January 2003",
+    description: "Explores 'Mobile Dating Services', the state of 'Mobile Entertainment in Singapore', and a look back at 2002[cite: 16911].",
+    pdfUrl: "/documents/mea2003-01.pdf",
+  },
+  {
+    id: "mea-2003-02",
+    title: "Mobile Entertainment Analyst: Vol 2, No 2",
+    date: "February 2003",
+    description: "Analyzes 'Thoughts on the Fourth Games Platform' (Nokia's N-Gage), GDC '03 Essentials, and mobile marketing at the Super Bowl[cite: 20706].",
+    pdfUrl: "/documents/mea2003-02.pdf",
+  },
+  {
+    id: "mea-2003-03",
+    title: "Mobile Entertainment Analyst: Vol 2, No 3",
+    date: "March 2003",
+    description: "Includes 'Opportunities and Threats in Mobile Entertainment' by the MEF and 'The Wireless Retail Point of Sale: The Final Frontier'[cite: 12996].",
+    pdfUrl: "/documents/mea2003-03.pdf",
+  },
+  {
+    id: "mea-2003-04",
+    title: "Mobile Entertainment Analyst: Vol 2, No 4",
+    date: "April 2003",
+    description: "Features 'Connected Games in a Distracted World', 'Where Are the Wireless Palm Games?', and teen perspectives in 'Dude, Where's My Game?'[cite: 15260].",
+    pdfUrl: "/documents/mea2003-04.pdf",
+  },
+  {
+    id: "mea-2003-05",
+    title: "Mobile Entertainment Analyst: Vol 2, No 5",
+    date: "May 2003",
+    description: "Includes 'Funding Mobile Content', 'Are Mobile Games Disruptive?' (Clay Christensen analysis), and 'The Coming Wave of Mobile RPGs'[cite: 18704].",
+    pdfUrl: "/documents/mea2003-05.pdf",
+  },
+  {
+    id: "mea-2003-06",
+    title: "Mobile Entertainment Analyst: Vol 2, No 6",
+    date: "June 2003",
+    description: "Covers 'China's Mobile Market Potential', 'What's a Mobile Community?', and learning from the Coin-Op arcade model[cite: 17504].",
+    pdfUrl: "/documents/mea2003-06.pdf",
+  },
+  {
+    id: "mea-2003-07",
+    title: "Mobile Entertainment Analyst: Vol 2, No 7",
+    date: "July 2003",
+    description: "Features 'N-Gage Impressions' from the street, 'Sun and Java Revise Their Mobile Games Strategies', and 'A Brief History of Mobile Gaming'[cite: 19804].",
+    pdfUrl: "/documents/mea2003-07.pdf",
+  },
+  {
+    id: "mea-2003-08",
+    title: "Mobile Entertainment Analyst: Vol 2, No 8",
+    date: "August 2003",
+    description: "Includes 'The History of Debacle' (Learning from gaming mistakes like CD-I and 3DO) and 'Wireless Local Number Portability'[cite: 10958].",
+    pdfUrl: "/documents/mea2003-08.pdf",
+  },
+  {
+    id: "mea-2003-09",
+    title: "Mobile Entertainment Analyst: Vol 2, No 9",
+    date: "September 2003",
+    description: "Features 'More Over the Air' regarding device management and 'Get It When?', analyzing Verizon's game demo decree[cite: 14060].",
+    pdfUrl: "/documents/mea2003-09.pdf",
+  },
+  {
+    id: "mea-2003-10",
+    title: "Mobile Entertainment Analyst: Vol 2, No 10",
+    date: "October 2003",
+    description: "Includes the 'CTIA Wireless IT and Entertainment Preview' and 'Advertisers Exploring the Mobile Medium: An Advergaming Brief'[cite: 16454].",
+    pdfUrl: "/documents/mea2003-10.pdf",
+  },
+  {
+    id: "mea-2003-12",
+    title: "Mobile Entertainment Analyst: Vol 2, No 12",
+    date: "December 2003",
+    description: "Features 'Are Smart Mobs the Next Social Revolution?', 'VZW Analyst Day', and 'The Arc of Mobile Multiplayer Game Development'[cite: 20287].",
+    pdfUrl: "/documents/mea2003-12.pdf",
+  },
+  {
+    id: "mea-2004-02",
+    title: "Mobile Entertainment Analyst: Vol 3, No 2",
+    date: "February 2004",
+    description: "Includes 'The Unquiet Mobile' (Music on phones), 'Mobile Fun and Games' by Juniper Research, and an interview with Square Enix Mobile[cite: 13511].",
+    pdfUrl: "/documents/mea2004-02.pdf",
+  },
+  {
+    id: "mea-2004-03",
+    title: "Mobile Entertainment Analyst: Vol 3, No 3",
+    date: "March 2004",
+    description: "Features 'Unleashing the GameBoy: Nintendo's Wireless Future', 'Women and Mobile Content', and a profile of the cell phone gamer[cite: 11497].",
+    pdfUrl: "/documents/mea2004-03.pdf",
+  },
+];
 
   return (
     <>
@@ -325,10 +439,7 @@ function PublicationsContent() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {mobileEntertainmentReviews.map((item) => (
                 <div key={item.id} className="group bg-gray-800/50 rounded-xl border border-gray-700/50 hover:border-red-500/50 hover:bg-gray-800 transition-all duration-300 overflow-hidden flex flex-col h-full">
-                  <div className="h-32 bg-gradient-to-br from-gray-700 to-gray-800 relative overflow-hidden p-6 flex items-center justify-center">
-                    <FileText className="w-12 h-12 text-gray-500 group-hover:text-red-400 transition-colors" />
-                    <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
-                  </div>
+                  
                   
                   <div className="p-5 flex flex-col flex-grow">
                     <div className="text-xs font-bold text-red-400 mb-2 uppercase tracking-wide">
@@ -344,7 +455,7 @@ function PublicationsContent() {
                     <Button 
                       onClick={() => setViewingPdf(item.pdfUrl)}
                       variant="outline" 
-                      className="w-full border-gray-600 text-gray-300 hover:bg-white hover:text-gray-900 hover:border-white transition-all mt-auto group/btn"
+                      className="w-full border-gray-600 text-red-600 hover:bg-white hover:text-gray-900 hover:border-white transition-all mt-auto group/btn"
                     >
                       <Eye className="w-4 h-4 mr-2 group-hover/btn:scale-110 transition-transform" /> View Archive
                     </Button>

@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import Image from "next/image"
 import { DonationButton } from "@/components/donation-button"
-import { ArrowRight, Gamepad2, Archive, History } from "lucide-react"
+import { ArrowRight, Gamepad2, Archive, History, Smartphone } from "lucide-react"
 import { GameAPI } from "@/services/api"
 import type { GameData, CollectionData } from "@/lib/types"
 import {
@@ -40,7 +40,6 @@ export default function ArchivePage() {
         // 1. Fetch Games
         const gamesResponse = await GameAPI.getAllGames()
         if (Array.isArray(gamesResponse)) {
-          // Helper to handle potential DynamoDB format issues if raw data is passed
           const getString = (obj: any): string => {
             if (!obj) return ""
             if (typeof obj === "string") return obj
@@ -57,19 +56,17 @@ export default function ArchivePage() {
             Genre: getString(game.Genre),
             Hardware: getString(game.HardwareFeatures || game.Hardware),
             "# Players": getString(game.Players || game["# Players"]),
-            // Ensure all required fields are present
             City: "", Country: "", URL: "", Description: "", Documentation: "", 
             Articles: "", Purpose: "", "Open Source": "", Location: "", 
             Connectivity: "", Contact: "",
           }))
-          // Sort by year or interest if needed, taking the first 8 for the carousel
-          setGames(mappedGames.slice(0, 8)) 
+          // Slice 6 for the grid (2 rows of 3)
+          setGames(mappedGames.slice(0, 6)) 
         }
 
         // 2. Fetch Collections (Devices)
         const collectionsResponse = await GameAPI.getCollections()
         if (Array.isArray(collectionsResponse)) {
-          // Assuming collections endpoint returns cleaner data structure based on your API route
           setCollections(collectionsResponse.slice(0, 8))
         }
 
@@ -84,7 +81,6 @@ export default function ArchivePage() {
 
   const getFirstImage = (pictures: string | undefined) => {
     if (!pictures) return "/placeholder.svg"
-    // Handle comma-separated strings if present
     const imageUrls = pictures.split(",").map((url) => url.trim())
     return imageUrls[0] || "/placeholder.svg"
   }
@@ -95,10 +91,9 @@ export default function ArchivePage() {
       
       <main className="relative z-10 pb-0">
         
-        {/* --- Hero Section (Education Style) --- */}
-        <section className="relative w-full mt-20 py-24 overflow-hidden bg-black">
+        {/* --- Hero Section --- */}
+        <section className="relative w-full mt-20 py-24 md:py-32 overflow-hidden bg-black">
           <div className="absolute inset-0 z-0">
-            {/* Using the uploaded file name */}
             <Image
               src="/page/archieve.jpg" 
               alt="Archive Background"
@@ -106,7 +101,6 @@ export default function ArchivePage() {
               className="object-cover opacity-40"
               priority
             />
-            {/* Gradient Overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent"></div>
           </div>
 
@@ -116,9 +110,9 @@ export default function ArchivePage() {
                 Digital Repository
               </Badge>
               <h1 className="text-5xl md:text-7xl font-black text-white mb-6 tracking-tight leading-tight">
-                Explore the  &nbsp;
+                Explore the <br/>
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500">
-                   Archive
+                  Archive
                 </span>
               </h1>
               <p className="text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
@@ -136,7 +130,7 @@ export default function ArchivePage() {
                 {/* Image Card */}
                 <div className="relative h-[400px] rounded-2xl overflow-hidden shadow-lg border border-gray-100 group">
                   <Image 
-                    src="/page/archive2.avif" 
+                    src="/retro-gaming-collection.jpg" 
                     alt="Collection of retro games" 
                     fill 
                     className="object-cover transition-transform duration-700 group-hover:scale-105" 
@@ -184,13 +178,13 @@ export default function ArchivePage() {
           </div>
         </section>
 
-        {/* --- Featured Games Carousel --- */}
-        <section className="py-16 md:py-24 px-4 md:px-8 lg:px-16 bg-gray-50/50 border-t border-gray-100">
+        {/* --- Featured Database (Grid Layout) --- */}
+        <section className="py-16 md:py-24 px-4 md:px-8 lg:px-16 bg-gray-50 border-t border-gray-100">
           <div className="max-w-[100rem] mx-auto">
             <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
               <div>
-                <span className="text-red-600 font-bold uppercase tracking-wider text-sm block mb-2">Highlights</span>
-                <h2 className="text-4xl md:text-5xl font-black text-gray-900">Featured Games</h2>
+                <span className="text-red-600 font-bold uppercase tracking-wider text-sm block mb-2">Software Archive</span>
+                <h2 className="text-4xl md:text-5xl font-black text-gray-900">Featured Database</h2>
               </div>
               <Button asChild variant="link" className="text-red-600 hover:text-red-700 font-bold text-lg p-0">
                 <Link href="/database" className="flex items-center gap-2">
@@ -199,67 +193,55 @@ export default function ArchivePage() {
               </Button>
             </div>
 
-            <Carousel opts={{ loop: true, align: "start" }} className="w-full">
-              <CarouselContent className="-ml-6">
+            {/* 6 Cards Grid (3x2) */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                 {loading ? (
                    /* Loading Skeletons */
-                   Array.from({ length: 4 }).map((_, i) => (
-                     <CarouselItem key={i} className="pl-6 md:basis-1/2 lg:basis-1/4">
-                       <div className="bg-gray-200 rounded-2xl h-[350px] animate-pulse"></div>
-                     </CarouselItem>
+                   Array.from({ length: 6 }).map((_, i) => (
+                     <div key={i} className="bg-gray-200 rounded-2xl h-[400px] animate-pulse"></div>
                    ))
                 ) : (
                   games.map((game, index) => (
-                    <CarouselItem key={index} className="pl-6 md:basis-1/2 lg:basis-1/4">
-                      <Link href="/database" className="group block bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden h-full border border-gray-100 hover:border-red-100 flex flex-col">
-                        <div className="relative w-full aspect-[4/3] overflow-hidden bg-gray-100">
-                          <Image
-                            src={getFirstImage(game.Pictures)}
-                            alt={game.Title}
-                            fill
-                            className="object-cover group-hover:scale-110 transition-transform duration-500"
-                            onError={(e) => { (e.target as HTMLImageElement).src = "/placeholder.svg" }}
-                          />
-                          <div className="absolute top-4 right-4">
-                            <span className="bg-black/70 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-bold shadow-sm border border-white/10">
-                              {game.Year}
-                            </span>
-                          </div>
-                          {/* Overlay on hover */}
-                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                            <div className="bg-white/20 backdrop-blur-md p-3 rounded-full border border-white/30">
-                              <Gamepad2 className="w-6 h-6 text-white" />
-                            </div>
-                          </div>
+                    <Link href="/database" key={index} className="group block relative bg-gradient-to-br from-red-600 to-red-900 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl hover:shadow-red-500/30 transition-all duration-300 transform hover:-translate-y-2 border border-red-500/20 h-full flex flex-col">
+                      <div className="relative w-full aspect-[4/3] overflow-hidden bg-black/20">
+                        <Image
+                          src={getFirstImage(game.Pictures)}
+                          alt={game.Title}
+                          fill
+                          className="object-cover transition-transform duration-500 group-hover:scale-110"
+                          onError={(e) => { (e.target as HTMLImageElement).src = "/placeholder.svg" }}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity"></div>
+                        <div className="absolute top-4 right-4">
+                          <span className="bg-black/60 backdrop-blur-md text-white px-3 py-1 rounded-full text-xs font-bold border border-white/10 shadow-sm">
+                            {game.Year}
+                          </span>
                         </div>
-                        <div className="p-6 flex flex-col flex-grow">
-                          <h3 className="font-bold text-xl text-gray-900 line-clamp-1 group-hover:text-red-600 transition-colors mb-1">
-                            {game.Title}
-                          </h3>
-                          <p className="text-gray-500 text-sm line-clamp-1 mb-4">{game.Developers}</p>
-                          <div className="flex items-center gap-2 mt-auto">
-                            <Badge variant="secondary" className="bg-red-50 text-red-600 border-red-100 hover:bg-red-100">
-                              {game.Genre ? game.Genre.split(",")[0] : "Game"}
-                            </Badge>
-                            <Badge variant="outline" className="text-gray-500 border-gray-200">
-                              {game.Hardware ? game.Hardware.split(",")[0] : "Platform"}
-                            </Badge>
-                          </div>
+                      </div>
+                      <div className="p-6 flex flex-col flex-grow">
+                        <h3 className="font-bold text-xl text-white mb-2 line-clamp-1 group-hover:text-red-100 transition-colors">
+                          {game.Title}
+                        </h3>
+                        <p className="text-red-100/80 text-sm mb-4 line-clamp-1">
+                          {game.Developers}
+                        </p>
+                        <div className="flex items-center gap-2 mt-auto">
+                          <Badge variant="secondary" className="bg-black/30 text-white hover:bg-black/40 border-0 backdrop-blur-sm">
+                            {game.Genre ? game.Genre.split(",")[0] : "Game"}
+                          </Badge>
+                          <Badge variant="outline" className="text-red-100 border-red-400/30">
+                            {game.Hardware ? game.Hardware.split(",")[0] : "Platform"}
+                          </Badge>
                         </div>
-                      </Link>
-                    </CarouselItem>
+                      </div>
+                    </Link>
                   ))
                 )}
-              </CarouselContent>
-              <div className="flex justify-end gap-2 mt-8">
-                <CarouselPrevious className="relative translate-y-0 translate-x-0 left-0 hover:bg-red-600 hover:text-white border-gray-300" />
-                <CarouselNext className="relative translate-y-0 translate-x-0 right-0 hover:bg-red-600 hover:text-white border-gray-300" />
-              </div>
-            </Carousel>
+            </div>
           </div>
         </section>
 
-        {/* --- Featured Devices Carousel (Dynamic Data) --- */}
+        {/* --- Featured Collection (Carousel) --- */}
         <section className="py-16 md:py-24 px-4 md:px-8 lg:px-16 bg-white relative">
            {/* Background decoration */}
            <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-50 rounded-full blur-[100px] -ml-20 -mb-20 pointer-events-none"></div>
@@ -268,7 +250,7 @@ export default function ArchivePage() {
             <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
               <div>
                 <span className="text-blue-600 font-bold uppercase tracking-wider text-sm block mb-2">Hardware</span>
-                <h2 className="text-4xl md:text-5xl font-black text-gray-900">Featured Devices</h2>
+                <h2 className="text-4xl md:text-5xl font-black text-gray-900">Featured Collection</h2>
               </div>
               <Button asChild variant="link" className="text-blue-600 hover:text-blue-700 font-bold text-lg p-0">
                 <Link href="/collection" className="flex items-center gap-2">
@@ -313,7 +295,7 @@ export default function ArchivePage() {
                             <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide">{item.maker}</span>
                           </div>
                           <h3 className="text-xl font-bold mb-2 text-gray-900 group-hover:text-blue-600 transition-colors">{item.name}</h3>
-                          <p className="text-gray-500 text-sm leading-relaxed flex-grow line-clamp-3">{item.description}</p>
+                          <p className="text-gray-400 text-sm leading-relaxed flex-grow line-clamp-3">{item.description}</p>
                         </div>
                       </Link>
                     </CarouselItem>
@@ -321,8 +303,8 @@ export default function ArchivePage() {
                 )}
               </CarouselContent>
               <div className="flex justify-end gap-2 mt-8">
-                <CarouselPrevious className="relative translate-y-0 translate-x-0 left-0 hover:bg-black hover:text-white border-gray-300" />
-                <CarouselNext className="relative translate-y-0 translate-x-0 right-0 hover:bg-black hover:text-white border-gray-300" />
+                <CarouselPrevious className="relative translate-y-0 translate-x-0 left-0 bg-transparent text-gray-900 border-gray-300 hover:bg-black hover:text-white" />
+                <CarouselNext className="relative translate-y-0 translate-x-0 right-0 bg-transparent text-gray-900 border-gray-300 hover:bg-black hover:text-white" />
               </div>
             </Carousel>
           </div>

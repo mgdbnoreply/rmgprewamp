@@ -21,6 +21,7 @@ export const publicationsData: Publication[] = [
     thumbnail: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80",
     category: "Articles",
     topic: "Hybrid Spaces",
+    link: "https://www.routledge.com/The-Mobile-Media-Debate-Challenging-Viewpoints-Across-Epistemologies/vonPape-Karnowski/p/book/9781032316314"
   },
   {
     id: 2,
@@ -31,6 +32,7 @@ export const publicationsData: Publication[] = [
     thumbnail: "https://images.unsplash.com/photo-1598391990342-311775e3d374?w=800&q=80",
     category: "Articles",
     topic: "Cultural Studies",
+    link: "https://doi.org/10.1177/14614448211016400"
   },
   {
     id: 3,
@@ -41,6 +43,7 @@ export const publicationsData: Publication[] = [
     thumbnail: "https://images.unsplash.com/photo-1556075798-4825dfaaf498?w=800&q=80",
     category: "Articles",
     topic: "Game Design",
+    link: "https://www.routledge.com/Hybrid-Play-Crossing-Boundaries-in-Game-Design-Players-Identities-and-Play-Spaces/deSouzaeSilva-Glover-Rijkse/p/book/9781032400587"
   },
   {
     id: 4,
@@ -51,6 +54,7 @@ export const publicationsData: Publication[] = [
     thumbnail: "https://images.unsplash.com/photo-1560707303-4e980ce876ad?w=800&q=80",
     category: "Articles",
     topic: "Materiality",
+    link: "https://doi.org/10.1080/1369118X.2021.1909099"
   },
   {
     id: 5,
@@ -61,6 +65,7 @@ export const publicationsData: Publication[] = [
     thumbnail: "https://images.unsplash.com/photo-1632239776255-0a7f24814df2?w=800&q=80",
     category: "Articles",
     topic: "Hybrid Play",
+    link: "https://www.routledge.com/Hybrid-Play-Crossing-Boundaries-in-Game-Design-Players-Identities-and-Play-Spaces/deSouzaeSilva-Glover-Rijkse/p/book/9781032400587"
   },
   {
     id: 6,
@@ -71,6 +76,7 @@ export const publicationsData: Publication[] = [
     thumbnail: "https://images.unsplash.com/photo-1614294148960-9aa740632a87?w=800&q=80",
     category: "Articles",
     topic: "Media Art",
+    link: "https://www.taylorfrancis.com/chapters/edit/10.4324/9780429242816-14/historicizing-hybrid-spaces-mobile-media-art-adriana-de-souza-silva-ragan-glover-rijkse"
   },
   {
     id: 7,
@@ -81,6 +87,7 @@ export const publicationsData: Publication[] = [
     thumbnail: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&q=80",
     category: "Articles",
     topic: "Database",
+    link: "https://doi.org/10.1177/20501579231155534"
   },
   {
     id: 8,
@@ -91,6 +98,7 @@ export const publicationsData: Publication[] = [
     thumbnail: "https://images.unsplash.com/photo-1591541341697-725a59be2f53?w=800&q=80",
     category: "Articles",
     topic: "Preservation",
+    link: "https://doi.org/10.1177/20501579231155533"
   },
   {
     id: 9,
@@ -98,9 +106,10 @@ export const publicationsData: Publication[] = [
     authors: ["de Souza e Silva, A."],
     year: 2008,
     description: "de Souza e Silva, A. (2008). Alien Revolt (2005–2007): A case study of the first location-based mobile game in Brazil. IEEE Technology and Society Magazine, 27(1), 18–28.",
-    thumbnail: "https://images.unsplash.com/photo-1588508065123-287b28e013da?w=800&q=80", 
+    thumbnail: "https://images.unsplash.com/photo-1588508065123-287b28e013da?w=800&q=80",
     category: "Articles",
     topic: "Case Study",
+    link: "https://doi.org/10.1109/MTS.2008.918036"
   },
   {
     id: 10,
@@ -111,6 +120,7 @@ export const publicationsData: Publication[] = [
     thumbnail: "https://images.unsplash.com/photo-1533421821268-87e42c1d70b0?w=800&q=80",
     category: "Articles",
     topic: "Hybrid Reality",
+    link: "https://doi.org/10.1177/1046878108314643"
   },
   {
     id: 11,
@@ -121,6 +131,7 @@ export const publicationsData: Publication[] = [
     thumbnail: "https://images.unsplash.com/photo-1514924013411-cbf25faa35bb?w=800&q=80",
     category: "Articles",
     topic: "Urban Spaces",
+    link: "https://doi.org/10.1177/1046878109333723"
   },
   {
     id: 12,
@@ -131,6 +142,7 @@ export const publicationsData: Publication[] = [
     thumbnail: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&q=80",
     category: "Book Chapter",
     topic: "Urban Spaces",
+    link: "https://www.researchgate.net/publication/328217860_8_Location-based_mobile_games_Interfaces_to_urban_spaces_The_Ludification_of_Digital_Media_Cultures"
   },
   {
     id: 13,
@@ -141,6 +153,7 @@ export const publicationsData: Publication[] = [
     thumbnail: "https://images.unsplash.com/photo-1562577309-2592ab84b1bc?w=800&q=80",
     category: "Conference Paper",
     topic: "Social Networks",
+    link: "https://www.researchgate.net/publication/228383836_Conceptualizing_Locative_Social_Mobile_Networks"
   },
   {
     id: 14,
@@ -151,9 +164,9 @@ export const publicationsData: Publication[] = [
     thumbnail: "https://images.unsplash.com/photo-1560707303-4e980ce876ad?w=800&q=80",
     category: "Journal Article",
     topic: "Materiality",
+    link: "https://www.researchgate.net/project/Exploring-the-material-conditions-of-Pokemon-Go-play-in-Rio-de-Janeiro-and-Nairobi"
   }
-]
-
+];
 // Helper function
 export function getTopicImage(topic: string): string {
   const topicImages: Record<string, string> = {

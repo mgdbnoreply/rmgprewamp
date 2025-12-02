@@ -147,13 +147,7 @@ export default function AssignmentPage() {
               </div>
             </div>
 
-            <div className="flex justify-center pt-8 border-t border-gray-100">
-               <Link href="https://rmgd-official-backend.vercel.app/" target="_blank">
-                  <Button className="bg-red-600 hover:bg-red-700 text-white font-bold px-8 py-6 rounded-full text-lg shadow-lg hover:shadow-xl transition-all">
-                    Start Your Contribution
-                  </Button>
-               </Link>
-            </div>
+            
 
           </div>
         </section>
