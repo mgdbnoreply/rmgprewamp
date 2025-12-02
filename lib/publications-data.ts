@@ -165,6 +165,50 @@ export const publicationsData: Publication[] = [
     category: "Journal Article",
     topic: "Materiality",
     link: "https://www.researchgate.net/project/Exploring-the-material-conditions-of-Pokemon-Go-play-in-Rio-de-Janeiro-and-Nairobi"
+  },
+  {
+    id: 15,
+    title: "Wireless Gaming Review (Archived)",
+    authors: ["WGR Staff"],
+    year: 2005,
+    description: "Archived version of Wireless Gaming Review, an early trade outlet covering mobile games.",
+    thumbnail: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&q=80",
+    category: "Website Archive",
+    topic: "Trade Outlet",
+    link: "https://web.archive.org/web/20050312094143/http://www.wgamer.com/"
+  },
+  {
+    id: 16,
+    title: "A Brief History of Mobile Games: In the beginning, there was Snake",
+    authors: ["Wright, C."],
+    year: 2016, // Year estimated based on typical publication dates for this series
+    description: "Wright, C. (n.d.). A Brief History of Mobile Games: In the beginning, there was Snake. PocketGamer.biz. A short series on mobile history helpful for newcomers.",
+    thumbnail: "https://images.unsplash.com/photo-1556075798-4825dfaaf498?w=800&q=80",
+    category: "Online Article",
+    topic: "History",
+    link: "https://www.pocketgamer.biz/a-brief-history-of-mobile-games-in-the-beginning-there-was-snake/"
+  },
+  {
+    id: 17,
+    title: "Game Developer Magazine (Archives)",
+    authors: ["Various"],
+    year: 2004,
+    description: "Archives of Game Developer Magazine. Issues such as April 2004 contain significant content on early mobile game development.",
+    thumbnail: "https://images.unsplash.com/photo-1593642632823-8f785667771b?w=800&q=80",
+    category: "Magazine Archive",
+    topic: "Game Development",
+    link: "https://archive.org/details/game_developer_magazine"
+  },
+  {
+    id: 18,
+    title: "Levi Buchanan's IGN Articles (Early Mobile Beat)",
+    authors: ["Buchanan, L."],
+    year: 2011,
+    description: "Collection of Levi Buchanan's output at IGN, covering mobile gaming from the early WAP days to the post-iPhone era (approx. until 2011).",
+    thumbnail: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&q=80",
+    category: "Author Archive",
+    topic: "Reviews and History",
+    link: "https://www.ign.com/person/fletch1031"
   }
 ];
 // Helper function

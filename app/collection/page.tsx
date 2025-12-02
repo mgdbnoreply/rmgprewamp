@@ -328,9 +328,7 @@ export default function CollectionPage() {
                         </p>
                         
                         <div className="pt-4 border-t border-gray-100 mt-auto">
-                           <span className="text-red-600 text-sm font-bold flex items-center gap-1 group-hover:gap-2 transition-all">
-                             View Details <ArrowRight className="w-4 h-4" />
-                           </span>
+                           
                         </div>
                       </div>
                     </div>
@@ -402,7 +400,7 @@ export default function CollectionPage() {
       </main>
 
       <Footer />
-      <DonationButton />
+      
     </div>
   )
 }

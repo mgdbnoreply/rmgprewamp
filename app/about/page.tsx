@@ -259,7 +259,6 @@ export default function AboutPage() {
     
   </main>
   <Footer />
-  <DonationButton />
 </div>
   )
 }

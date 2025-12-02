@@ -683,8 +683,8 @@ export default function Page() {
                 asChild 
                 className="bg-white/90 text-red-600 hover:bg-white hover:scale-105 font-bold px-10 py-6 rounded-2xl shadow-lg transition-all group"
               >
-                <Link href="/archive">
-                  View Full Archive
+                <Link href="/database">
+                  View Full Database
                   <ArrowRight className="ml-3 h-5 w-5 transition-transform group-hover:translate-x-2" />
                 </Link>
               </Button>

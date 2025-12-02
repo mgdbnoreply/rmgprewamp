@@ -263,7 +263,7 @@ export default function ArchivePage() {
               <CarouselContent className="-ml-6">
                 {loading ? (
                    /* Loading Skeletons */
-                   Array.from({ length: 4 }).map((_, i) => (
+                   Array.from({ length: 8 }).map((_, i) => (
                      <CarouselItem key={i} className="pl-6 md:basis-1/2 lg:basis-1/4">
                        <div className="bg-gray-100 rounded-2xl h-[350px] animate-pulse"></div>
                      </CarouselItem>

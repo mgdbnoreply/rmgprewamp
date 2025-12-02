@@ -62,7 +62,7 @@ export default function EducationPage() {
       date: "April 1, 2022",
       description:
         "PhD student Alex Custodio shares how mobile games are capable of seamless transfer between playing a game and everyday activities, highlighting the casual nature of mobile play.",
-      youtubeId: "CXxPej4dKZM",
+      youtubeId: "NFjT-J1cXnM",
     },
     {
       id: "shira-chess",
