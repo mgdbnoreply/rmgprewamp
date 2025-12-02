@@ -241,7 +241,7 @@ function PublicationsContent() {
 
         {/* --- Featured Publication --- */}
         {showFeatured && (
-          <section className="container mx-auto px-4 -mt-20 relative z-20 pb-16">
+          <section id="latest" className="container mx-auto px-4 -mt-20 relative z-20 pb-16">
             <div className="bg-white rounded-3xl p-8 md:p-12 shadow-2xl border border-gray-100">
               <div className="grid md:grid-cols-2 gap-12 items-center">
                 <div className="relative h-[300px] md:h-[450px] rounded-2xl overflow-hidden shadow-lg border border-gray-100 group">
@@ -420,7 +420,7 @@ function PublicationsContent() {
         </section>
 
          {/* --- Mobile Entertainment Review Archive (Bottom Section) --- */}
-         <section className="bg-gray-900 text-white py-20 relative overflow-hidden">
+         <section id="latest" className="bg-gray-900 text-white py-20 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-red-900/20 rounded-full blur-[120px] -mr-40 -mt-40 pointer-events-none"></div>
           <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-900/10 rounded-full blur-[100px] -ml-20 -mb-20 pointer-events-none"></div>
 

@@ -238,7 +238,7 @@ export default function Page() {
       icon: Trophy, 
       image: "/deviceofweek.jpg",
       color: "from-yellow-500/20 to-orange-500/20",
-      href: "/devices/featured"
+      href: "/collection/"
     },
     { 
       title: "Latest Publications", 
@@ -247,10 +247,10 @@ export default function Page() {
       icon: Zap, 
       image: "/latestpublic.jpg",
       color: "from-blue-500/20 to-purple-500/20",
-      href: "/publications/latest"
+      href: "/publications#latest"
     },
     { 
-      title: "Preservation Status", 
+      title: "Ongoing Work", 
       description: "Currently digitizing Game Boy Advance classics and preserving source code.", 
       category: "Active", 
       icon: Shield, 
@@ -304,7 +304,7 @@ export default function Page() {
         <Header />
 
         {/* HERO SECTION - Enhanced with better video handling */}
-        <section className="h-screen min-h-[700px] flex items-center justify-center mt-20 p-8 relative z-0 overflow-hidden">
+        <section className="h-screen min-h-[700px] flex items-center justify-center mt-10 p-8 relative z-0 overflow-hidden">
           <div className="absolute inset-0 w-full h-full bg-black">
             <video
               ref={videoRef}
@@ -350,15 +350,15 @@ export default function Page() {
           </div>
 
           {/* Scroll indicator */}
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-            <ChevronDown className="w-8 h-8 text-white/50" />
+          <div className="absolute bottom-15 left-1/2 -translate-x-1/2 animate-bounce">
+            <ChevronDown className="w-10 h-10 text-white/90" />
           </div>
         </section>
 
         {/* ABOUT SECTION - Enhanced animations */}
         <section 
           ref={aboutRef as React.RefObject<HTMLElement>}
-          className="relative py-20 px-8 z-10 bg-white text-black -mt-8  mb-8 rounded-t-[2rem] overflow-hidden"
+          className="relative py-20 px-8 z-10 bg-white text-black -mt-8   rounded-t-[2rem] overflow-hidden"
         >
           {/* Background pattern */}
           <div className="absolute inset-0 opacity-5">
@@ -437,7 +437,7 @@ export default function Page() {
         {/* BROWSE GAMES SECTION - Enhanced filters and animations */}
         <section 
           ref={gamesRef as React.RefObject<HTMLElement>}
-          className="relative py-20 px-8 z-20 text-white -mt-8 mb-8 rounded-t-[2rem]" 
+          className="relative py-20 px-8 z-20 text-white -mt-8  rounded-t-[2rem]" 
           style={{ 
             background: "linear-gradient(135deg, #ef4444 0%, #991b1b 50%, #000000 100%)" 
           }}

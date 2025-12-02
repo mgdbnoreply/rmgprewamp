@@ -61,7 +61,7 @@ export default function ArchivePage() {
             Connectivity: "", Contact: "",
           }))
           // Slice 6 for the grid (2 rows of 3)
-          setGames(mappedGames.slice(0, 6)) 
+          setGames(mappedGames.slice(0, 8)) 
         }
 
         // 2. Fetch Collections (Devices)
@@ -184,7 +184,7 @@ export default function ArchivePage() {
             <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
               <div>
                 <span className="text-red-600 font-bold uppercase tracking-wider text-sm block mb-2">Software Archive</span>
-                <h2 className="text-4xl md:text-5xl font-black text-gray-900">Featured Database</h2>
+                <h2 className="text-4xl md:text-5xl font-black text-gray-900">Database</h2>
               </div>
               <Button asChild variant="link" className="text-red-600 hover:text-red-700 font-bold text-lg p-0">
                 <Link href="/database" className="flex items-center gap-2">
@@ -194,10 +194,10 @@ export default function ArchivePage() {
             </div>
 
             {/* 6 Cards Grid (3x2) */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                 {loading ? (
                    /* Loading Skeletons */
-                   Array.from({ length: 6 }).map((_, i) => (
+                   Array.from({ length: 8 }).map((_, i) => (
                      <div key={i} className="bg-gray-200 rounded-2xl h-[400px] animate-pulse"></div>
                    ))
                 ) : (
@@ -250,7 +250,7 @@ export default function ArchivePage() {
             <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
               <div>
                 <span className="text-blue-600 font-bold uppercase tracking-wider text-sm block mb-2">Hardware</span>
-                <h2 className="text-4xl md:text-5xl font-black text-gray-900">Featured Collection</h2>
+                <h2 className="text-4xl md:text-5xl font-black text-gray-900">Collection</h2>
               </div>
               <Button asChild variant="link" className="text-blue-600 hover:text-blue-700 font-bold text-lg p-0">
                 <Link href="/collection" className="flex items-center gap-2">
