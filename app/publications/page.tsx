@@ -420,7 +420,7 @@ function PublicationsContent() {
         </section>
 
          {/* --- Mobile Entertainment Review Archive (Bottom Section) --- */}
-         <section id="latest" className="bg-gray-900 text-white py-20 relative overflow-hidden">
+         <section id="mobenta" className="bg-gray-900 text-white py-20 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-red-900/20 rounded-full blur-[120px] -mr-40 -mt-40 pointer-events-none"></div>
           <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-900/10 rounded-full blur-[100px] -ml-20 -mb-20 pointer-events-none"></div>
 
