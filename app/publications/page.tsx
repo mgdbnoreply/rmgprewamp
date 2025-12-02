@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, Suspense } from "react"
+import { useSearchParams } from "next/navigation"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
@@ -15,7 +16,8 @@ import {
   ExternalLink, 
   FileText, 
   Eye, 
-  X, 
+  Filter,
+  X,
   ArrowRight
 } from "lucide-react"
 import Image from "next/image"
@@ -23,71 +25,77 @@ import { publicationsData } from "@/lib/publications-data"
 import { DonationButton } from "@/components/donation-button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog"
 
-// Mock data for the 8 Mobile Entertainment Analyst PDFs
-const mobileEntertainmentReviews = [
-  {
-    id: "mea-2003-03",
-    title: "Mobile Entertainment Analyst: Vol 2, No 3",
-    date: "March 2003",
-    description: "Featuring 'Opportunities and Threats in Mobile Entertainment' and 'The Wireless Retail Point of Sale'.",
-    pdfUrl: "/documents/mea2003-03.pdf", 
-  },
-  {
-    id: "mea-2003-05",
-    title: "Mobile Entertainment Analyst: Vol 2, No 5",
-    date: "May 2003",
-    description: "Covering 'Funding Mobile Content' and 'The Coming Wave of Mobile RPGs'.",
-    pdfUrl: "/documents/mea2003-05.pdf", 
-  },
-  // Placeholders
-  { id: "mea-3", title: "Mobile Entertainment Analyst: Vol 2, No 6", date: "June 2003", description: "Special report on mobile gaming demographics and emerging markets.", pdfUrl: "#" },
-  { id: "mea-4", title: "Mobile Entertainment Analyst: Vol 2, No 7", date: "July 2003", description: "Analysis of early J2ME game performance and carrier strategies.", pdfUrl: "#" },
-  { id: "mea-5", title: "Mobile Entertainment Analyst: Vol 2, No 8", date: "August 2003", description: "The rise of multiplayer mobile gaming and network latency challenges.", pdfUrl: "#" },
-  { id: "mea-6", title: "Mobile Entertainment Analyst: Vol 2, No 9", date: "September 2003", description: "Investment trends in mobile content: A quarterly review.", pdfUrl: "#" },
-  { id: "mea-7", title: "Mobile Entertainment Analyst: Vol 2, No 10", date: "October 2003", description: "Interview with leading mobile game publishers of the early 2000s.", pdfUrl: "#" },
-  { id: "mea-8", title: "Mobile Entertainment Analyst: Vol 2, No 11", date: "November 2003", description: "Year-end summary and predictions for the future of mobile entertainment.", pdfUrl: "#" },
-]
+// Component to handle search params wrapper in Suspense
+function PublicationsContent() {
+  const searchParams = useSearchParams()
+  const categoryParam = searchParams.get("category")
 
-export default function PublicationsPage() {
   const [searchQuery, setSearchQuery] = useState("")
-  const [selectedYear, setSelectedYear] = useState("")
-  const [selectedTopic, setSelectedTopic] = useState("")
+  const [selectedCategory, setSelectedCategory] = useState(categoryParam || "")
   const [selectedAuthor, setSelectedAuthor] = useState("")
   const [currentPage, setCurrentPage] = useState(0)
-  
-  // State for the PDF Viewer
   const [viewingPdf, setViewingPdf] = useState<string | null>(null)
+
+  // Sync with URL param if it changes
+  useEffect(() => {
+    if (categoryParam) {
+      setSelectedCategory(categoryParam)
+    }
+  }, [categoryParam])
 
   const itemsPerPage = 6
   
-  const years = Array.from(new Set(publicationsData.map(p => p.year))).sort((a, b) => b - a)
-  const topics = Array.from(new Set(publicationsData.map(p => p.topic))).sort()
+  // Get unique category for filter
+  const category = Array.from(new Set(publicationsData.map(p => p.category))).sort()
 
   const filteredPublications = publicationsData.filter((pub) => {
     const matchesSearch =
       pub.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       pub.description.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesYear = !selectedYear || pub.year.toString() === selectedYear
-    const matchesTopic = !selectedTopic || pub.topic === selectedTopic
+    
+    // Filter by Category
+    const matchesCategory = !selectedCategory || pub.category === selectedCategory
+    
     const matchesAuthor =
       !selectedAuthor || pub.authors.some((author) => author.toLowerCase().includes(selectedAuthor.toLowerCase()))
-    return matchesSearch && matchesYear && matchesTopic && matchesAuthor
+    
+    return matchesSearch && matchesCategory && matchesAuthor
   })
 
   const totalPages = Math.ceil(filteredPublications.length / itemsPerPage)
   const paginatedPublications = filteredPublications.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage)
 
+  // Featured logic: Show first if no active filters
   const featuredPublication = publicationsData[0]
-  const showFeatured = !searchQuery && !selectedYear && !selectedTopic && !selectedAuthor && currentPage === 0
+  const showFeatured = !searchQuery && !selectedCategory && !selectedAuthor && currentPage === 0
+
+  // --- Local Data for the Mobile Entertainment Archive (Bottom Section) ---
+  const mobileEntertainmentReviews = [
+    {
+      id: "mea-2003-03",
+      title: "Mobile Entertainment Analyst: Vol 2, No 3",
+      date: "March 2003",
+      description: "Includes 'Opportunities and Threats in Mobile Entertainment' and 'The Wireless Retail Point of Sale'.",
+      pdfUrl: "/documents/mea2003-03.pdf", 
+    },
+    {
+      id: "mea-2003-05",
+      title: "Mobile Entertainment Analyst: Vol 2, No 5",
+      date: "May 2003",
+      description: "Includes 'Funding Mobile Content', 'Are Mobile Games Disruptive?', and 'The Coming Wave of Mobile RPGs'.",
+      pdfUrl: "/documents/mea2003-05.pdf", 
+    },
+     // Placeholders
+     { id: "mea-6", title: "Mobile Entertainment Analyst: Vol 2, No 9", date: "September 2003", description: "Investment trends in mobile content: A quarterly review.", pdfUrl: "#" },
+     { id: "mea-7", title: "Mobile Entertainment Analyst: Vol 2, No 10", date: "October 2003", description: "Interview with leading mobile game publishers of the early 2000s.", pdfUrl: "#" },
+     { id: "mea-8", title: "Mobile Entertainment Analyst: Vol 2, No 11", date: "November 2003", description: "Year-end summary and predictions for the future of mobile entertainment.", pdfUrl: "#" },
+     { id: "mea-9", title: "Mobile Entertainment Analyst: Vol 3, No 1", date: "January 2004", description: "The rise of 3D mobile gaming: A look ahead.", pdfUrl: "#" },
+  ]
 
   return (
-    <div className="min-h-screen bg-white text-gray-900 font-sans">
-      <Header />
-
-      <main className="relative z-10 pb-0">
-        
-        {/* --- Hero Section --- */}
-        <section className="relative w-full mt-20 py-24 md:py-32 overflow-hidden bg-black">
+    <>
+      {/* --- Hero Section --- */}
+      <section className="relative w-full mt-20 py-24 md:py-32 overflow-hidden bg-black">
           <div className="absolute inset-0 z-0">
             <Image
               src="/page/publications.jpg"
@@ -111,7 +119,7 @@ export default function PublicationsPage() {
                 </span>
               </h1>
               <p className="text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
-                Discover groundbreaking research, books, and articles analyzing the cultural and technological evolution of mobile gaming from 1975 to 2008.
+                Discover groundbreaking research, books, and articles analyzing the cultural and technological evolution of mobile gaming.
               </p>
             </div>
           </div>
@@ -139,7 +147,7 @@ export default function PublicationsPage() {
                     <Calendar className="w-4 h-4 text-red-500" />
                     <span>{featuredPublication.year}</span>
                     <span className="w-1 h-1 bg-gray-300 rounded-full mx-1"></span>
-                    <span className="text-red-600 font-bold uppercase">{featuredPublication.topic}</span>
+                    <span className="text-red-600 font-bold uppercase">{featuredPublication.category}</span>
                   </div>
                   <h2 className="text-3xl md:text-4xl font-black mb-4 text-gray-900 leading-tight">
                     {featuredPublication.title}
@@ -180,37 +188,27 @@ export default function PublicationsPage() {
                 />
               </div>
               <div className="flex flex-wrap gap-3 w-full md:w-auto">
-                <select
-                  value={selectedYear}
-                  onChange={(e) => {
-                    setSelectedYear(e.target.value)
-                    setCurrentPage(0)
-                  }}
-                  className="h-14 px-4 bg-white border border-gray-200 text-gray-700 rounded-xl focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 cursor-pointer hover:bg-gray-50 transition-colors"
-                >
-                  <option value="">All Years</option>
-                  {years.map(year => (
-                    <option key={year} value={year}>{year}</option>
-                  ))}
-                </select>
-                <select
-                  value={selectedTopic}
-                  onChange={(e) => {
-                    setSelectedTopic(e.target.value)
-                    setCurrentPage(0)
-                  }}
-                  className="h-14 px-4 bg-white border border-gray-200 text-gray-700 rounded-xl focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 cursor-pointer hover:bg-gray-50 transition-colors"
-                >
-                  <option value="">All Topics</option>
-                  {topics.map(topic => (
-                    <option key={topic} value={topic}>{topic}</option>
-                  ))}
-                </select>
+                <div className="relative">
+                   <Filter className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+                   <select
+                    value={selectedCategory}
+                    onChange={(e) => {
+                      setSelectedCategory(e.target.value)
+                      setCurrentPage(0)
+                    }}
+                    className="h-14 pl-10 pr-8 bg-white border border-gray-200 text-gray-700 rounded-xl focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 cursor-pointer hover:bg-gray-50 transition-colors appearance-none min-w-[180px]"
+                  >
+                    <option value="">All category</option>
+                    {category.map(cat => (
+                      <option key={cat} value={cat}>{cat}</option>
+                    ))}
+                  </select>
+                </div>
+
                 <Button 
                   onClick={() => {
                     setSearchQuery("")
-                    setSelectedYear("")
-                    setSelectedTopic("")
+                    setSelectedCategory("")
                     setSelectedAuthor("")
                     setCurrentPage(0)
                   }}
@@ -224,7 +222,7 @@ export default function PublicationsPage() {
           </div>
         </section>
 
-        {/* --- Publications Grid --- */}
+        {/* --- Publications Grid (CSV Data Only) --- */}
         <section className="container mx-auto px-4 pb-24">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {paginatedPublications.map((pub) => (
@@ -241,13 +239,12 @@ export default function PublicationsPage() {
                   />
                   <div className="absolute top-4 left-4">
                     <Badge className="bg-white/90 backdrop-blur-md text-gray-900 border border-white/20 shadow-sm hover:bg-white">
-                      {pub.topic}
+                      {pub.category}
                     </Badge>
                   </div>
                 </div>
                 <div className="p-6 flex flex-col flex-grow">
                   <div className="flex items-center justify-between text-xs text-gray-500 mb-3 font-medium uppercase tracking-wide">
-                    <span>{pub.categories[0]}</span>
                     <span>{pub.year}</span>
                   </div>
                   <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-red-600 transition-colors">
@@ -262,12 +259,8 @@ export default function PublicationsPage() {
                       <span className="truncate max-w-[120px]">{pub.authors[0]}</span>
                       {pub.authors.length > 1 && <span>+{pub.authors.length - 1}</span>}
                     </div>
-                    <a 
-                      href={pub.link || "#"} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-1 text-sm font-bold text-red-600 group-hover:gap-2 transition-all"
-                    >
+                    
+                    <a href={pub.link || "#"} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-sm font-bold text-red-600 group-hover:gap-2 transition-all">
                       Read <ArrowRight className="w-4 h-4" />
                     </a>
                   </div>
@@ -312,8 +305,8 @@ export default function PublicationsPage() {
           )}
         </section>
 
-        {/* --- NEW SECTION: Mobile Entertainment Review Archive --- */}
-        <section className="bg-gray-900 text-white py-20 relative overflow-hidden">
+         {/* --- Mobile Entertainment Review Archive (Bottom Section) --- */}
+         <section className="bg-gray-900 text-white py-20 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-red-900/20 rounded-full blur-[120px] -mr-40 -mt-40 pointer-events-none"></div>
           <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-900/10 rounded-full blur-[100px] -ml-20 -mb-20 pointer-events-none"></div>
 
@@ -329,15 +322,13 @@ export default function PublicationsPage() {
               </p>
             </div>
 
-            {/* 4-Column Grid for PDFs */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {mobileEntertainmentReviews.map((item) => (
                 <div key={item.id} className="group bg-gray-800/50 rounded-xl border border-gray-700/50 hover:border-red-500/50 hover:bg-gray-800 transition-all duration-300 overflow-hidden flex flex-col h-full">
-                  {/* Thumbnail / Header */}
-                  {/* <div className="h-32 bg-gradient-to-br from-gray-700 to-gray-800 relative overflow-hidden p-6 flex items-center justify-center">
+                  <div className="h-32 bg-gradient-to-br from-gray-700 to-gray-800 relative overflow-hidden p-6 flex items-center justify-center">
                     <FileText className="w-12 h-12 text-gray-500 group-hover:text-red-400 transition-colors" />
                     <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
-                  </div> */}
+                  </div>
                   
                   <div className="p-5 flex flex-col flex-grow">
                     <div className="text-xs font-bold text-red-400 mb-2 uppercase tracking-wide">
@@ -350,11 +341,10 @@ export default function PublicationsPage() {
                       {item.description}
                     </p>
                     
-                    {/* View Button Triggers Modal */}
                     <Button 
                       onClick={() => setViewingPdf(item.pdfUrl)}
                       variant="outline" 
-                      className="w-full border-gray-600 text-red-600 hover:bg-white hover:text-gray-900 hover:border-white transition-all mt-auto group/btn"
+                      className="w-full border-gray-600 text-gray-300 hover:bg-white hover:text-gray-900 hover:border-white transition-all mt-auto group/btn"
                     >
                       <Eye className="w-4 h-4 mr-2 group-hover/btn:scale-110 transition-transform" /> View Archive
                     </Button>
@@ -365,17 +355,12 @@ export default function PublicationsPage() {
           </div>
         </section>
 
-      </main>
-
-      <Footer />
-      <DonationButton />
-
       {/* PDF Viewer Modal */}
       <Dialog open={!!viewingPdf} onOpenChange={(open) => !open && setViewingPdf(null)}>
-        <DialogContent className="w-[90vw] max-w-[90vw] h-[90vh] mt-10 p-0 bg-gray-950 border-gray-800 flex flex-col overflow-hidden sm:max-w-[95vw]">
+        <DialogContent className="w-[80vw] max-w-[80vw] h-[80vh] pt-10 p-0 bg-gray-950 border-gray-800 flex flex-col overflow-hidden sm:max-w-[95vw]">
           <DialogHeader className="px-6 py-4 border-b border-gray-800 flex-shrink-0 flex flex-row items-center justify-between bg-gray-900">
             <DialogTitle className="text-white text-lg font-bold">Document Viewer</DialogTitle>
-            <DialogClose className="text-gray-400 hover:text-white transition-colors" />
+            <DialogClose className="text-red-500 " />
           </DialogHeader>
           
           <div className="flex-1 w-full h-full bg-gray-900 relative">
@@ -395,6 +380,21 @@ export default function PublicationsPage() {
         </DialogContent>
       </Dialog>
 
+    </>
+  )
+}
+
+export default function PublicationsPage() {
+  return (
+    <div className="min-h-screen bg-white text-gray-900 font-sans">
+      <Header />
+      <main className="relative z-10 pb-0">
+        <Suspense fallback={<div className="text-center py-20">Loading publications...</div>}>
+          <PublicationsContent />
+        </Suspense>
+      </main>
+      <Footer />
+      
     </div>
   )
 }

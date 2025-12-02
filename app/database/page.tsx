@@ -6,7 +6,7 @@ import Header from "@/components/header"
 import Footer from "@/components/footer"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Search, SlidersHorizontal, X, ChevronLeft, ChevronRight, Gamepad2, Calendar, HardDrive } from "lucide-react"
+import { Search, ChevronLeft, ChevronRight, Gamepad2, Filter } from "lucide-react"
 import { GameAPI } from "@/services/api"
 import type { GameData } from "@/lib/types"
 import { GameModal } from "@/components/game-modal"
@@ -21,10 +21,9 @@ import { Badge } from "@/components/ui/badge"
 
 export default function DatabasePage() {
   const [searchQuery, setSearchQuery] = useState("")
-  const [isFilterOpen, setIsFilterOpen] = useState(false)
-  const [selectedCategory, setSelectedCategory] = useState<string>("all")
-  const [selectedYear, setSelectedYear] = useState<string>("all")
-  const [selectedHardware, setSelectedHardware] = useState<string>("all")
+  const [selectedCategory, setSelectedCategory] = useState<string>("")
+  const [selectedYear, setSelectedYear] = useState<string>("")
+  const [selectedHardware, setSelectedHardware] = useState<string>("")
   const [games, setGames] = useState<GameData[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedGame, setSelectedGame] = useState<GameData | null>(null)
@@ -52,17 +51,9 @@ export default function DatabasePage() {
     fetchGames()
   }, [])
 
-  const categories = ["all", ...Array.from(new Set(games.map((g) => g.Genre).filter(Boolean)))]
-  const years = [
-    "all",
-    ...Array.from(new Set(games.map((g) => g.Year).filter(Boolean)))
-      .sort()
-      .reverse(),
-  ]
-  const hardwareOptions = [
-    "all",
-    ...Array.from(new Set(games.map((g) => g.Hardware.split(",")[0].trim()).filter(Boolean))),
-  ]
+  const categories = Array.from(new Set(games.map((g) => g.Genre?.split(",")[0]).filter(Boolean))).sort()
+  const years = Array.from(new Set(games.map((g) => g.Year).filter(Boolean))).sort().reverse()
+  const hardwareOptions = Array.from(new Set(games.map((g) => g.Hardware?.split(",")[0].trim()).filter(Boolean))).sort()
 
   const filteredGames = games.filter((game) => {
     const matchesSearch =
@@ -70,18 +61,19 @@ export default function DatabasePage() {
       game.Genre.toLowerCase().includes(searchQuery.toLowerCase()) ||
       game.Hardware.toLowerCase().includes(searchQuery.toLowerCase()) ||
       game.Developers.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesCategory = selectedCategory === "all" || game.Genre.includes(selectedCategory)
-    const matchesYear = selectedYear === "all" || game.Year === selectedYear
-    const matchesHardware = selectedHardware === "all" || game.Hardware.includes(selectedHardware)
+    
+    const matchesCategory = !selectedCategory || game.Genre.includes(selectedCategory)
+    const matchesYear = !selectedYear || game.Year === selectedYear
+    const matchesHardware = !selectedHardware || game.Hardware.includes(selectedHardware)
+    
     return matchesSearch && matchesCategory && matchesYear && matchesHardware
   })
 
-  const activeFiltersCount = [selectedCategory, selectedYear, selectedHardware].filter((f) => f !== "all").length
-
   const resetFilters = () => {
-    setSelectedCategory("all")
-    setSelectedYear("all")
-    setSelectedHardware("all")
+    setSelectedCategory("")
+    setSelectedYear("")
+    setSelectedHardware("")
+    setSearchQuery("")
     setCurrentPage(1)
   }
 
@@ -165,7 +157,7 @@ export default function DatabasePage() {
 
       <main className="relative z-10 pb-0">
         
-        {/* --- Hero Section (Education Style) --- */}
+        {/* --- Hero Section --- */}
         <section className="relative w-full mt-20 py-24 overflow-hidden bg-black">
           <div className="absolute inset-0 z-0">
             <Image
@@ -175,7 +167,6 @@ export default function DatabasePage() {
               className="object-cover opacity-40"
               priority
             />
-            {/* Gradient Overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent"></div>
           </div>
 
@@ -197,31 +188,13 @@ export default function DatabasePage() {
           </div>
         </section>
 
-        {/* --- Filter Section --- */}
+        {/* --- Filter Section (Updated Style) --- */}
         <section className="container mx-auto px-4 -mt-16 relative z-20 mb-12">
           <div className="max-w-7xl mx-auto">
-            <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 md:p-8">
-              <div className="flex flex-col md:flex-row gap-4 items-center justify-between mb-6">
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-900">Filter Games</h2>
-                  <p className="text-gray-500 text-sm">
-                    {loading ? "Loading library..." : `Showing ${filteredGames.length} games`}
-                  </p>
-                </div>
-                {activeFiltersCount > 0 && (
-                  <Button
-                    onClick={resetFilters}
-                    variant="ghost"
-                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                  >
-                    Reset Filters <X className="ml-2 h-4 w-4" />
-                  </Button>
-                )}
-              </div>
-
-              <div className="flex flex-col lg:flex-row gap-4">
+            <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-6 md:p-8">
+              <div className="flex flex-col md:flex-row gap-6 items-center">
                 {/* Search */}
-                <div className="relative flex-1">
+                <div className="relative flex-1 w-full">
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                   <Input
                     type="text"
@@ -231,98 +204,69 @@ export default function DatabasePage() {
                       setSearchQuery(e.target.value)
                       setCurrentPage(1)
                     }}
-                    className="pl-12 h-12 bg-gray-50 border-gray-200 text-gray-900 rounded-xl focus:border-red-500 focus:ring-red-500/20"
+                    className="pl-12 h-14 bg-gray-50 border-gray-200 text-gray-900 rounded-xl focus:border-red-500 focus:ring-red-500/20 text-lg"
                   />
                 </div>
 
-                {/* Filter Toggle */}
-                <Button
-                  onClick={() => setIsFilterOpen(!isFilterOpen)}
-                  className={`h-12 px-6 rounded-xl font-semibold transition-all ${
-                    isFilterOpen 
-                      ? "bg-gray-900 text-white" 
-                      : "bg-gradient-to-r from-red-600 to-red-700 text-white hover:shadow-lg hover:shadow-red-500/30"
-                  }`}
-                >
-                  <SlidersHorizontal className="h-5 w-5 mr-2" />
-                  Filters
-                  {activeFiltersCount > 0 && (
-                    <span className="ml-2 bg-white text-red-600 rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
-                      {activeFiltersCount}
-                    </span>
-                  )}
-                </Button>
-              </div>
-
-              {/* Expandable Filters */}
-              {isFilterOpen && (
-                <div className="mt-6 pt-6 border-t border-gray-100 animate-in fade-in slide-in-from-top-2 duration-200">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {/* Genre */}
-                    <div className="space-y-2">
-                      <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                        <Gamepad2 className="w-4 h-4 text-red-500" /> Genre
-                      </label>
-                      <select
-                        value={selectedCategory}
-                        onChange={(e) => {
-                          setSelectedCategory(e.target.value)
-                          setCurrentPage(1)
-                        }}
-                        className="w-full h-10 px-3 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
-                      >
-                        {categories.map((cat) => (
-                          <option key={cat} value={cat}>
-                            {cat === "all" ? "All Genres" : cat}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    {/* Year */}
-                    <div className="space-y-2">
-                      <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                        <Calendar className="w-4 h-4 text-red-500" /> Year
-                      </label>
-                      <select
-                        value={selectedYear}
-                        onChange={(e) => {
-                          setSelectedYear(e.target.value)
-                          setCurrentPage(1)
-                        }}
-                        className="w-full h-10 px-3 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
-                      >
-                        {years.map((year) => (
-                          <option key={year} value={year}>
-                            {year === "all" ? "All Years" : year}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    {/* Hardware */}
-                    <div className="space-y-2">
-                      <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                        <HardDrive className="w-4 h-4 text-red-500" /> Hardware
-                      </label>
-                      <select
-                        value={selectedHardware}
-                        onChange={(e) => {
-                          setSelectedHardware(e.target.value)
-                          setCurrentPage(1)
-                        }}
-                        className="w-full h-10 px-3 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all"
-                      >
-                        {hardwareOptions.map((hw) => (
-                          <option key={hw} value={hw}>
-                            {hw === "all" ? "All Hardware" : hw}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
+                {/* Filter Controls */}
+                <div className="flex flex-wrap gap-3 w-full md:w-auto">
+                  {/* Genre Filter */}
+                  <div className="relative">
+                     <Filter className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 pointer-events-none" />
+                     <select
+                      value={selectedCategory}
+                      onChange={(e) => {
+                        setSelectedCategory(e.target.value)
+                        setCurrentPage(1)
+                      }}
+                      className="h-14 pl-10 pr-8 bg-white border border-gray-200 text-gray-700 rounded-xl focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 cursor-pointer hover:bg-gray-50 transition-colors appearance-none min-w-[160px]"
+                    >
+                      <option value="">All Genres</option>
+                      {categories.map(cat => (
+                        <option key={cat} value={cat}>{cat}</option>
+                      ))}
+                    </select>
                   </div>
+
+                  {/* Year Filter */}
+                  <select
+                    value={selectedYear}
+                    onChange={(e) => {
+                      setSelectedYear(e.target.value)
+                      setCurrentPage(1)
+                    }}
+                    className="h-14 px-4 bg-white border border-gray-200 text-gray-700 rounded-xl focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 cursor-pointer hover:bg-gray-50 transition-colors"
+                  >
+                    <option value="">All Years</option>
+                    {years.map(year => (
+                      <option key={year} value={year}>{year}</option>
+                    ))}
+                  </select>
+
+                  {/* Hardware Filter */}
+                  <select
+                    value={selectedHardware}
+                    onChange={(e) => {
+                      setSelectedHardware(e.target.value)
+                      setCurrentPage(1)
+                    }}
+                    className="h-14 px-4 bg-white border border-gray-200 text-gray-700 rounded-xl focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 cursor-pointer hover:bg-gray-50 transition-colors max-w-[160px]"
+                  >
+                    <option value="">All Hardware</option>
+                    {hardwareOptions.map(hw => (
+                      <option key={hw} value={hw}>{hw}</option>
+                    ))}
+                  </select>
+
+                  <Button 
+                    onClick={resetFilters}
+                    variant="outline"
+                    className="h-14 px-6 border-red-100 text-red-600 hover:bg-red-50 hover:text-red-700 rounded-xl font-semibold"
+                  >
+                    Reset
+                  </Button>
                 </div>
-              )}
+              </div>
             </div>
           </div>
         </section>
