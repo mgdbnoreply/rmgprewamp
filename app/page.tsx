@@ -304,7 +304,7 @@ export default function Page() {
         <Header />
 
         {/* HERO SECTION - Enhanced with better video handling */}
-        <section className="h-screen min-h-[700px] flex items-center justify-center mt-10 p-8 relative z-0 overflow-hidden">
+        <section className="h-screen min-h-[700px] flex items-center justify-center  p-8 relative z-0 overflow-hidden">
           <div className="absolute inset-0 w-full h-full bg-black">
             <video
               ref={videoRef}
