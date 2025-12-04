@@ -37,9 +37,9 @@ export default function AboutPage() {
   const researchAssistants = [
     {
       name: "Sutanuka Jashu",
-      role: "Ph.D. Student",
+      role: "PHD. Student, Project Manager",
       bio: "Sutanuka Jashu is an interdisciplinary artist and researcher from West Bengal, India, working at the nexus of art, technology, and cultural resilience. Her current practice integrates AI, adaptive systems, and speculative storytelling to critique digital colonialism, reimagine historical narratives, and explore ecological futures.",
-      image: "https://d3tvevvhad9ws1.cloudfront.net/wp-content/uploads/2025/07/Sutanuka-Jashu-phd-student-207x300.png",
+      image: "/sutanuka_jashu.jpg",
     },
     {
       name: "Arslan Parkar",
