@@ -143,7 +143,7 @@ export default function EducationPage() {
                   including handheld consoles, mobile phones, and other portable electronic devices.
                 </p>
                 <p>
-                  This video series features interviews with leading scholars who explore different aspects of mobile gaming and its evolution over time. Each scholar brings a unique perspective on what constitutes a mobile game and how these games have shaped our culture and society.
+                  Leading game scholars were asked to share in one minute their definition of mobile game. Check out what they had to say.
                 </p>
               </div>
             </div>
@@ -162,7 +162,7 @@ export default function EducationPage() {
         </section>
 
         {/* --- Advanced Video Layout (Master-Detail) --- */}
-        <section id="video-series" className="container mx-auto px-4 py-12 mb-24">
+        <section id="definition" className="container mx-auto px-4 py-12 mb-24">
           <div className="flex items-end justify-between mb-10">
             <div>
               <h2 className="text-4xl font-black text-gray-900 mb-2">Expert Perspectives</h2>
@@ -239,6 +239,7 @@ export default function EducationPage() {
                             {video.title}
                           </h5>
                           <p className="text-xs text-gray-500 truncate">{video.speaker}</p>
+                          <p className="text-xs text-gray-400 truncate">{video.role}</p>
                         </div>
                       </button>
                     );

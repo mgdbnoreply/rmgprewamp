@@ -127,17 +127,23 @@ export default function Page() {
   const [selectedYear, setSelectedYear] = useState<string>("all")
   const [selectedHardware, setSelectedHardware] = useState<string>("all")
   const [showIntro, setShowIntro] = useState(true)
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 12
   
   // Refs
   const carouselRef = useRef<HTMLDivElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
+  const aboutSectionRef = useRef<HTMLElement>(null)
   
   // Custom hooks
   const isVideoReady = useVideoAutoplay(videoRef)
   const { ref: aboutRef, isIntersecting: aboutVisible } = useIntersectionObserver(0.3)
   const { ref: gamesRef, isIntersecting: gamesVisible } = useIntersectionObserver(0.2)
   const { ref: discoverRef, isIntersecting: discoverVisible } = useIntersectionObserver(0.2)
-  const { ref: researchRef, isIntersecting: researchVisible } = useIntersectionObserver(0.2)
+
+  const scrollToAbout = useCallback(() => {
+    aboutRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [])
 
   // Hide intro after delay
   useEffect(() => {
@@ -152,7 +158,7 @@ export default function Page() {
         setLoading(true)
         const response = await GameAPI.getAllGames()
         if (Array.isArray(response)) {
-          setGames(response.slice(0, GAMES_PER_PAGE))
+          setGames(response)
         }
       } catch (error) {
         console.error("Error fetching games:", error)
@@ -208,21 +214,8 @@ export default function Page() {
   }, [])
 
   const scrollToSlide = useCallback((direction: "prev" | "next") => {
-    const container = carouselRef.current
-    if (!container) return
-    
-    const slideWidth = container.querySelector('[data-carousel-item]')?.clientWidth || 0
-    const gap = 24 // 6 * 4px (gap-6)
-    const scrollAmount = (slideWidth + gap) * CAROUSEL_SCROLL_ITEMS
-    
-    if (direction === "prev") {
-      container.scrollBy({ left: -scrollAmount, behavior: "smooth" })
-      setCurrentSlide(prev => Math.max(0, prev - CAROUSEL_SCROLL_ITEMS))
-    } else {
-      container.scrollBy({ left: scrollAmount, behavior: "smooth" })
-      setCurrentSlide(prev => Math.min(filteredGames.length - 4, prev + CAROUSEL_SCROLL_ITEMS))
-    }
-  }, [filteredGames.length])
+    // No longer needed with grid layout, but keeping for now
+  }, [])
 
   const debouncedSearch = useMemo(
     () => debounce((value: string) => setSearchQuery(value), 300),
@@ -233,12 +226,12 @@ export default function Page() {
   const discoverItems = [
     { 
       title: "Device of the Week", 
-      description: "Explore the iconic Nokia N-Gage and its revolutionary features.", 
+      description: "Featured rotating hardware with detailed specs and historical context.", 
       category: "Featured", 
       icon: Trophy, 
       image: "/deviceofweek.jpg",
       color: "from-yellow-500/20 to-orange-500/20",
-      href: "/collection/"
+      href: "/device-of-week"
     },
     { 
       title: "Latest Publications", 
@@ -256,7 +249,7 @@ export default function Page() {
       icon: Shield, 
       image: "/ongoing.jpeg",
       color: "from-green-500/20 to-teal-500/20",
-      href: "/preservation/status"
+      href: "/coming-soon"
     },
   ]
 
@@ -350,9 +343,13 @@ export default function Page() {
           </div>
 
           {/* Scroll indicator */}
-          <div className="absolute bottom-15 left-1/2 -translate-x-1/2 animate-bounce">
+          <button 
+            onClick={scrollToAbout}
+            className="absolute bottom-15 left-1/2 -translate-x-1/2 animate-bounce hover:scale-110 transition-transform cursor-pointer"
+            aria-label="Scroll down"
+          >
             <ChevronDown className="w-10 h-10 text-white/90" />
-          </div>
+          </button>
         </section>
 
         {/* ABOUT SECTION - Enhanced animations */}
@@ -398,9 +395,6 @@ export default function Page() {
                 Preserving<br />Gaming's<br />
                 <span className="text-red-600 relative">
                   Mobile Legacy
-                  <svg className="absolute -bottom-2 left-0 w-full" height="8" viewBox="0 0 200 8">
-                    <path d="M0 4 Q50 0 100 4 T200 4" stroke="#ef4444" strokeWidth="2" fill="none" />
-                  </svg>
                 </span>
               </h2>
               <p className="text-lg text-neutral-700 mt-6 leading-relaxed">
@@ -434,78 +428,85 @@ export default function Page() {
           </div>
         </section>
 
-        {/* BROWSE GAMES SECTION - Enhanced filters and animations */}
+        {/* FULL DATABASE SECTION - Complete search and filtering */}
         <section 
           ref={gamesRef as React.RefObject<HTMLElement>}
-          className="relative py-20 px-8 z-20 text-white -mt-8  rounded-t-[2rem]" 
+          className="relative py-20 px-8 z-20 text-white -mt-8 rounded-t-[2rem]"
           style={{ 
             background: "linear-gradient(135deg, #ef4444 0%, #991b1b 50%, #000000 100%)" 
           }}
         >
           <div className="max-w-[100rem] mx-auto">
             <div className={cn(
-              "text-center transition-all duration-1000",
+              "text-center transition-all duration-1000 mb-16",
               gamesVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
             )}>
               <h2 className="text-5xl md:text-7xl font-black tracking-tighter">
                 From The <span className="text-red-100">Archive</span>
               </h2>
               <p className="text-lg text-red-100 max-w-3xl mx-auto mt-6">
-                A selection of preserved games, devices, and hardware from our collection.
+                Explore our comprehensive collection of preserved games, devices, and hardware. Use the filters below to search by year, genre, platform, and connectivity.
               </p>
             </div>
 
-            {/* Enhanced filter UI */}
-            <div className="mt-16">
-              <div className="bg-black/20 backdrop-blur-md border border-white/10 rounded-2xl p-6 shadow-2xl">
-                <div className="flex flex-col lg:flex-row gap-4 items-center">
-                  <div className="relative flex-1 w-full">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-red-100/70 h-5 w-5" />
-                    <Input 
-                      type="text" 
-                      placeholder="Search games, developers, hardware..." 
-                      onChange={(e) => debouncedSearch(e.target.value)}
-                      className="pl-12 pr-4 py-6 bg-white/10 border-white/20 text-white placeholder:text-red-100/50 rounded-xl focus:border-white/50 focus:ring-2 focus:ring-red-500/50 transition-all"
-                      aria-label="Search games"
-                    />
-                  </div>
+            {/* Advanced filter UI - matching database page */}
+            <div className="bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-xl border border-white/20 rounded-3xl p-6 md:p-10 mb-12 shadow-2xl">
+              
+              {/* Top Bar: Search & Toggle */}
+              <div className="flex flex-col lg:flex-row gap-4 items-center justify-between mb-8">
+                <div className="relative w-full lg:flex-1">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-red-200/60" />
+                  <Input 
+                    type="text" 
+                    placeholder="Search by title or developer..." 
+                    onChange={(e) => debouncedSearch(e.target.value)}
+                    className="pl-12 pr-4 h-12 bg-white/15 border border-white/30 text-white placeholder:text-red-100/60 rounded-xl focus:border-white/60 focus:ring-2 focus:ring-white/40 transition-all hover:bg-white/20"
+                    aria-label="Search games"
+                  />
+                </div>
+                
+                <div className="flex items-center gap-3 w-full lg:w-auto">
                   <Button 
                     onClick={() => setIsFilterOpen(!isFilterOpen)} 
                     className={cn(
-                      "bg-white/90 backdrop-blur-sm text-red-600 font-bold px-6 py-6 rounded-xl hover:bg-white transition-all flex items-center gap-2 w-full lg:w-auto",
-                      isFilterOpen && "ring-2 ring-white/50"
+                      "bg-white/20 backdrop-blur-sm text-white font-bold px-6 py-3 rounded-xl hover:bg-white/30 transition-all flex items-center gap-2 h-12 border border-white/30",
+                      isFilterOpen && "bg-white/30 ring-2 ring-white/50"
                     )}
                     aria-expanded={isFilterOpen}
                     aria-controls="filter-panel"
                   >
-                    <SlidersHorizontal className="h-5 w-5" />
-                    <span>Filter</span>
+                    <SlidersHorizontal className="h-4 w-4" />
+                    <span className="hidden sm:inline">{isFilterOpen ? "Hide Filters" : "Show Filters"}</span>
                     {activeFiltersCount > 0 && (
-                      <span className="ml-2 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold animate-pulse">
+                      <span className="ml-2 bg-red-500/80 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">
                         {activeFiltersCount}
                       </span>
                     )}
-                    <ChevronDown className={cn(
-                      "h-5 w-5 ml-2 transition-transform",
-                      isFilterOpen && "rotate-180"
-                    )} />
                   </Button>
+                  {activeFiltersCount > 0 && (
+                    <Button 
+                      onClick={resetFilters} 
+                      variant="ghost" 
+                      className="text-white hover:text-red-200 hover:bg-white/20 h-12 px-4 rounded-xl border border-white/20"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  )}
                 </div>
-                
-                {/* Animated filter panel */}
+              </div>
+
+              {/* Expanded Filter Controls */}
+              {isFilterOpen && (
                 <div 
                   id="filter-panel"
-                  className={cn(
-                    "grid grid-cols-1 lg:grid-cols-3 gap-4 transition-all duration-500 overflow-hidden",
-                    isFilterOpen ? "mt-6 pt-6 border-t border-white/20 max-h-96 opacity-100" : "max-h-0 opacity-0"
-                  )}
+                  className="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-8 border-t border-white/20 animate-in fade-in slide-in-from-top-4 duration-300"
                 >
-                  <div>
-                    <label className="text-red-100 font-semibold mb-2 block">Genre</label>
+                  <div className="space-y-2">
+                    <label className="text-white font-semibold text-sm uppercase tracking-wide mb-3 block">Genre</label>
                     <select 
                       value={selectedCategory} 
                       onChange={(e) => setSelectedCategory(e.target.value)} 
-                      className="w-full bg-white/10 border border-white/20 text-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all"
+                      className="w-full bg-white/15 border border-white/30 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-white/50 transition-all hover:bg-white/20 font-medium"
                       aria-label="Filter by genre"
                     >
                       {filterOptions.categories.map(cat => (
@@ -515,12 +516,12 @@ export default function Page() {
                       ))}
                     </select>
                   </div>
-                  <div>
-                    <label className="text-red-100 font-semibold mb-2 block">Year</label>
+                  <div className="space-y-2">
+                    <label className="text-white font-semibold text-sm uppercase tracking-wide mb-3 block">Year</label>
                     <select 
                       value={selectedYear} 
                       onChange={(e) => setSelectedYear(e.target.value)} 
-                      className="w-full bg-white/10 border border-white/20 text-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all"
+                      className="w-full bg-white/15 border border-white/30 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-white/50 transition-all hover:bg-white/20 font-medium"
                       aria-label="Filter by year"
                     >
                       {filterOptions.years.map(year => (
@@ -530,12 +531,12 @@ export default function Page() {
                       ))}
                     </select>
                   </div>
-                  <div>
-                    <label className="text-red-100 font-semibold mb-2 block">Hardware</label>
+                  <div className="space-y-2">
+                    <label className="text-white font-semibold text-sm uppercase tracking-wide mb-3 block">Hardware</label>
                     <select 
                       value={selectedHardware} 
                       onChange={(e) => setSelectedHardware(e.target.value)} 
-                      className="w-full bg-white/10 border border-white/20 text-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all"
+                      className="w-full bg-white/15 border border-white/30 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-white/50 transition-all hover:bg-white/20 font-medium"
                       aria-label="Filter by hardware"
                     >
                       {filterOptions.hardware.map(hw => (
@@ -545,150 +546,107 @@ export default function Page() {
                       ))}
                     </select>
                   </div>
-                  {activeFiltersCount > 0 && (
-                    <div className="lg:col-span-3">
-                      <Button 
-                        onClick={resetFilters} 
-                        variant="ghost" 
-                        className="text-white hover:text-red-100 hover:bg-white/10"
-                      >
-                        <X className="h-4 w-4 mr-2" /> 
-                        Clear All Filters
-                      </Button>
-                    </div>
-                  )}
                 </div>
-              </div>
+              )}
             </div>
 
-            {/* Games carousel with better controls */}
-            <div className="relative mt-16 max-w-[100rem] mx-auto">
-              {!loading && filteredGames.length > 4 && (
-                <button 
-                  onClick={() => scrollToSlide("prev")} 
-                  className={cn(
-                    "absolute left-0 top-1/2 -translate-y-1/2 z-20",
-                    "bg-white/20 backdrop-blur-sm rounded-full p-3 shadow-xl",
-                    "hover:bg-white/30 disabled:opacity-30 -translate-x-4 lg:-translate-x-12",
-                    "border border-white/20 transition-all duration-300",
-                    "hover:scale-110 active:scale-95"
-                  )}
-                  disabled={currentSlide === 0}
-                  aria-label="Previous games"
-                >
-                  <ChevronLeft className="h-6 w-6 text-white" />
-                </button>
-              )}
-              
-              <div 
-                ref={carouselRef} 
-                className="flex gap-6 overflow-x-auto scrollbar-hide scroll-smooth pb-4"
-                role="region"
-                aria-label="Games carousel"
-              >
-                {loading ? (
-                  // Skeleton loaders with animation
-                  [...Array(4)].map((_, i) => (
-                    <div 
-                      key={i} 
-                      className="flex-none w-full sm:w-1/2 lg:w-[calc(25%-18px)]"
-                      data-carousel-item
-                    >
-                      <div className="bg-white/20 backdrop-blur-sm rounded-xl overflow-hidden h-[400px]">
-                        <div className="h-64 bg-gradient-to-br from-white/10 to-white/5 animate-pulse" />
-                        <div className="p-5 space-y-3">
-                          <div className="h-6 bg-white/10 rounded animate-pulse" />
-                          <div className="h-4 bg-white/10 rounded w-3/4 animate-pulse" />
-                          <div className="h-8 bg-white/10 rounded w-1/2 animate-pulse" />
-                        </div>
+            {/* Games grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-12">
+              {loading ? (
+                [...Array(12)].map((_, i) => (
+                  <div 
+                    key={i} 
+                    className="bg-white/10 rounded-2xl aspect-[4/5] animate-pulse"
+                  />
+                ))
+              ) : filteredGames.length === 0 ? (
+                <div className="col-span-full text-center py-16">
+                  <p className="text-white/70 text-lg">No games found matching your filters.</p>
+                  <Button 
+                    onClick={resetFilters}
+                    variant="outline"
+                    className="mt-4 border-white/20 text-white hover:bg-white/10"
+                  >
+                    Clear Filters
+                  </Button>
+                </div>
+              ) : (
+                filteredGames.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((game, index) => (
+                  <div
+                    key={game.Title + index}
+                    onClick={() => openGameModal(game)}
+                    className="group cursor-pointer relative bg-gradient-to-br from-red-600 to-red-900 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl hover:shadow-red-500/30 transition-all duration-300 transform hover:-translate-y-2 border border-red-500/20"
+                    role="article"
+                    tabIndex={0}
+                    onKeyDown={(e) => e.key === 'Enter' && openGameModal(game)}
+                  >
+                    {/* Image */}
+                    <div className="relative w-full aspect-square overflow-hidden bg-black/20">
+                      <Image 
+                        src={getFirstImage(game.Pictures)} 
+                        alt={game.Title} 
+                        fill 
+                        className="object-cover transition-transform duration-500 group-hover:scale-110"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
+                      
+                      {/* Year Badge */}
+                      <div className="absolute top-4 right-4">
+                        <span className="bg-black/60 backdrop-blur-md text-white px-3 py-1 rounded-full text-xs font-bold border border-white/10">
+                          {game.Year}
+                        </span>
                       </div>
                     </div>
-                  ))
-                ) : filteredGames.length === 0 ? (
-                  <div className="w-full text-center py-16">
-                    <p className="text-white/70 text-lg">No games found matching your filters.</p>
-                    <Button 
-                      onClick={resetFilters}
-                      variant="outline"
-                      className="mt-4 border-white/20 text-white hover:bg-white/10"
-                    >
-                      Clear Filters
-                    </Button>
+
+                    {/* Content */}
+                    <div className="p-6">
+                      <h3 className="text-xl font-bold text-white mb-2 line-clamp-2 group-hover:text-red-100 transition-colors">
+                        {game.Title}
+                      </h3>
+                      <p className="text-red-100/80 text-sm mb-4 line-clamp-1">
+                        {game.Developers}
+                      </p>
+                      <div className="flex justify-between items-center">
+                        <span className="text-xs font-medium px-3 py-1.5 bg-white/20 text-white rounded-full">
+                          {game.Hardware.split(",")[0].trim()}
+                        </span>
+                        <ArrowRight className="w-4 h-4 text-red-100 group-hover:translate-x-1 transition-transform" />
+                      </div>
+                    </div>
                   </div>
-                ) : (
-                  filteredGames.map((game, index) => (
-                    <div 
-                      key={game.Title + index} 
-                      className="flex-none w-full sm:w-1/2 lg:w-[calc(25%-18px)] group cursor-pointer"
-                      onClick={() => openGameModal(game)}
-                      data-carousel-item
-                      role="article"
-                      tabIndex={0}
-                      onKeyDown={(e) => e.key === 'Enter' && openGameModal(game)}
-                    >
-                      <div className="bg-white text-black rounded-xl overflow-hidden h-full flex flex-col shadow-lg transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-red-500/20">
-                        <div className="relative w-full h-64 overflow-hidden bg-gradient-to-br from-gray-200 to-gray-300">
-                          <Image 
-                            src={getFirstImage(game.Pictures)} 
-                            alt={game.Title} 
-                            fill 
-                            className="object-cover transition-transform duration-700 group-hover:scale-110"
-                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                          <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-bold">
-                            {game.Year}
-                          </div>
-                        </div>
-                        <div className="p-5 flex-grow flex flex-col">
-                          <h3 className="font-bold text-xl text-neutral-900 mb-1 line-clamp-2 group-hover:text-red-600 transition-colors">
-                            {game.Title}
-                          </h3>
-                          <p className="text-sm text-neutral-600 mb-4 line-clamp-1">
-                            {game.Developers}
-                          </p>
-                          <div className="mt-auto flex justify-between items-center">
-                            <span className="text-xs text-neutral-600 font-medium px-3 py-1.5 bg-neutral-100 rounded-full">
-                              {game.Hardware.split(",")[0].trim()}
-                            </span>
-                            <ArrowRight className="w-5 h-5 text-neutral-400 group-hover:text-red-600 transition-all duration-300 group-hover:translate-x-1" />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-              
-              {!loading && filteredGames.length > 4 && (
-                <button 
-                  onClick={() => scrollToSlide("next")} 
-                  className={cn(
-                    "absolute right-0 top-1/2 -translate-y-1/2 z-20",
-                    "bg-white/20 backdrop-blur-sm rounded-full p-3 shadow-xl",
-                    "hover:bg-white/30 disabled:opacity-30 translate-x-4 lg:translate-x-12",
-                    "border border-white/20 transition-all duration-300",
-                    "hover:scale-110 active:scale-95"
-                  )}
-                  disabled={currentSlide >= filteredGames.length - 4}
-                  aria-label="Next games"
-                >
-                  <ChevronRight className="h-6 w-6 text-white" />
-                </button>
+                ))
               )}
             </div>
-            
-            <div className="text-center mt-12">
-              <Button 
-                asChild 
-                className="bg-white/90 text-red-600 hover:bg-white hover:scale-105 font-bold px-10 py-6 rounded-2xl shadow-lg transition-all group"
-              >
-                <Link href="/database">
-                  View Full Database
-                  <ArrowRight className="ml-3 h-5 w-5 transition-transform group-hover:translate-x-2" />
-                </Link>
-              </Button>
-            </div>
+
+            {!loading && filteredGames.length > 0 && (
+              <div className="mt-16 flex flex-col items-center gap-8">
+                {/* Pagination Controls */}
+                <div className="flex flex-wrap justify-center gap-2">
+                  {Array.from({ length: Math.ceil(filteredGames.length / itemsPerPage) }, (_, i) => i + 1).map((page) => (
+                    <button
+                      key={page}
+                      onClick={() => {
+                        setCurrentPage(page)
+                        window.scrollTo({ top: 0, behavior: 'smooth' })
+                      }}
+                      className={cn(
+                        "px-4 py-2 rounded-lg font-semibold transition-all",
+                        currentPage === page
+                          ? "bg-white text-red-600"
+                          : "bg-white/10 text-white hover:bg-white/20 border border-white/20"
+                      )}
+                    >
+                      {page}
+                    </button>
+                  ))}
+                </div>
+                
+                <p className="text-white/70 text-sm">
+                  Showing {(currentPage - 1) * itemsPerPage + 1}-{Math.min(currentPage * itemsPerPage, filteredGames.length)} of {filteredGames.length} games
+                </p>
+              </div>
+            )}
           </div>
         </section>
 
@@ -768,98 +726,6 @@ export default function Page() {
           </div>
         </section>
 
-        {/* RESEARCH SECTION - Enhanced cards and layout */}
-        <section 
-          ref={researchRef as React.RefObject<HTMLElement>}
-          className="relative py-20 px-8 z-40 text-black bg-white -mt-8 rounded-t-[2rem]"
-        >
-          <div className="max-w-[100rem] mx-auto">
-            <div className={cn(
-              "text-center mb-16 transition-all duration-1000",
-              researchVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-            )}>
-              <span className="inline-flex items-center gap-2 bg-red-100 text-red-600 px-4 py-2 rounded-full text-sm font-semibold mb-6">
-                <BookOpen className="w-4 h-4" />
-                Research & Publications
-              </span>
-              <h2 className="text-4xl md:text-5xl font-black text-neutral-900 mb-4">
-                Latest Research
-              </h2>
-              <p className="text-neutral-600 text-lg max-w-3xl mx-auto">
-                Explore our academic papers, case studies, and in-depth analyses of mobile gaming history
-              </p>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {researchArticles.map((article, index) => (
-                <Link 
-                  href={article.href}
-                  key={index} 
-                  className={cn(
-                    "group transform transition-all duration-500",
-                    "hover:-translate-y-3 hover:shadow-2xl cursor-pointer",
-                    researchVisible 
-                      ? "opacity-100 translate-y-0" 
-                      : "opacity-0 translate-y-10"
-                  )}
-                  style={{
-                    transitionDelay: `${index * 100}ms`
-                  }}
-                >
-                  <div className="bg-white border border-neutral-200 hover:border-red-500 rounded-2xl shadow-lg hover:shadow-red-500/20 transition-all h-full flex flex-col overflow-hidden">
-                    <div className="relative w-full overflow-hidden h-56 bg-gradient-to-br from-red-50 to-red-100">
-                      <Image 
-                        src={article.image || "/placeholder.jpg"} 
-                        alt={article.title} 
-                        fill 
-                        className="object-cover group-hover:scale-110 transition-transform duration-700"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                      <span className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm text-red-600 px-3 py-1.5 rounded-full font-semibold text-xs shadow-lg">
-                        {article.category}
-                      </span>
-                      {article.featured && (
-                        <Star className="absolute top-4 right-4 w-6 h-6 text-yellow-500 fill-yellow-500" />
-                      )}
-                    </div>
-                    
-                    <div className="p-6 flex-grow flex flex-col">
-                      <h3 className="font-bold text-xl text-neutral-900 group-hover:text-red-600 mb-3 transition-colors line-clamp-2">
-                        {article.title}
-                      </h3>
-                      <p className="text-neutral-600 text-sm line-clamp-3 flex-grow">
-                        {article.description}
-                      </p>
-                      <div className="mt-5 flex items-center justify-between">
-                        <span className="flex items-center gap-1.5 text-xs text-neutral-500">
-                          <Clock className="w-3 h-3" />
-                          {article.readTime} read
-                        </span>
-                        <span className="flex items-center gap-1 text-sm font-semibold text-red-600 group-hover:gap-3 transition-all">
-                          Read More
-                          <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-            
-            <div className="text-center mt-16">
-              <Button 
-                asChild 
-                className="bg-red-600 hover:bg-red-700 text-white font-bold px-10 py-6 rounded-2xl text-lg shadow-lg hover:shadow-2xl hover:shadow-red-500/20 transition-all transform hover:scale-105 group"
-              >
-                <Link href="/publications">
-                  View All Research 
-                  <ArrowRight className="ml-3 h-5 w-5 transition-transform group-hover:translate-x-2" />
-                </Link>
-              </Button>
-            </div>
-          </div>
-        </section>
       </div>
       
       <Footer />

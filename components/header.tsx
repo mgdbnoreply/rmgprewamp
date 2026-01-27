@@ -5,6 +5,7 @@ import { Menu, ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useState, useEffect } from "react"
 import Image from "next/image"
+import { usePathname } from "next/navigation"
 
 // A reusable component for the links inside the hover dropdowns
 const NavLink = ({ href, children }: { href: string; children: React.ReactNode }) => (
@@ -21,6 +22,7 @@ const NavLink = ({ href, children }: { href: string; children: React.ReactNode }
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
+  const pathname = usePathname()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -33,6 +35,13 @@ export function Header() {
 
   // Custom class for all nav triggers and links to look the same
   const navLinkStyle = "text-gray-300 hover:text-white font-semibold transition-colors px-3 py-2 rounded-lg hover:bg-white/5 flex items-center gap-1"
+  
+  // Helper function to check if a link is active
+  const isActive = (href: string) => {
+    if (href === "/" && pathname === "/") return true
+    if (href !== "/" && pathname.startsWith(href)) return true
+    return false
+  }
 
   return (
     <header
@@ -61,13 +70,13 @@ export function Header() {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-4">
             <nav className="flex items-center gap-1 lg:gap-2">
-              <Link href="/" className={navLinkStyle}>
+              <Link href="/" className={`${navLinkStyle} ${isActive("/") ? "text-red-600" : ""}`}>
                 Home
               </Link>
 
               {/* Publications Dropdown */}
               <div className="relative group">
-                <div className={navLinkStyle + " cursor-default"}>
+                <div className={`${navLinkStyle} cursor-default ${isActive("/publications") ? "text-red-600" : ""}`}>
                   <Link href="/publications">Publications</Link>
                   <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180" />
                 </div>
@@ -76,15 +85,13 @@ export function Header() {
                     <NavLink href="/publications?category=Articles">Articles</NavLink>
                     <NavLink href="/publications?category=Book Chapter">Book Chapters</NavLink>
                     <NavLink href="/publications?category=Conference Paper">Conference Papers</NavLink>
-                    <NavLink href="/publications#mobenta">Mobenta</NavLink>
-                    
                   </ul>
                 </div>
               </div>
 
               {/* Archive Dropdown */}
               <div className="relative group">
-                <div className={navLinkStyle + " cursor-default"}>
+                <div className={`${navLinkStyle} cursor-default ${isActive("/archive") || isActive("/database") || isActive("/collection") ? "text-red-600" : ""}`}>
                   <Link href="/archive">Archive</Link>
                   <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180" />
                 </div>
@@ -98,29 +105,29 @@ export function Header() {
 
               {/* Education Dropdown */}
               <div className="relative group">
-                <div className={navLinkStyle + " cursor-default"}>
+                <div className={`${navLinkStyle} cursor-default ${isActive("/education") ? "text-red-600" : ""}`}>
                   <Link href="/education">Education</Link>
                   <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180" />
                 </div>
                 <div className="absolute top-full left-0 z-[200] hidden group-hover:block pt-2">
                   <ul className="bg-white border border-gray-200 shadow-2xl rounded-2xl min-w-64 p-1">
                     <NavLink href="/education#definition">What is a Mobile Game?</NavLink>
-                    <NavLink href="/education#video-series">Video Series</NavLink>
                     <NavLink href="/education#educational-resources">Resources & Assignments</NavLink>
+                    <NavLink href="/education/resources">Archives</NavLink>
                   </ul>
                 </div>
               </div>
 
               {/* News Dropdown */}
               <div className="relative group">
-                <Link href="/news" className={navLinkStyle}>
+                <Link href="/news" className={`${navLinkStyle} ${isActive("/news") ? "text-red-600" : ""}`}>
                   News
                 </Link>
               </div>
 
               {/* About Dropdown */}
               <div className="relative group">
-                <div className={navLinkStyle + " cursor-default"}>
+                <div className={`${navLinkStyle} cursor-default ${isActive("/about") || isActive("/faq") ? "text-red-600" : ""}`}>
                   <Link href="/about">About</Link>
                   <ChevronDown className="h-4 w-4 transition-transform group-hover:rotate-180" />
                 </div>
@@ -133,7 +140,7 @@ export function Header() {
               </div>
 
               {/* Contact Link */}
-              <Link href="/contact" className={navLinkStyle}>
+              <Link href="/contact" className={`${navLinkStyle} ${isActive("/contact") ? "text-red-600" : ""}`}>
                 Contact
               </Link>
             </nav>
@@ -175,7 +182,8 @@ export function Header() {
               
               <div className="text-gray-500 font-bold text-xs uppercase tracking-wider mt-2">Education</div>
               <Link href="/education#definition" className="text-gray-300 hover:text-white transition-colors py-1 pl-4">What is a Mobile Game?</Link>
-              <Link href="/education#educational-resources" className="text-gray-300 hover:text-white transition-colors py-1 pl-4">Resources</Link>
+              <Link href="/education#educational-resources" className="text-gray-300 hover:text-white transition-colors py-1 pl-4">Resources & Assignments</Link>
+              <Link href="/education/resources" className="text-gray-300 hover:text-white transition-colors py-1 pl-4">Archives</Link>
               
               <Link href="/news" className="text-gray-300 hover:text-white font-semibold transition-colors py-2 mt-2">News</Link>
               <Link href="/about" className="text-gray-300 hover:text-white font-semibold transition-colors py-2">About</Link>

@@ -37,14 +37,14 @@ export default function AboutPage() {
   const researchAssistants = [
     {
       name: "Sutanuka Jashu",
-      role: "PHD. Student, Project Manager",
-      bio: "Sutanuka Jashu is an interdisciplinary artist and researcher from West Bengal, India, working at the nexus of art, technology, and cultural resilience. Her current practice integrates AI, adaptive systems, and speculative storytelling to critique digital colonialism, reimagine historical narratives, and explore ecological futures.",
+      role: "Ph.D. Student, Project Manager",
+      bio: "Sutanuka Jashu is a first-year Ph.D. student studying Interdisciplinary Media and Design at Northeastern as well as one of the Center for Transformative Media's newest team members. Jashu is an interdisciplinary artist, designer, and researcher whose work explores the intersection of artificial intelligence, cultural memory, and speculative spatial systems.",
       image: "https://rmgprewamptest.vercel.app/Sutanuka_Jashu.jpg",
     },
     {
       name: "Arslan Parkar",
       role: "MS in Information Systems",
-      bio: "Arslan is pursuing an MS in information systems at Northeastern. He has experience in leading an AI-driven startup and has done impactful research projects focusing on innovative, user-centric solutions.",
+      bio: "Arslan is pursuing an MS in Information Systems at Northeastern. He has experience in leading an AI-driven startup and has done impactful research projects focusing on innovative, user-centric solutions.",
       image: "https://mobilecreativity.net/wp-content/uploads/2025/09/Arslan-Parkar-2.jpg",
     },
     {
@@ -55,8 +55,8 @@ export default function AboutPage() {
     },
     {
       name: "Alessandra Diaz",
-      role: "Research Assistant ",
-      bio: "Ale is a third-year student at Northeastern University pursuing a combined major in Business Administration and Experience Design. As a research assistant, she brings both technical expertise and creative insight to her work. With hands-on experience in UX/UI, she has contributed to impactful projects centered on designing innovative, user-focused solutions that balance functionality with thoughtful design.",
+      role: "Research Assistant",
+      bio: "Ale is a third-year student at Northeastern University pursuing a combined major in Business Administration and Experience Design. As a research assistant, she brings both technical expertise and creative insight to her work.",
       image: "https://mobilecreativity.net/wp-content/uploads/2025/09/DSC6656-scaled.jpg",
     },
   ]
@@ -249,7 +249,7 @@ export default function AboutPage() {
               <div className="p-6 flex flex-col flex-grow">
                 <h3 className="text-xl font-bold text-gray-900 mb-1">{member.name}</h3>
                 <p className="font-semibold text-red-600 text-sm mb-4">{member.role}</p>
-                <p className="text-gray-600 text-sm leading-relaxed flex-grow line-clamp-4">{member.bio}</p>
+                <p className="text-gray-600 text-sm leading-relaxed flex-grow">{member.bio}</p>
               </div>
             </div>
           ))}
