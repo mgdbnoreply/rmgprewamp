@@ -123,7 +123,7 @@ export default function ArchivePage() {
         </section>
         
         {/* --- About the Archive (Split Layout) --- */}
-        <section className="py-16 md:py-24 px-4 md:px-8 lg:px-16 bg-white relative overflow-hidden -mt-10 z-20">
+        <section className="py-16 md:py-24 px-4 md:px-8 lg:px-16 bg-white relative overflow-hidden z-20">
           <div className="container mx-auto">
             <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 md:p-12">
               <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -307,6 +307,105 @@ export default function ArchivePage() {
                 <CarouselNext className="relative translate-y-0 translate-x-0 right-0 bg-transparent text-gray-900 border-gray-300 hover:bg-black hover:text-white" />
               </div>
             </Carousel>
+          </div>
+        </section>
+
+        {/* --- Donation Appeal Section --- */}
+        <section className="relative py-20 md:py-32 px-4 md:px-8 lg:px-16 bg-gradient-to-br from-red-50 via-orange-50 to-amber-50 z-20">
+          <div className="container mx-auto">
+            <div className="max-w-5xl mx-auto">
+              <div className="bg-white rounded-3xl shadow-2xl border border-red-100 overflow-hidden">
+                {/* Header with accent bar */}
+                <div className="relative h-2 bg-gradient-to-r from-red-500 via-orange-500 to-amber-500"></div>
+                
+                <div className="p-8 md:p-16">
+                  {/* Badge */}
+                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-50 text-red-600 text-sm font-bold mb-8 border border-red-100">
+                    <span className="text-xl">🎮</span>
+                    <span>Help Preserve Gaming History</span>
+                  </div>
+
+                  {/* Main Heading */}
+                  <h2 className="text-4xl md:text-5xl font-black mb-6 text-gray-900 leading-tight">
+                    Help Preserve the <br/>
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-orange-600">
+                      History of Mobile Gaming!
+                    </span>
+                  </h2>
+
+                  {/* Description */}
+                  <p className="text-lg text-gray-700 mb-8 leading-relaxed">
+                    The Retro Mobile Gaming Collection, soon to be hosted at Northeastern University, is now accepting donations. Your contributions will support our mission to document, preserve, and showcase the technological innovation, artistic design, and cultural significance of mobile gaming.
+                  </p>
+
+                  {/* What We're Seeking */}
+                  <div className="mb-10">
+                    <h3 className="text-xl font-bold text-gray-900 mb-6">We're Seeking Donations Of:</h3>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="flex items-start gap-4 p-4 rounded-xl bg-red-50/50 border border-red-100/50 hover:border-red-200 transition-colors">
+                        <span className="text-2xl">📱</span>
+                        <div>
+                          <h4 className="font-bold text-gray-900 mb-1">Vintage Handheld Devices</h4>
+                          <p className="text-sm text-gray-600">Game Boy, Game Gear, PSP, and more</p>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-4 p-4 rounded-xl bg-orange-50/50 border border-orange-100/50 hover:border-orange-200 transition-colors">
+                        <span className="text-2xl">📞</span>
+                        <div>
+                          <h4 className="font-bold text-gray-900 mb-1">Early Mobile Phones</h4>
+                          <p className="text-sm text-gray-600">Phones with gaming capabilities</p>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-4 p-4 rounded-xl bg-yellow-50/50 border border-yellow-100/50 hover:border-yellow-200 transition-colors">
+                        <span className="text-2xl">💾</span>
+                        <div>
+                          <h4 className="font-bold text-gray-900 mb-1">Cartridges & Accessories</h4>
+                          <p className="text-sm text-gray-600">Memory cards and gaming accessories</p>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-4 p-4 rounded-xl bg-red-50/50 border border-red-100/50 hover:border-red-200 transition-colors">
+                        <span className="text-2xl">📦</span>
+                        <div>
+                          <h4 className="font-bold text-gray-900 mb-1">Original Materials</h4>
+                          <p className="text-sm text-gray-600">Packaging, manuals, and promotional items</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Impact Statement */}
+                  <div className="mb-10 p-6 rounded-2xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100/50">
+                    <div className="flex gap-4">
+                      <span className="text-3xl">✨</span>
+                      <div>
+                        <h4 className="font-bold text-gray-900 mb-2">Your Impact</h4>
+                        <p className="text-gray-700">Donated items will be cataloged, maintained, and featured in future exhibitions exploring the history of mobile gaming. Support our mission to document and preserve technological innovation for future generations of researchers, students, and gaming enthusiasts.</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Contact Section */}
+                  <div className="mb-8 p-6 rounded-2xl bg-gradient-to-r from-red-100 to-orange-100 border border-red-200/50">
+                    <h4 className="font-bold text-gray-900 mb-3">Get in Touch</h4>
+                    <p className="text-gray-700 mb-4">Have questions or interested in donating items? We'd love to hear from you!</p>
+                    <a 
+                      href="mailto:TransformativeMedia@northeastern.edu"
+                      className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-full transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
+                    >
+                      <span>✉️</span>
+                      Contact Us at TransformativeMedia@northeastern.edu
+                    </a>
+                  </div>
+
+                  {/* Important Note */}
+                  <div className="p-4 rounded-xl bg-gray-50 border border-gray-200">
+                    <p className="text-sm text-gray-600">
+                      <span className="font-bold text-gray-900">Please Note:</span> These donations are NOT tax-deductible as the items are being donated to a research project that is conducted across several institutions and not Northeastern University itself.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
         

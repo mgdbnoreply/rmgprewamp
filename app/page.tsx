@@ -21,6 +21,10 @@ import {
   Gamepad2,
   Zap,
   Shield,
+  Calendar,
+  HardDrive,
+  Wifi,
+  Filter,
 } from "lucide-react"
 import { useState, useEffect, useRef, useCallback, useMemo } from "react"
 import { Button } from "@/components/ui/button"
@@ -29,6 +33,18 @@ import { GameAPI } from "@/services/api"
 import type { GameData } from "@/lib/types"
 import { publicationsData } from "@/lib/publications-data"
 import { cn } from "@/lib/utils"
+import { Badge } from "@/components/ui/badge"
+import { Slider } from "@/components/ui/slider"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Label } from "@/components/ui/label"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 // Constants
 const AUTOPLAY_DELAY = 50
@@ -103,17 +119,6 @@ const getFirstImage = (pictures: string | undefined): string => {
   return imageUrls[0] || "/placeholder.jpg"
 }
 
-const debounce = <T extends (...args: any[]) => any>(
-  func: T,
-  delay: number
-): ((...args: Parameters<T>) => void) => {
-  let timeoutId: NodeJS.Timeout
-  return (...args: Parameters<T>) => {
-    clearTimeout(timeoutId)
-    timeoutId = setTimeout(() => func(...args), delay)
-  }
-}
-
 export default function Page() {
   // State management
   const [games, setGames] = useState<GameData[]>([])
@@ -122,10 +127,14 @@ export default function Page() {
   const [loading, setLoading] = useState(true)
   const [currentSlide, setCurrentSlide] = useState(0)
   const [searchQuery, setSearchQuery] = useState("")
-  const [isFilterOpen, setIsFilterOpen] = useState(false)
-  const [selectedCategory, setSelectedCategory] = useState<string>("all")
-  const [selectedYear, setSelectedYear] = useState<string>("all")
+  const [isFilterOpen, setIsFilterOpen] = useState(true)
+  
+  // Advanced filter states (matching database page)
+  const [yearRange, setYearRange] = useState<[number, number]>([1975, 2008])
+  const [selectedGenres, setSelectedGenres] = useState<string[]>([])
   const [selectedHardware, setSelectedHardware] = useState<string>("all")
+  const [selectedConnectivity, setSelectedConnectivity] = useState<string>("all")
+  
   const [showIntro, setShowIntro] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 12
@@ -159,16 +168,77 @@ export default function Page() {
         const response = await GameAPI.getAllGames()
         if (Array.isArray(response)) {
           setGames(response)
+          // Initialize year range based on data
+          const years = response.map(g => parseInt(g.Year)).filter(y => !isNaN(y))
+          if (years.length > 0) {
+            const minYear = Math.min(...years)
+            const maxYear = Math.max(...years)
+            setYearRange([minYear, maxYear])
+          }
         }
       } catch (error) {
         console.error("Error fetching games:", error)
-        // Could show error state to user
       } finally {
         setLoading(false)
       }
     }
     fetchGames()
   }, [])
+
+  // Derive unique filter options (matching database page)
+  const allGenres = useMemo(() => 
+    Array.from(new Set(games.flatMap(g => g.Genre?.split(",").map(s => s.trim()) || []))).filter(Boolean).sort(),
+    [games]
+  )
+
+  const hardwareOptions = useMemo(() => 
+    Array.from(new Set(games.map(g => g.Hardware?.split(",")[0].trim()).filter(Boolean))).sort(),
+    [games]
+  )
+
+  const connectivityOptions = useMemo(() => 
+    Array.from(new Set(games.map(g => g.Connectivity?.trim()).filter(Boolean))).sort(),
+    [games]
+  )
+
+  const minGameYear = useMemo(() => {
+    const years = games.map(g => parseInt(g.Year)).filter(y => !isNaN(y))
+    return years.length ? Math.min(...years) : 1975
+  }, [games])
+
+  const maxGameYear = useMemo(() => {
+    const years = games.map(g => parseInt(g.Year)).filter(y => !isNaN(y))
+    return years.length ? Math.max(...years) : 2008
+  }, [games])
+
+  // Filtering Logic (matching database page)
+  const filteredGames = useMemo(() => {
+    return games.filter((game) => {
+      const searchLower = searchQuery.toLowerCase()
+      const matchesSearch =
+        game.Title.toLowerCase().includes(searchLower) ||
+        game.Developers.toLowerCase().includes(searchLower)
+      
+      const gameYear = parseInt(game.Year)
+      const matchesYear = !isNaN(gameYear) ? (gameYear >= yearRange[0] && gameYear <= yearRange[1]) : true
+      
+      const matchesGenre = selectedGenres.length === 0 || 
+        selectedGenres.some(genre => game.Genre?.includes(genre))
+
+      const matchesHardware = selectedHardware === "all" || game.Hardware.includes(selectedHardware)
+      
+      const matchesConnectivity = selectedConnectivity === "all" || game.Connectivity?.includes(selectedConnectivity)
+      
+      return matchesSearch && matchesYear && matchesGenre && matchesHardware && matchesConnectivity
+    })
+  }, [games, searchQuery, yearRange, selectedGenres, selectedHardware, selectedConnectivity])
+
+  const activeFiltersCount = useMemo(() => (
+    (selectedGenres.length > 0 ? 1 : 0) + 
+    (selectedHardware !== "all" ? 1 : 0) + 
+    (selectedConnectivity !== "all" ? 1 : 0) +
+    (yearRange[0] !== minGameYear || yearRange[1] !== maxGameYear ? 1 : 0)
+  ), [selectedGenres, selectedHardware, selectedConnectivity, yearRange, minGameYear, maxGameYear])
 
   // Memoized filter options
   const filterOptions = useMemo(() => ({
@@ -177,50 +247,31 @@ export default function Page() {
     hardware: ["all", ...Array.from(new Set(games.flatMap(g => g.Hardware.split(",")[0].trim()).filter(Boolean)))]
   }), [games])
 
-  // Memoized filtered games with debounced search
-  const filteredGames = useMemo(() => {
-    return games.filter(game => {
-      const searchLower = searchQuery.toLowerCase()
-      const matchesSearch = !searchQuery || 
-        game.Title.toLowerCase().includes(searchLower) ||
-        game.Genre?.toLowerCase().includes(searchLower) ||
-        game.Hardware?.toLowerCase().includes(searchLower) ||
-        game.Developers?.toLowerCase().includes(searchLower)
-      
-      const matchesCategory = selectedCategory === "all" || game.Genre?.includes(selectedCategory)
-      const matchesYear = selectedYear === "all" || game.Year === selectedYear
-      const matchesHardware = selectedHardware === "all" || game.Hardware?.includes(selectedHardware)
-      
-      return matchesSearch && matchesCategory && matchesYear && matchesHardware
-    })
-  }, [games, searchQuery, selectedCategory, selectedYear, selectedHardware])
-
-  const activeFiltersCount = useMemo(() => 
-    [selectedCategory, selectedYear, selectedHardware].filter(f => f !== "all").length,
-    [selectedCategory, selectedYear, selectedHardware]
-  )
-
   // Callbacks
   const resetFilters = useCallback(() => {
-    setSelectedCategory("all")
-    setSelectedYear("all")
+    setYearRange([minGameYear, maxGameYear])
+    setSelectedGenres([])
     setSelectedHardware("all")
+    setSelectedConnectivity("all")
     setSearchQuery("")
-  }, [])
+    setCurrentPage(1)
+  }, [minGameYear, maxGameYear])
 
   const openGameModal = useCallback((game: GameData) => {
     setSelectedGame(game)
     setIsModalOpen(true)
   }, [])
 
+  const handleGenreChange = (genre: string, checked: boolean) => {
+    setSelectedGenres(prev => 
+      checked ? [...prev, genre] : prev.filter(g => g !== genre)
+    )
+    setCurrentPage(1)
+  }
+
   const scrollToSlide = useCallback((direction: "prev" | "next") => {
     // No longer needed with grid layout, but keeping for now
   }, [])
-
-  const debouncedSearch = useMemo(
-    () => debounce((value: string) => setSearchQuery(value), 300),
-    []
-  )
 
   // Enhanced data
   const discoverItems = [
@@ -459,7 +510,10 @@ export default function Page() {
                   <Input 
                     type="text" 
                     placeholder="Search by title or developer..." 
-                    onChange={(e) => debouncedSearch(e.target.value)}
+                    onChange={(e) => {
+                      setSearchQuery(e.target.value)
+                      setCurrentPage(1)
+                    }}
                     className="pl-12 pr-4 h-12 bg-white/15 border border-white/30 text-white placeholder:text-red-100/60 rounded-xl focus:border-white/60 focus:ring-2 focus:ring-white/40 transition-all hover:bg-white/20"
                     aria-label="Search games"
                   />
@@ -497,55 +551,112 @@ export default function Page() {
 
               {/* Expanded Filter Controls */}
               {isFilterOpen && (
-                <div 
-                  id="filter-panel"
-                  className="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-8 border-t border-white/20 animate-in fade-in slide-in-from-top-4 duration-300"
-                >
-                  <div className="space-y-2">
-                    <label className="text-white font-semibold text-sm uppercase tracking-wide mb-3 block">Genre</label>
-                    <select 
-                      value={selectedCategory} 
-                      onChange={(e) => setSelectedCategory(e.target.value)} 
-                      className="w-full bg-white/15 border border-white/30 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-white/50 transition-all hover:bg-white/20 font-medium"
-                      aria-label="Filter by genre"
-                    >
-                      {filterOptions.categories.map(cat => (
-                        <option key={cat} value={cat} className="bg-black text-white">
-                          {cat === "all" ? "All Genres" : cat}
-                        </option>
-                      ))}
-                    </select>
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pt-6 border-t border-white/20 animate-in fade-in slide-in-from-top-2">
+                  
+                  {/* Left Column: Genre Checkboxes */}
+                  <div className="lg:col-span-3 space-y-4">
+                    <div className="flex items-center gap-2 text-white font-bold">
+                      <Gamepad2 className="w-4 h-4 text-red-300" /> Genres
+                    </div>
+                    <ScrollArea className="h-[280px] w-full rounded-xl border border-white/30 bg-white/10 p-4">
+                      <div className="space-y-3">
+                        {allGenres.map((genre) => (
+                          <div key={genre} className="flex items-center space-x-2">
+                            <Checkbox 
+                              id={`genre-${genre}`} 
+                              checked={selectedGenres.includes(genre)}
+                              onCheckedChange={(checked) => handleGenreChange(genre, checked as boolean)}
+                              className="data-[state=checked]:bg-red-400 data-[state=checked]:border-red-400 border-white/40 rounded"
+                            />
+                            <label
+                              htmlFor={`genre-${genre}`}
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer text-white hover:text-red-200"
+                            >
+                              {genre}
+                            </label>
+                          </div>
+                        ))}
+                      </div>
+                    </ScrollArea>
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-white font-semibold text-sm uppercase tracking-wide mb-3 block">Year</label>
-                    <select 
-                      value={selectedYear} 
-                      onChange={(e) => setSelectedYear(e.target.value)} 
-                      className="w-full bg-white/15 border border-white/30 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-white/50 transition-all hover:bg-white/20 font-medium"
-                      aria-label="Filter by year"
-                    >
-                      {filterOptions.years.map(year => (
-                        <option key={year} value={year} className="bg-black text-white">
-                          {year === "all" ? "All Years" : year}
-                        </option>
-                      ))}
-                    </select>
+
+                  {/* Middle Column: Year Slider & Connectivity */}
+                  <div className="lg:col-span-5 space-y-8 px-0 lg:px-4">
+                    {/* Year Slider */}
+                    <div className="space-y-4 bg-white/10 p-6 rounded-xl border border-white/30">
+                      <div className="flex items-center justify-between">
+                         <div className="flex items-center gap-2 text-white font-bold">
+                            <Calendar className="w-4 h-4 text-red-300" /> Release Year
+                         </div>
+                         <span className="text-sm font-mono text-red-200 font-bold bg-white/10 px-2 py-1 rounded border border-red-300/30">
+                           {yearRange[0]} - {yearRange[1]}
+                         </span>
+                      </div>
+                      <Slider
+                        defaultValue={[minGameYear, maxGameYear]}
+                        value={[yearRange[0], yearRange[1]]}
+                        min={minGameYear}
+                        max={maxGameYear}
+                        step={1}
+                        minStepsBetweenThumbs={1}
+                        onValueChange={(value) => {
+                          setYearRange(value as [number, number])
+                          setCurrentPage(1)
+                        }}
+                        className="py-4"
+                      />
+                      <div className="flex justify-between text-xs text-white/60">
+                        <span>{minGameYear}</span>
+                        <span>{maxGameYear}</span>
+                      </div>
+                    </div>
+
+                     {/* Connectivity Select */}
+                     <div className="space-y-2">
+                       <label className="text-sm font-bold text-white flex items-center gap-2">
+                          <Wifi className="w-4 h-4 text-red-300" /> Connectivity
+                       </label>
+                       <Select value={selectedConnectivity} onValueChange={(val) => {setSelectedConnectivity(val); setCurrentPage(1)}}>
+                        <SelectTrigger className="w-full h-12 bg-white/10 border-white/30 text-white rounded-xl">
+                          <SelectValue placeholder="Select Connectivity" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All Connectivity Types</SelectItem>
+                          {connectivityOptions.map((conn) => (
+                            <SelectItem key={conn} value={conn}>{conn}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-white font-semibold text-sm uppercase tracking-wide mb-3 block">Hardware</label>
-                    <select 
-                      value={selectedHardware} 
-                      onChange={(e) => setSelectedHardware(e.target.value)} 
-                      className="w-full bg-white/15 border border-white/30 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-white/50 transition-all hover:bg-white/20 font-medium"
-                      aria-label="Filter by hardware"
-                    >
-                      {filterOptions.hardware.map(hw => (
-                        <option key={hw} value={hw} className="bg-black text-white">
-                          {hw === "all" ? "All Hardware" : hw}
-                        </option>
-                      ))}
-                    </select>
+
+                  {/* Right Column: Hardware */}
+                  <div className="lg:col-span-4 space-y-4">
+                    <div className="space-y-2">
+                       <label className="text-sm font-bold text-white flex items-center gap-2">
+                          <HardDrive className="w-4 h-4 text-red-300" /> Platform / Hardware
+                       </label>
+                       <Select value={selectedHardware} onValueChange={(val) => {setSelectedHardware(val); setCurrentPage(1)}}>
+                        <SelectTrigger className="w-full h-12 bg-white/10 border-white/30 text-white rounded-xl">
+                          <SelectValue placeholder="Select Hardware" />
+                        </SelectTrigger>
+                        <SelectContent className="max-h-[300px]">
+                          <SelectItem value="all">All Platforms</SelectItem>
+                          {hardwareOptions.map((hw) => (
+                            <SelectItem key={hw} value={hw}>{hw}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Results Summary Box */}
+                    <div className="bg-white/15 rounded-xl p-6 border border-white/30 mt-6 text-center">
+                      <p className="text-white/70 font-medium mb-1">Found</p>
+                      <p className="text-4xl font-black text-red-300">{filteredGames.length}</p>
+                      <p className="text-white/60 text-sm mt-1">Games matching criteria</p>
+                    </div>
                   </div>
+
                 </div>
               )}
             </div>

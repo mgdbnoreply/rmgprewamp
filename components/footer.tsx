@@ -5,7 +5,7 @@ export function Footer() {
   return (
     <footer className="relative border-t border-gray-800 bg-black text-white z-50">
       <div className="max-w-[100rem] mx-auto px-4 md:px-8 lg:px-16 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           
           {/* Brand & Mission */}
           <div className="space-y-4">
@@ -24,9 +24,9 @@ export function Footer() {
           </div>
 
           {/* Archive & Research */}
-          <div>
-            <h3 className="text-white font-bold text-sm uppercase tracking-wider mb-4">Archive & Research</h3>
-            <ul className="space-y-2.5">
+          <div className="space-y-4">
+            <h3 className="text-white font-bold text-sm uppercase tracking-wider">Archive & Research</h3>
+            <ul className="space-y-2">
               <li>
                 <Link href="/archive" className="text-gray-400 hover:text-red-400 text-sm transition-colors">
                   Archive Overview
@@ -56,9 +56,9 @@ export function Footer() {
           </div>
 
           {/* Project & Community */}
-          <div>
-            <h3 className="text-white font-bold text-sm uppercase tracking-wider mb-4">Project</h3>
-            <ul className="space-y-2.5">
+          <div className="space-y-4">
+            <h3 className="text-white font-bold text-sm uppercase tracking-wider">Project</h3>
+            <ul className="space-y-2">
               <li>
                 <Link href="/about" className="text-gray-400 hover:text-red-400 text-sm transition-colors">
                   About Us
@@ -84,7 +84,7 @@ export function Footer() {
                   href="https://rmgd-official-backend.vercel.app/" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="text-gray-400 hover:text-red-400 text-sm transition-colors flex items-center gap-1"
+                  className="text-gray-400 hover:text-red-400 text-sm transition-colors inline-flex items-center gap-1"
                 >
                   Contribute Data
                 </a>
@@ -93,16 +93,16 @@ export function Footer() {
           </div>
 
           {/* Connect */}
-          <div>
-            <h3 className="text-white font-bold text-sm uppercase tracking-wider mb-4">Connect</h3>
-            <div className="flex gap-4">
-              <a href="#" className="w-10 h-10 rounded-full bg-gray-900 flex items-center justify-center text-gray-400 hover:bg-red-600 hover:text-white transition-all" aria-label="GitHub">
+          <div className="space-y-4">
+            <h3 className="text-white font-bold text-sm uppercase tracking-wider">Connect</h3>
+            <div className="flex gap-3">
+              <a href="#" className="w-10 h-10 rounded-full bg-gray-900 flex items-center justify-center text-gray-400 hover:bg-red-600 hover:text-white transition-all duration-300" aria-label="GitHub">
                 <Github className="h-5 w-5" />
               </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-gray-900 flex items-center justify-center text-gray-400 hover:bg-red-600 hover:text-white transition-all" aria-label="Twitter">
+              <a href="#" className="w-10 h-10 rounded-full bg-gray-900 flex items-center justify-center text-gray-400 hover:bg-red-600 hover:text-white transition-all duration-300" aria-label="Twitter">
                 <Twitter className="h-5 w-5" />
               </a>
-              <a href="mailto:TransformativeMedia@northeastern.edu" className="w-10 h-10 rounded-full bg-gray-900 flex items-center justify-center text-gray-400 hover:bg-red-600 hover:text-white transition-all" aria-label="Email">
+              <a href="mailto:TransformativeMedia@northeastern.edu" className="w-10 h-10 rounded-full bg-gray-900 flex items-center justify-center text-gray-400 hover:bg-red-600 hover:text-white transition-all duration-300" aria-label="Email">
                 <Mail className="h-5 w-5" />
               </a>
             </div>
