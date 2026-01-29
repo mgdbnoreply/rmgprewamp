@@ -348,7 +348,7 @@ export default function Page() {
         <Header />
 
         {/* HERO SECTION - Enhanced with better video handling */}
-        <section className="h-screen min-h-[700px] flex items-center justify-center  p-8 relative z-0 overflow-hidden">
+        <section className="h-screen min-h-[600px] sm:min-h-[700px] flex items-center justify-center px-4 sm:p-8 relative z-0 overflow-hidden">
           <div className="absolute inset-0 w-full h-full bg-black">
             <video
               ref={videoRef}
@@ -380,14 +380,14 @@ export default function Page() {
               : "opacity-0 translate-y-10 scale-95 pointer-events-none"
           )}>
             <div className="space-y-2">
-              <h1 className="text-6xl md:text-9xl font-black tracking-tighter uppercase animate-in fade-in slide-in-from-bottom-10 duration-1000">
+              <h1 className="text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter uppercase animate-in fade-in slide-in-from-bottom-10 duration-1000">
                 Retro Mobile
               </h1>
-              <h2 className="text-6xl md:text-9xl font-black tracking-tighter uppercase text-red-600 animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-300">
+              <h2 className="text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter uppercase text-red-600 animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-300">
                 Gaming Project
               </h2>
             </div>
-            <p className="text-xl md:text-2xl text-neutral-300 mt-8 max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-700 font-medium">
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-neutral-300 mt-6 sm:mt-8 max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-700 font-medium">
               Preserving the history of portable play from 1975 to 2008.
             </p>
             
@@ -452,18 +452,18 @@ export default function Page() {
                 The Retro Mobile Gaming Project (RMGP) is a comprehensive digital preservation 
                 initiative documenting the evolution of mobile gaming from 1975 to 2008.
               </p>
-              <div className="grid grid-cols-3 gap-6 mt-8">
+              <div className="grid grid-cols-3 gap-3 sm:gap-6 mt-6 sm:mt-8">
                 <div className="text-center">
-                  <div className="text-3xl font-black text-red-600">33+</div>
-                  <div className="text-sm text-neutral-600">Years Covered</div>
+                  <div className="text-2xl sm:text-3xl font-black text-red-600">33+</div>
+                  <div className="text-xs sm:text-sm text-neutral-600 mt-1">Years Covered</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl font-black text-red-600">500+</div>
-                  <div className="text-sm text-neutral-600">Devices</div>
+                  <div className="text-2xl sm:text-3xl font-black text-red-600">500+</div>
+                  <div className="text-xs sm:text-sm text-neutral-600 mt-1">Devices</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl font-black text-red-600">10K+</div>
-                  <div className="text-sm text-neutral-600">Games</div>
+                  <div className="text-2xl sm:text-3xl font-black text-red-600">10K+</div>
+                  <div className="text-xs sm:text-sm text-neutral-600 mt-1">Games</div>
                 </div>
               </div>
               <Button 
@@ -482,29 +482,29 @@ export default function Page() {
         {/* FULL DATABASE SECTION - Complete search and filtering */}
         <section 
           ref={gamesRef as React.RefObject<HTMLElement>}
-          className="relative py-20 px-8 z-20 text-white -mt-8 rounded-t-[2rem]"
+          className="relative py-12 sm:py-20 px-4 sm:px-8 z-20 text-white -mt-8 rounded-t-[2rem]"
           style={{ 
             background: "linear-gradient(135deg, #ef4444 0%, #991b1b 50%, #000000 100%)" 
           }}
         >
           <div className="max-w-[100rem] mx-auto">
             <div className={cn(
-              "text-center transition-all duration-1000 mb-16",
+              "text-center transition-all duration-1000 mb-12 sm:mb-16",
               gamesVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
             )}>
-              <h2 className="text-5xl md:text-7xl font-black tracking-tighter">
+              <h2 className="text-4xl sm:text-5xl md:text-7xl font-black tracking-tighter">
                 From The <span className="text-red-100">Archive</span>
               </h2>
-              <p className="text-lg text-red-100 max-w-3xl mx-auto mt-6">
+              <p className="text-sm sm:text-base md:text-lg text-red-100 max-w-3xl mx-auto mt-4 sm:mt-6">
                 Explore our comprehensive collection of preserved games, devices, and hardware. Use the filters below to search by year, genre, platform, and connectivity.
               </p>
             </div>
 
             {/* Advanced filter UI - matching database page */}
-            <div className="bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-xl border border-white/20 rounded-3xl p-6 md:p-10 mb-12 shadow-2xl">
+            <div className="bg-gradient-to-br from-white/15 to-white/5 backdrop-blur-xl border border-white/20 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-10 mb-8 sm:mb-12 shadow-2xl">
               
               {/* Top Bar: Search & Toggle */}
-              <div className="flex flex-col lg:flex-row gap-4 items-center justify-between mb-8">
+              <div className="flex flex-col lg:flex-row gap-3 sm:gap-4 items-center justify-between mb-6 sm:mb-8">
                 <div className="relative w-full lg:flex-1">
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-red-200/60" />
                   <Input 
@@ -551,7 +551,7 @@ export default function Page() {
 
               {/* Expanded Filter Controls */}
               {isFilterOpen && (
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pt-6 border-t border-white/20 animate-in fade-in slide-in-from-top-2">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 pt-4 sm:pt-6 border-t border-white/20 animate-in fade-in slide-in-from-top-2">
                   
                   {/* Left Column: Genre Checkboxes */}
                   <div className="lg:col-span-3 space-y-4">
@@ -662,7 +662,7 @@ export default function Page() {
             </div>
 
             {/* Games grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-12">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 md:gap-8 mb-8 sm:mb-12">
               {loading ? (
                 [...Array(12)].map((_, i) => (
                   <div 
@@ -765,17 +765,17 @@ export default function Page() {
         {/* DISCOVER SECTION - Enhanced cards */}
         <section 
           ref={discoverRef as React.RefObject<HTMLElement>}
-          className="relative py-20 px-8 z-30 bg-black text-white -mt-8 mb-8 rounded-t-[2rem]"
+          className="relative py-12 sm:py-20 px-4 sm:px-8 z-30 bg-black text-white -mt-8 mb-4 sm:mb-8 rounded-t-[2rem]"
         >
           <div className="max-w-[100rem] mx-auto">
             <h2 className={cn(
-              "text-5xl md:text-7xl font-black tracking-tighter text-center transition-all duration-1000",
+              "text-4xl sm:text-5xl md:text-7xl font-black tracking-tighter text-center transition-all duration-1000",
               discoverVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
             )}>
               Discover & <span className="text-red-600 ">Explore</span>
             </h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 mt-12 sm:mt-16">
               {discoverItems.map((item, index) => {
                 const Icon = item.icon
                 return (
@@ -801,7 +801,7 @@ export default function Page() {
                       item.color
                     )} />
                     
-                    <div className="relative h-56 w-full overflow-hidden bg-neutral-900">
+                    <div className="relative h-40 sm:h-48 md:h-56 w-full overflow-hidden bg-neutral-900">
                       <Image 
                         src={item.image} 
                         alt={item.title} 
@@ -818,8 +818,8 @@ export default function Page() {
                       </div>
                     </div>
                     
-                    <div className="p-6">
-                      <h3 className="text-2xl font-bold text-white group-hover:text-red-600 transition-colors">
+                    <div className="p-4 sm:p-6">
+                      <h3 className="text-lg sm:text-2xl font-bold text-white group-hover:text-red-600 transition-colors">
                         {item.title}
                       </h3>
                       <p className="text-neutral-400 mt-3 line-clamp-2">

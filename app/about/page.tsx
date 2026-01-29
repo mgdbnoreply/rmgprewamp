@@ -238,7 +238,7 @@ export default function AboutPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {researchAssistants.map((member, index) => (
             <div key={index} className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 flex flex-col h-full group">
-              <div className="relative w-full aspect-square overflow-hidden bg-gray-100">
+              <div className="relative w-full aspect-[4/3] sm:aspect-square overflow-hidden bg-gray-100">
                 <Image 
                   src={member.image || "/placeholder-user.jpg"} 
                   alt={member.name} 
@@ -247,9 +247,9 @@ export default function AboutPage() {
                 />
               </div>
               <div className="p-6 flex flex-col flex-grow">
-                <h3 className="text-xl font-bold text-gray-900 mb-1">{member.name}</h3>
+                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-1">{member.name}</h3>
                 <p className="font-semibold text-red-600 text-sm mb-4">{member.role}</p>
-                <p className="text-gray-600 text-sm leading-relaxed flex-grow">{member.bio}</p>
+                <p className="text-gray-600 text-sm leading-relaxed">{member.bio}</p>
               </div>
             </div>
           ))}
