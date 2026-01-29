@@ -1,8 +1,14 @@
 "use client"
 
 import Link from "next/link"
-import { Menu, ChevronDown } from "lucide-react"
+import { Menu, ChevronDown, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import {
+  Drawer,
+  DrawerTrigger,
+  DrawerContent,
+  DrawerClose,
+} from "@/components/ui/drawer"
 import { useState, useEffect } from "react"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
@@ -32,6 +38,23 @@ export function Header() {
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
+
+  // Prevent background scroll when mobile menu is open
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [isMenuOpen])
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setIsMenuOpen(false)
+  }, [pathname])
 
   // Custom class for all nav triggers and links to look the same
   const navLinkStyle = "text-gray-300 hover:text-white font-semibold transition-colors px-3 py-2 rounded-lg hover:bg-white/5 flex items-center gap-1"
@@ -153,15 +176,61 @@ export function Header() {
             </Button>
           </div>
 
-          {/* Mobile Menu Button */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden text-white hover:bg-gray-800"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            <Menu className="h-6 w-6" />
-          </Button>
+          {/* Mobile Drawer Trigger */}
+          <div className="md:hidden">
+            <Drawer open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+              <DrawerTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-white hover:bg-gray-800"
+                  aria-label="Open menu"
+                >
+                  <Menu className="h-6 w-6" />
+                </Button>
+              </DrawerTrigger>
+
+              <DrawerContent className="bg-black/95 text-white" data-vaul-drawer-direction="right">
+                <div className="flex items-center justify-between p-4 border-b border-white/5">
+                  <Link href="/" className="flex items-center gap-2">
+                    <span className="font-black tracking-tight">RETRO MOBILE</span>
+                  </Link>
+                  <DrawerClose asChild>
+                    <Button variant="ghost" aria-label="Close menu" className="text-white">
+                      <X className="h-5 w-5" />
+                    </Button>
+                  </DrawerClose>
+                </div>
+
+                <div className="p-4 flex flex-col gap-3">
+                  <Link href="/" className="text-gray-300 hover:text-white font-semibold transition-colors py-3 px-2 rounded-lg">Home</Link>
+
+                  <div className="text-gray-500 font-bold text-xs uppercase tracking-wider mt-2">Publications</div>
+                  <Link href="/publications?category=Articles" className="text-gray-300 hover:text-white transition-colors py-3 px-2">Articles</Link>
+                  <Link href="/publications?category=Book Chapter" className="text-gray-300 hover:text-white transition-colors py-3 px-2">Book Chapters</Link>
+
+                  <div className="text-gray-500 font-bold text-xs uppercase tracking-wider mt-2">Archive</div>
+                  <Link href="/database" className="text-gray-300 hover:text-white transition-colors py-3 px-2">Database</Link>
+                  <Link href="/collection" className="text-gray-300 hover:text-white transition-colors py-3 px-2">Collection</Link>
+
+                  <div className="text-gray-500 font-bold text-xs uppercase tracking-wider mt-2">Education</div>
+                  <Link href="/education#definition" className="text-gray-300 hover:text-white transition-colors py-3 px-2">What is a Mobile Game?</Link>
+                  <Link href="/education#educational-resources" className="text-gray-300 hover:text-white transition-colors py-3 px-2">Resources & Assignments</Link>
+                  <Link href="/education/resources" className="text-gray-300 hover:text-white transition-colors py-3 px-2">Archives</Link>
+
+                  <Link href="/news" className="text-gray-300 hover:text-white font-semibold transition-colors py-3 px-2 mt-2">News</Link>
+                  <Link href="/about" className="text-gray-300 hover:text-white font-semibold transition-colors py-3 px-2">About</Link>
+                  <Link href="/contact" className="text-gray-300 hover:text-white font-semibold transition-colors py-3 px-2">Contact</Link>
+
+                  <Button asChild className="bg-red-600 hover:bg-red-700 text-white font-bold w-full mt-4">
+                    <a href="https://rmgd-official-backend.vercel.app/" target="_blank" rel="noopener noreferrer">
+                      Contribute
+                    </a>
+                  </Button>
+                </div>
+              </DrawerContent>
+            </Drawer>
+          </div>
         </div>
 
         {/* Mobile Menu */}
