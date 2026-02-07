@@ -113,10 +113,7 @@ export default function AboutPage() {
             <div className="flex flex-col justify-center bg-black/30 backdrop-blur-lg rounded-3xl border border-white/10 shadow-2xl p-10 md:p-14">
               <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">What is RMGP?</h2>
               <p className="text-gray-300 leading-relaxed mb-4">
-                The Retro Mobile Gaming Project (RMGP) is a comprehensive archival and research initiative dedicated to documenting the history and evolution of mobile gaming. The project brings together a curated collection of early mobile games, handheld devices, platforms, and related materials from the formative years of portable entertainment.
-              </p>
-              <p className="text-gray-300 leading-relaxed">
-                RMGP functions as both a repository and reference framework for scholars, developers, and enthusiasts.
+                The Retro Mobile Gaming Project (RMGP) is a comprehensive archival and research initiative dedicated to documenting the history and evolution of mobile gaming. The project brings together a curated collection of early mobile games, handheld devices, platforms, and related materials from the formative years of mobile gaming.
               </p>
             </div>
           </div>
@@ -128,7 +125,7 @@ export default function AboutPage() {
             <div className="bg-red-950/20 backdrop-blur-lg rounded-3xl border border-red-500/30 shadow-2xl p-12 md:p-16">
               <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">Our Mission</h2>
               <p className="text-lg md:text-xl text-gray-200 leading-relaxed max-w-4xl mx-auto">
-                We are dedicated to assembling a rigorous, structured archive of mobile games, devices, platforms, and associated media; to provide researchers and practitioners with a trusted resource for studying the technological, aesthetic, and cultural dimensions of mobile gaming; and to foster public understanding of how portable play has shaped and continues to shape the interactions between hardware, software, users, and society.
+                We are dedicated to assembling a rigorous, structured archive of mobile games, devices, platforms, and associated media. We aim to provide researchers and practitioners with a trusted resource for studying the technological, aesthetic, and cultural dimensions of mobile gaming. Further, we hope to foster public understanding of how mobile gameplay has shaped and continues to shape culture — the interactions between hardware, software, users, and society.
               </p>
             </div>
           </div>

@@ -138,7 +138,7 @@ export default function EducationPage() {
                 <p className="mb-4">
                   The Retro Mobile Gaming Project (RMGP) defines mobile games as 
                   <span className="text-gray-900 font-bold bg-red-50 px-1 rounded mx-1">
-                    games that are played on portable devices
+                    games that can be played while on-the-go on portable devices
                   </span>, 
                   including handheld consoles, mobile phones, and other portable electronic devices.
                 </p>

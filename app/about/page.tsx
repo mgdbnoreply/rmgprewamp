@@ -23,7 +23,7 @@ export default function AboutPage() {
       role: "Project Director",
       bio: "Ragan Glover leads the RMGP initiative as Project Director, and serves as Director of the Michigan Research and Discovery Scholars at University of Michigan. Her work focuses on the sociocultural impacts of mobile and immersive media. Ragan’s passion for uncovering overlooked mobile gaming histories in varied cultural settings has helped shape RMGP’s mission to chart mobile play’s global past.",
       link: "https://lsa.umich.edu/mrads/people/Leadership-Team/ragan-glover.html",
-      image: "https://d3tvevvhad9ws1.cloudfront.net/wp-content/uploads/2024/12/ragan-glover.jpg",
+      image: "/ragan.JPG",
     },
     {
       name: "Logan Brown",
@@ -134,7 +134,7 @@ export default function AboutPage() {
               {/* Image Side */}
               <div className="relative h-[400px] md:h-[500px] rounded-2xl overflow-hidden shadow-lg border border-gray-100 group">
                 <Image 
-                  src="/retro-gaming-collection.jpg" 
+                  src="/urban2.jpg" 
                   alt="Collection of retro games" 
                   fill 
                   className="object-cover transition-transform duration-700 group-hover:scale-105" 
@@ -149,10 +149,7 @@ export default function AboutPage() {
                 </div>
                 <h2 className="text-4xl md:text-5xl font-black mb-6 text-gray-900">What is RMGP?</h2>
                 <p className="text-gray-600 text-lg leading-relaxed mb-6">
-                  The Retro Mobile Gaming Project (RMGP) is a comprehensive archival and research initiative dedicated to documenting the history and evolution of mobile gaming. The project brings together a curated collection of early mobile games, handheld devices, platforms, and related materials from the formative years of portable entertainment.
-                </p>
-                <p className="text-gray-600 text-lg leading-relaxed">
-                  RMGP functions as both a repository and reference framework for scholars, developers, and enthusiasts.
+                  The Retro Mobile Gaming Project (RMGP) is a comprehensive archival and research initiative dedicated to documenting the history and evolution of mobile gaming. The project brings together a curated collection of early mobile games, handheld devices, platforms, and related materials from the formative years of mobile gaming.
                 </p>
               </div>
             </div>
@@ -168,7 +165,7 @@ export default function AboutPage() {
               
               <h2 className="text-4xl md:text-5xl font-black mb-8 text-white relative z-10">Our Mission</h2>
               <p className="text-xl md:text-2xl text-red-100 leading-relaxed max-w-4xl mx-auto font-medium relative z-10">
-                We are dedicated to assembling a rigorous, structured archive of mobile games, devices, platforms, and associated media; to provide researchers and practitioners with a trusted resource for studying the technological, aesthetic, and cultural dimensions of mobile gaming; and to foster public understanding of how portable play has shaped and continues to shape the interactions between hardware, software, users, and society.
+                We are dedicated to assembling a rigorous, structured archive of mobile games, devices, platforms, and associated media. We aim to provide researchers and practitioners with a trusted resource for studying the technological, aesthetic, and cultural dimensions of mobile gaming. Further, we hope to foster public understanding of how mobile gameplay has shaped and continues to shape culture — the interactions between hardware, software, users, and society.
               </p>
             </div>
           </div>

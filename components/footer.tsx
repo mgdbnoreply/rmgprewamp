@@ -96,12 +96,12 @@ export function Footer() {
           <div className="space-y-4">
             <h3 className="text-white font-bold text-sm uppercase tracking-wider">Connect</h3>
             <div className="flex gap-3">
-              <a href="#" className="w-10 h-10 rounded-full bg-gray-900 flex items-center justify-center text-gray-400 hover:bg-red-600 hover:text-white transition-all duration-300" aria-label="GitHub">
+              {/* <a href="#" className="w-10 h-10 rounded-full bg-gray-900 flex items-center justify-center text-gray-400 hover:bg-red-600 hover:text-white transition-all duration-300" aria-label="GitHub">
                 <Github className="h-5 w-5" />
-              </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-gray-900 flex items-center justify-center text-gray-400 hover:bg-red-600 hover:text-white transition-all duration-300" aria-label="Twitter">
+              </a> */}
+              {/* <a href="#" className="w-10 h-10 rounded-full bg-gray-900 flex items-center justify-center text-gray-400 hover:bg-red-600 hover:text-white transition-all duration-300" aria-label="Twitter">
                 <Twitter className="h-5 w-5" />
-              </a>
+              </a> */}
               <a href="mailto:TransformativeMedia@northeastern.edu" className="w-10 h-10 rounded-full bg-gray-900 flex items-center justify-center text-gray-400 hover:bg-red-600 hover:text-white transition-all duration-300" aria-label="Email">
                 <Mail className="h-5 w-5" />
               </a>

@@ -158,7 +158,7 @@ export default function ArchivePage() {
                     </span>
                   </h2>
                   <p className="text-gray-600 text-lg leading-relaxed mb-6">
-                    The Retro Mobile Gaming Project functions as both a repository and a reference framework for scholars, developers, and enthusiasts. We go beyond simple storage; we contextualize each artifact within its technological and cultural era.
+                    We go beyond simple storage; we contextualize each artifact within its technological and cultural era.
                   </p>
                   <div className="flex flex-wrap gap-4 pt-2">
                     <Button asChild className="bg-gray-900 text-white hover:bg-gray-800 rounded-full px-8 py-6 text-lg shadow-lg">
@@ -174,69 +174,6 @@ export default function ArchivePage() {
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-        </section>
-
-        {/* --- Featured Database (Grid Layout) --- */}
-        <section className="py-16 md:py-24 px-4 md:px-8 lg:px-16 bg-gray-50 border-t border-gray-100">
-          <div className="max-w-[100rem] mx-auto">
-            <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
-              <div>
-                <span className="text-red-600 font-bold uppercase tracking-wider text-sm block mb-2">Software Archive</span>
-                <h2 className="text-4xl md:text-5xl font-black text-gray-900">Database</h2>
-              </div>
-              <Button asChild variant="link" className="text-red-600 hover:text-red-700 font-bold text-lg p-0">
-                <Link href="/database" className="flex items-center gap-2">
-                  View Full Database <ArrowRight className="w-5 h-5" />
-                </Link>
-              </Button>
-            </div>
-
-            {/* 6 Cards Grid (3x2) */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                {loading ? (
-                   /* Loading Skeletons */
-                   Array.from({ length: 8 }).map((_, i) => (
-                     <div key={i} className="bg-gray-200 rounded-2xl h-[400px] animate-pulse"></div>
-                   ))
-                ) : (
-                  games.map((game, index) => (
-                    <Link href="/database" key={index} className="group block relative bg-gradient-to-br from-red-600 to-red-900 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl hover:shadow-red-500/30 transition-all duration-300 transform hover:-translate-y-2 border border-red-500/20 h-full flex flex-col">
-                      <div className="relative w-full aspect-[4/3] overflow-hidden bg-black/20">
-                        <Image
-                          src={getFirstImage(game.Pictures)}
-                          alt={game.Title}
-                          fill
-                          className="object-cover transition-transform duration-500 group-hover:scale-110"
-                          onError={(e) => { (e.target as HTMLImageElement).src = "/placeholder.svg" }}
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity"></div>
-                        <div className="absolute top-4 right-4">
-                          <span className="bg-black/60 backdrop-blur-md text-white px-3 py-1 rounded-full text-xs font-bold border border-white/10 shadow-sm">
-                            {game.Year}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="p-6 flex flex-col flex-grow">
-                        <h3 className="font-bold text-xl text-white mb-2 line-clamp-1 group-hover:text-red-100 transition-colors">
-                          {game.Title}
-                        </h3>
-                        <p className="text-red-100/80 text-sm mb-4 line-clamp-1">
-                          {game.Developers}
-                        </p>
-                        <div className="flex items-center gap-2 mt-auto">
-                          <Badge variant="secondary" className="bg-black/30 text-white hover:bg-black/40 border-0 backdrop-blur-sm">
-                            {game.Genre ? game.Genre.split(",")[0] : "Game"}
-                          </Badge>
-                          <Badge variant="outline" className="text-red-100 border-red-400/30">
-                            {game.Hardware ? game.Hardware.split(",")[0] : "Platform"}
-                          </Badge>
-                        </div>
-                      </div>
-                    </Link>
-                  ))
-                )}
             </div>
           </div>
         </section>

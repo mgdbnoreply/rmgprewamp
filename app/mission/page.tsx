@@ -67,8 +67,7 @@ export default function MissionPage() {
             <div className="bg-gradient-to-br from-red-500/10 to-red-700/5 backdrop-blur-md border border-red-500/20 rounded-3xl p-12 md:p-16 shadow-2xl text-center">
               <h2 className="text-4xl md:text-5xl font-bold mb-8 text-red-500">Our Mission</h2>
               <p className="text-xl md:text-2xl text-gray-200 leading-relaxed max-w-4xl mx-auto">
-                To preserve the history of mobile gaming and provide researchers, developers, and enthusiasts with a
-                comprehensive resource for understanding the evolution of mobile games from 1975 to 2008.
+                We are dedicated to assembling a rigorous, structured archive of mobile games, devices, platforms, and associated media. We aim to provide researchers and practitioners with a trusted resource for studying the technological, aesthetic, and cultural dimensions of mobile gaming. Further, we hope to foster public understanding of how mobile gameplay has shaped and continues to shape culture — the interactions between hardware, software, users, and society.
               </p>
             </div>
           </div>

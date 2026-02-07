@@ -95,13 +95,20 @@ const useVideoAutoplay = (videoRef: React.RefObject<HTMLVideoElement | null> | R
 const useIntersectionObserver = (threshold = 0.1) => {
   const [isIntersecting, setIsIntersecting] = useState(false)
   const ref = useRef<HTMLElement>(null)
+  const hasAnimated = useRef(false)
 
   useEffect(() => {
     const element = ref.current
     if (!element) return
 
     const observer = new IntersectionObserver(
-      ([entry]) => setIsIntersecting(entry.isIntersecting),
+      ([entry]) => {
+        if (entry.isIntersecting && !hasAnimated.current) {
+          setIsIntersecting(true)
+          hasAnimated.current = true
+          observer.unobserve(element)
+        }
+      },
       { threshold }
     )
 
@@ -128,12 +135,13 @@ export default function Page() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [searchQuery, setSearchQuery] = useState("")
   const [isFilterOpen, setIsFilterOpen] = useState(true)
+  const [collectionsCount, setCollectionsCount] = useState<number | null>(null)
   
   // Advanced filter states (matching database page)
   const [yearRange, setYearRange] = useState<[number, number]>([1975, 2008])
   const [selectedGenres, setSelectedGenres] = useState<string[]>([])
-  const [selectedHardware, setSelectedHardware] = useState<string>("all")
-  const [selectedConnectivity, setSelectedConnectivity] = useState<string>("all")
+  const [selectedHardware, setSelectedHardware] = useState<string[]>([])
+  const [selectedConnectivity, setSelectedConnectivity] = useState<string[]>([])
   
   const [showIntro, setShowIntro] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
@@ -191,15 +199,21 @@ export default function Page() {
     [games]
   )
 
-  const hardwareOptions = useMemo(() => 
-    Array.from(new Set(games.map(g => g.Hardware?.split(",")[0].trim()).filter(Boolean))).sort(),
-    [games]
-  )
+  const hardwareOptions = useMemo(() => {
+    const options = games
+      .map(g => g.Hardware?.split(",")[0].trim())
+      .filter(Boolean)
+    const uniqueOptions = Array.from(new Set(options))
+    return uniqueOptions.sort()
+  }, [games])
 
-  const connectivityOptions = useMemo(() => 
-    Array.from(new Set(games.map(g => g.Connectivity?.trim()).filter(Boolean))).sort(),
-    [games]
-  )
+  const connectivityOptions = useMemo(() => {
+    const options = games
+      .flatMap(g => g.Connectivity?.split(",").map(item => item.trim()) || [])
+      .filter(Boolean)
+    const uniqueOptions = Array.from(new Set(options))
+    return uniqueOptions.sort()
+  }, [games])
 
   const minGameYear = useMemo(() => {
     const years = games.map(g => parseInt(g.Year)).filter(y => !isNaN(y))
@@ -225,9 +239,9 @@ export default function Page() {
       const matchesGenre = selectedGenres.length === 0 || 
         selectedGenres.some(genre => game.Genre?.includes(genre))
 
-      const matchesHardware = selectedHardware === "all" || game.Hardware.includes(selectedHardware)
+      const matchesHardware = selectedHardware.length === 0 || selectedHardware.some(hw => game.Hardware.includes(hw))
       
-      const matchesConnectivity = selectedConnectivity === "all" || game.Connectivity?.includes(selectedConnectivity)
+      const matchesConnectivity = selectedConnectivity.length === 0 || selectedConnectivity.some(conn => game.Connectivity?.includes(conn))
       
       return matchesSearch && matchesYear && matchesGenre && matchesHardware && matchesConnectivity
     })
@@ -235,8 +249,8 @@ export default function Page() {
 
   const activeFiltersCount = useMemo(() => (
     (selectedGenres.length > 0 ? 1 : 0) + 
-    (selectedHardware !== "all" ? 1 : 0) + 
-    (selectedConnectivity !== "all" ? 1 : 0) +
+    (selectedHardware.length > 0 ? 1 : 0) + 
+    (selectedConnectivity.length > 0 ? 1 : 0) +
     (yearRange[0] !== minGameYear || yearRange[1] !== maxGameYear ? 1 : 0)
   ), [selectedGenres, selectedHardware, selectedConnectivity, yearRange, minGameYear, maxGameYear])
 
@@ -251,8 +265,8 @@ export default function Page() {
   const resetFilters = useCallback(() => {
     setYearRange([minGameYear, maxGameYear])
     setSelectedGenres([])
-    setSelectedHardware("all")
-    setSelectedConnectivity("all")
+    setSelectedHardware([])
+    setSelectedConnectivity([])
     setSearchQuery("")
     setCurrentPage(1)
   }, [minGameYear, maxGameYear])
@@ -283,24 +297,6 @@ export default function Page() {
       image: "/deviceofweek.jpg",
       color: "from-yellow-500/20 to-orange-500/20",
       href: "/device-of-week"
-    },
-    { 
-      title: "Latest Publications", 
-      description: "Fresh research on the impact of Java games on mobile gaming.", 
-      category: "New", 
-      icon: Zap, 
-      image: "/latestpublic.jpg",
-      color: "from-blue-500/20 to-purple-500/20",
-      href: "/publications#latest"
-    },
-    { 
-      title: "Ongoing Work", 
-      description: "Currently digitizing Game Boy Advance classics and preserving source code.", 
-      category: "Active", 
-      icon: Shield, 
-      image: "/ongoing.jpeg",
-      color: "from-green-500/20 to-teal-500/20",
-      href: "/coming-soon"
     },
   ]
 
@@ -388,7 +384,7 @@ export default function Page() {
               </h2>
             </div>
             <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-neutral-300 mt-6 sm:mt-8 max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-700 font-medium">
-              Preserving the history of portable play from 1975 to 2008.
+              Preserving the history of mobile gameplay from 1975 to 2008.
             </p>
             
           </div>
@@ -403,81 +399,7 @@ export default function Page() {
           </button>
         </section>
 
-        {/* ABOUT SECTION - Enhanced animations */}
-        <section 
-          ref={aboutRef as React.RefObject<HTMLElement>}
-          className="relative py-20 px-8 z-10 bg-white text-black -mt-8   rounded-t-[2rem] overflow-hidden"
-        >
-          {/* Background pattern */}
-          <div className="absolute inset-0 opacity-5">
-            <div className="absolute inset-0" style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
-            }} />
-          </div>
-          
-          <div className="max-w-[100rem] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center relative">
-            <div className={cn(
-              "relative w-full h-96 lg:h-[500px] rounded-2xl overflow-hidden shadow-2xl transition-all duration-1000",
-              aboutVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-10"
-            )}>
-              <Image 
-                src="/retro-gaming-collection.jpg" 
-                alt="Retro Gaming Collection" 
-                fill 
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, 50vw"
-                priority
-              />
-              {/* Floating badge */}
-              <div className="absolute top-6 left-6 bg-white/90 backdrop-blur-sm rounded-full px-4 py-2 shadow-lg animate-float">
-                <span className="flex items-center gap-2 text-sm font-bold text-neutral-900">
-                  <Gamepad2 className="w-4 h-4 text-red-600" />
-                  10,000+ Games
-                </span>
-              </div>
-            </div>
-            
-            <div className={cn(
-              "transition-all duration-1000 delay-300",
-              aboutVisible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-10"
-            )}>
-              <span className="text-sm font-bold text-neutral-500 uppercase tracking-wider">About RMGP</span>
-              <h2 className="text-5xl lg:text-6xl font-black tracking-tighter text-neutral-900 mt-4">
-                Preserving<br />Gaming's<br />
-                <span className="text-red-600 relative">
-                  Mobile Legacy
-                </span>
-              </h2>
-              <p className="text-lg text-neutral-700 mt-6 leading-relaxed">
-                The Retro Mobile Gaming Project (RMGP) is a comprehensive digital preservation 
-                initiative documenting the evolution of mobile gaming from 1975 to 2008.
-              </p>
-              <div className="grid grid-cols-3 gap-3 sm:gap-6 mt-6 sm:mt-8">
-                <div className="text-center">
-                  <div className="text-2xl sm:text-3xl font-black text-red-600">33+</div>
-                  <div className="text-xs sm:text-sm text-neutral-600 mt-1">Years Covered</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl sm:text-3xl font-black text-red-600">500+</div>
-                  <div className="text-xs sm:text-sm text-neutral-600 mt-1">Devices</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl sm:text-3xl font-black text-red-600">10K+</div>
-                  <div className="text-xs sm:text-sm text-neutral-600 mt-1">Games</div>
-                </div>
-              </div>
-              <Button 
-                asChild 
-                className="bg-red-600 hover:bg-red-700 text-white font-bold px-8 py-6 rounded-xl text-lg shadow-lg mt-10 group"
-              >
-                <Link href="/about">
-                  Learn More 
-                  <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-                </Link>
-              </Button>
-            </div>
-          </div>
-        </section>
+        
 
         {/* FULL DATABASE SECTION - Complete search and filtering */}
         <section 
@@ -611,42 +533,74 @@ export default function Page() {
                       </div>
                     </div>
 
-                     {/* Connectivity Select */}
-                     <div className="space-y-2">
+                     {/* Connectivity Checkboxes */}
+                     <div className="space-y-4">
                        <label className="text-sm font-bold text-white flex items-center gap-2">
                           <Wifi className="w-4 h-4 text-red-300" /> Connectivity
                        </label>
-                       <Select value={selectedConnectivity} onValueChange={(val) => {setSelectedConnectivity(val); setCurrentPage(1)}}>
-                        <SelectTrigger className="w-full h-12 bg-white/10 border-white/30 text-white rounded-xl">
-                          <SelectValue placeholder="Select Connectivity" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="all">All Connectivity Types</SelectItem>
-                          {connectivityOptions.map((conn) => (
-                            <SelectItem key={conn} value={conn}>{conn}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
+                       <ScrollArea className="h-[180px] w-full rounded-xl border border-white/30 bg-white/10 p-4">
+                         <div className="space-y-3">
+                           {connectivityOptions.map((conn) => (
+                             <div key={conn} className="flex items-center space-x-2">
+                               <Checkbox 
+                                 id={`conn-${conn}`} 
+                                 checked={selectedConnectivity.includes(conn)}
+                                 onCheckedChange={(checked) => {
+                                   if (checked) {
+                                     setSelectedConnectivity([...selectedConnectivity, conn])
+                                   } else {
+                                     setSelectedConnectivity(selectedConnectivity.filter(c => c !== conn))
+                                   }
+                                   setCurrentPage(1)
+                                 }}
+                                 className="data-[state=checked]:bg-red-400 data-[state=checked]:border-red-400 border-white/40 rounded"
+                               />
+                               <label
+                                 htmlFor={`conn-${conn}`}
+                                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer text-white hover:text-red-200"
+                               >
+                                 {conn}
+                               </label>
+                             </div>
+                           ))}
+                         </div>
+                       </ScrollArea>
+                     </div>
                   </div>
 
                   {/* Right Column: Hardware */}
                   <div className="lg:col-span-4 space-y-4">
-                    <div className="space-y-2">
+                    <div className="space-y-4">
                        <label className="text-sm font-bold text-white flex items-center gap-2">
                           <HardDrive className="w-4 h-4 text-red-300" /> Platform / Hardware
                        </label>
-                       <Select value={selectedHardware} onValueChange={(val) => {setSelectedHardware(val); setCurrentPage(1)}}>
-                        <SelectTrigger className="w-full h-12 bg-white/10 border-white/30 text-white rounded-xl">
-                          <SelectValue placeholder="Select Hardware" />
-                        </SelectTrigger>
-                        <SelectContent className="max-h-[300px]">
-                          <SelectItem value="all">All Platforms</SelectItem>
-                          {hardwareOptions.map((hw) => (
-                            <SelectItem key={hw} value={hw}>{hw}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                       <ScrollArea className="h-[180px] w-full rounded-xl border border-white/30 bg-white/10 p-4">
+                         <div className="space-y-3">
+                           {hardwareOptions.map((hw) => (
+                             <div key={hw} className="flex items-center space-x-2">
+                               <Checkbox 
+                                 id={`hw-${hw}`} 
+                                 checked={selectedHardware.includes(hw)}
+                                 onCheckedChange={(checked) => {
+                                   if (checked) {
+                                     setSelectedHardware([...selectedHardware, hw])
+                                   } else {
+                                     setSelectedHardware(selectedHardware.filter(h => h !== hw))
+                                   }
+                                   setCurrentPage(1)
+                                 }}
+                                 className="data-[state=checked]:bg-red-400 data-[state=checked]:border-red-400 border-white/40 rounded"
+                               />
+                               <label
+                                 htmlFor={`hw-${hw}`}
+                                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer text-white hover:text-red-200"
+                               >
+                                 {hw}
+                               </label>
+                             </div>
+                           ))}
+                         </div>
+                       </ScrollArea>
                     </div>
 
                     {/* Results Summary Box */}
@@ -761,81 +715,140 @@ export default function Page() {
           </div>
         </section>
 
-        
-        {/* DISCOVER SECTION - Enhanced cards */}
+        {/* ABOUT SECTION - Enhanced animations */}
         <section 
-          ref={discoverRef as React.RefObject<HTMLElement>}
-          className="relative py-12 sm:py-20 px-4 sm:px-8 z-30 bg-black text-white -mt-8 mb-4 sm:mb-8 rounded-t-[2rem]"
+          ref={aboutRef as React.RefObject<HTMLElement>}
+          className="relative py-20 px-8 z-10 bg-white text-black -mt-8   rounded-t-[2rem] overflow-hidden"
         >
-          <div className="max-w-[100rem] mx-auto">
-            <h2 className={cn(
-              "text-4xl sm:text-5xl md:text-7xl font-black tracking-tighter text-center transition-all duration-1000",
-              discoverVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+          {/* Background pattern */}
+          <div className="absolute inset-0 opacity-5">
+            <div className="absolute inset-0" style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+            }} />
+          </div>
+          
+          <div className="max-w-[100rem] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center relative">
+            <div className={cn(
+              "relative w-full h-96 lg:h-[500px] rounded-2xl overflow-hidden shadow-2xl transition-all duration-1000",
+              aboutVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-10"
             )}>
-              Discover & <span className="text-red-600 ">Explore</span>
-            </h2>
+              <Image 
+                src="/urban.jpg" 
+                alt="Retro Gaming Collection" 
+                fill 
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 50vw"
+                priority
+              />
+            </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 mt-12 sm:mt-16">
-              {discoverItems.map((item, index) => {
-                const Icon = item.icon
-                return (
-                  <Link 
-                    href={item.href}
-                    key={index} 
-                    className={cn(
-                      "block border border-neutral-800 rounded-2xl overflow-hidden",
-                      "transition-all duration-500 hover:border-red-600",
-                      "hover:shadow-2xl hover:shadow-red-600/20 group relative",
-                      "hover:-translate-y-2",
-                      discoverVisible 
-                        ? "opacity-100 translate-y-0" 
-                        : "opacity-0 translate-y-10"
-                    )}
-                    style={{
-                      transitionDelay: `${index * 100}ms`
-                    }}
-                  >
-                    {/* Background gradient effect */}
-                    <div className={cn(
-                      "absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-20 transition-opacity duration-500 -z-10",
-                      item.color
-                    )} />
-                    
-                    <div className="relative h-40 sm:h-48 md:h-56 w-full overflow-hidden bg-neutral-900">
-                      <Image 
-                        src={item.image} 
-                        alt={item.title} 
-                        fill 
-                        className="object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700 opacity-80 group-hover:opacity-100"
-                        sizes="(max-width: 768px) 100vw, 33vw"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                      <div className="absolute bottom-4 left-4">
-                        <span className="inline-flex items-center gap-2 text-sm font-bold text-white/90 uppercase tracking-wider bg-black/50 backdrop-blur-sm px-3 py-1.5 rounded-full">
-                          <Icon className="w-4 h-4" />
-                          {item.category}
-                        </span>
-                      </div>
-                    </div>
-                    
-                    <div className="p-4 sm:p-6">
-                      <h3 className="text-lg sm:text-2xl font-bold text-white group-hover:text-red-600 transition-colors">
-                        {item.title}
-                      </h3>
-                      <p className="text-neutral-400 mt-3 line-clamp-2">
-                        {item.description}
-                      </p>
-                      <div className="mt-4 flex items-center text-red-600 font-semibold">
-                        <span>Explore</span>
-                        <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-2" />
-                      </div>
-                    </div>
-                  </Link>
-                )
-              })}
+            <div className={cn(
+              "transition-all duration-1000 delay-300",
+              aboutVisible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-10"
+            )}>
+              <span className="text-sm font-bold text-neutral-500 uppercase tracking-wider">About RMGP</span>
+              <h2 className="text-5xl lg:text-6xl font-black tracking-tighter text-neutral-900 mt-4">
+                Preserving<br />Gaming's<br />
+                <span className="text-red-600 relative">
+                  Mobile Legacy
+                </span>
+              </h2>
+              <p className="text-lg text-neutral-700 mt-6 leading-relaxed">
+                The Retro Mobile Gaming Project (RMGP) is a comprehensive digital preservation 
+                initiative documenting the evolution of mobile gaming from 1975 to 2008.
+              </p>
+              
+              <Button 
+                asChild 
+                className="bg-red-600 hover:bg-red-700 text-white font-bold px-8 py-6 rounded-xl text-lg shadow-lg mt-10 group"
+              >
+                <Link href="/about">
+                  Learn More 
+                  <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                </Link>
+              </Button>
             </div>
           </div>
         </section>
+
+        
+       <section 
+      ref={discoverRef as React.RefObject<HTMLElement>}
+      className="relative py-12 sm:py-20 px-4 sm:px-8 z-30 bg-black text-white -mt-8 mb-4 sm:mb-8 rounded-t-[2rem]"
+    >
+      <div className="max-w-[100rem] mx-auto">
+        <h2 className={cn(
+          "text-4xl sm:text-5xl md:text-7xl font-black tracking-tighter text-center transition-all duration-1000 mb-12",
+          discoverVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+        )}>
+          Discover & <span className="text-red-600">Explore</span>
+        </h2>
+        
+        <div className="flex flex-col gap-8 items-center mt-12 sm:mt-16">
+          {discoverItems.map((item, index) => {
+            const Icon = item.icon;
+            return (
+              <Link 
+                href={item.href}
+                key={index} 
+                className={cn(
+                  "group relative flex flex-col md:flex-row items-stretch w-full max-w-5xl overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-900/50 transition-all duration-500 hover:border-red-600 hover:shadow-2xl hover:shadow-red-600/10",
+                  "hover:-translate-y-1",
+                  discoverVisible 
+                    ? "opacity-100 translate-y-0" 
+                    : "opacity-0 translate-y-10"
+                )}
+                style={{
+                  transitionDelay: `${index * 150}ms`
+                }}
+              >
+                {/* Hover Background Glow */}
+                <div className={cn(
+                  "absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-10 transition-opacity duration-500",
+                  item.color
+                )} />
+                
+                {/* LEFT SIDE: Content */}
+                <div className="relative z-10 flex flex-1 flex-col justify-center p-8 sm:p-12">
+                  <div className="mb-4">
+                    <span className="inline-flex items-center gap-2 rounded-full bg-red-600/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-red-500">
+                      <Icon className="h-4 w-4" />
+                      {item.category}
+                    </span>
+                  </div>
+                  
+                  <h3 className="text-2xl sm:text-4xl font-bold text-white transition-colors group-hover:text-red-600">
+                    {item.title}
+                  </h3>
+                  
+                  <p className="mt-4 text-neutral-400 text-base sm:text-lg leading-relaxed max-w-lg">
+                    {item.description}
+                  </p>
+                  
+                  <div className="mt-8 flex items-center font-bold text-red-600">
+                    <span className="uppercase tracking-tighter">Explore More</span>
+                    <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-2" />
+                  </div>
+                </div>
+
+                {/* RIGHT SIDE: Image */}
+                <div className="relative h-64 w-full md:h-auto md:w-[40%] overflow-hidden border-t border-neutral-800 md:border-l md:border-t-0">
+                  <Image 
+                    src={item.image} 
+                    alt={item.title} 
+                    fill 
+                    className="object-cover grayscale transition-all duration-700 group-hover:scale-105 group-hover:grayscale-0"
+                    sizes="(max-width: 768px) 100vw, 40vw"
+                  />
+                  {/* Subtle overlay to blend image */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-neutral-900/50 to-transparent pointer-events-none" />
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+    </section>
 
       </div>
       
